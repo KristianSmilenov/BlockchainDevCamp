@@ -9,7 +9,9 @@ namespace Blockchain.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        // GET api/values
+        /// <summary>
+        /// Gets API values.
+        /// </summary>
         [HttpGet]
         public IEnumerable<string> Get()
         {

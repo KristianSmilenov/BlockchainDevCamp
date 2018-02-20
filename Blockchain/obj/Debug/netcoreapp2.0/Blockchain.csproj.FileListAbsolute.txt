@@ -9,3 +9,15 @@ D:\Projects\DevCamp-SoftUni\BlockchainDevCamp\Blockchain\obj\Debug\netcoreapp2.0
 D:\Projects\DevCamp-SoftUni\BlockchainDevCamp\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.AssemblyInfo.cs
 D:\Projects\DevCamp-SoftUni\BlockchainDevCamp\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.dll
 D:\Projects\DevCamp-SoftUni\BlockchainDevCamp\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.pdb
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.deps.json
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.runtimeconfig.json
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.runtimeconfig.dev.json
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.dll
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.pdb
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.csprojResolveAssemblyReference.cache
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.csproj.CoreCompileInputs.cache
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.AssemblyInfoInputs.cache
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.AssemblyInfo.cs
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.dll
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.pdb
+D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.xml
