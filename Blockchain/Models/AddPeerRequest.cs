@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
-    public class RegisterNodeRequest
+    public class AddPeerRequest
     {
-        public List<string> Nodes { get; set; }
+        public string PeerUrl;
     }
 }

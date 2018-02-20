@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
+    [Serializable]
     public class TransactionRequest
     {
-        public string Sender;
-        public string Recipient;
+        public string From;
+        public string To;
         public decimal Amount;
+        public string SenderPubKey;
+        public string[] SenderSignature;
     }
 }

@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
-    public class ResolvedChainResponse : ChainResponse
+    [Serializable]
+    public class BalanceInfo
     {
-        public string Message { get; set; }
+        public int Confirmations;
+        public decimal Balance;
     }
 }

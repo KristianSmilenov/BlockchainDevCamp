@@ -15,9 +15,16 @@ namespace Blockchain.Controllers
         public TransactionsController(IBlockchainService blockchainService) : base(blockchainService) { }
 
         [HttpPost]
-        public void Post([FromBody]TransactionRequest data)
+        [Route("/new")]
+        public TransactionHashInfo Post([FromBody]TransactionRequest data)
         {
+            return _blockchainService.CreateTransaction(data);
+        }
 
+        [HttpGet("/{transactionHash}/info", Name = "Get")]
+        public Transaction Get(string transactionHash)
+        {
+            return _blockchainService.GetTransaction(transactionHash);
         }
     }
 }

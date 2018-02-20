@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
+    [Serializable]
     public class BlockMinedResponse
     {
         public string Message;

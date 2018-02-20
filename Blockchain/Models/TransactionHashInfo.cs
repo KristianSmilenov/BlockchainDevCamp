@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
-    public class ChainResponse
+    [Serializable]
+    public class TransactionHashInfo
     {
-        public string Chain { get; set; }
-        public int Length { get; set; }
+        public DateTime DateReceived;
+        public string TransactionHash;
     }
 }
