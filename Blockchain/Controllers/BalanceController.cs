@@ -18,7 +18,7 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Get address balance
         /// </summary>
-        [HttpGet("/{address}", Name = "Get")]
+        [HttpGet("{address}")]
         public Balance Get(string address)
         {
             return _blockchainService.GetBalance(address);

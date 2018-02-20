@@ -20,4 +20,3 @@ D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.
 D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.dll
 D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.pdb
 D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\bin\Debug\netcoreapp2.0\Blockchain.xml
-D:\Projects\DevCamp-SoftUni\DevCamp-Blockchain\Blockchain\obj\Debug\netcoreapp2.0\Blockchain.csprojResolveAssemblyReference.cache

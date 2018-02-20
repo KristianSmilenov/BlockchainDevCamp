@@ -14,17 +14,22 @@ namespace Blockchain.Controllers
     {
         public TransactionsController(IBlockchainService blockchainService) : base(blockchainService) { }
 
-        [HttpPost]
-        [Route("/new")]
+        /// <summary>
+        /// Create new transaction
+        /// </summary>
+        [HttpPost("new")]
         public TransactionHashInfo Post([FromBody]TransactionRequest data)
         {
             return _blockchainService.CreateTransaction(data);
         }
 
-        [HttpGet("/{transactionHash}/info", Name = "Get")]
-        public Transaction Get(string transactionHash)
+        /// <summary>
+        /// Get transaction info
+        /// </summary>
+        [HttpGet("{hash}/info")]
+        public Transaction Get(string hash)
         {
-            return _blockchainService.GetTransaction(transactionHash);
+            return _blockchainService.GetTransaction(hash);
         }
     }
 }

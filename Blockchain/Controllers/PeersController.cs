@@ -15,12 +15,18 @@ namespace Blockchain.Controllers
     {
         public PeersController(IBlockchainService blockchainService) : base(blockchainService) { }
 
+        /// <summary>
+        /// Get registered node peers
+        /// </summary>
         [HttpGet]
         public List<string> Get()
         {
             return _blockchainService.GetPeers();
         }
 
+        /// <summary>
+        /// Add new node peer
+        /// </summary>
         [HttpPost]
         public void Post([FromBody]AddPeerRequest data)
         {

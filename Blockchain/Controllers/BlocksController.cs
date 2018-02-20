@@ -27,7 +27,7 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Gets specific block by index
         /// </summary>
-        [HttpGet("/{index}", Name = "Get")]
+        [HttpGet("{index}")]
         public Block Get(int index)
         {
             return _blockchainService.GetBlock(index);
@@ -37,7 +37,7 @@ namespace Blockchain.Controllers
         /// Notifies node about new block
         /// </summary>
         [HttpPost]
-        [Route("/notify")]
+        [HttpGet("notify")]
         public void Post([FromBody]int index)
         {
             _blockchainService.NotifyBlock(index);
