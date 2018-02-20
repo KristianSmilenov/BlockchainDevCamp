@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blockchain.Models;
+using Blockchain.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blockchain.Controllers
 {
     [Route("api/mine")]
     [Produces("application/json")]
-    public class MineController : Controller
+    public class MineController : BlockchainController
     {
+        public MineController(IBlockchainService blockchainService) : base(blockchainService) { }
+
         /// <summary>
         /// Mines a new block in the blockchain
         /// </summary>

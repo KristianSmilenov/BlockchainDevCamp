@@ -1,4 +1,5 @@
 ﻿using Blockchain.Models;
+using Blockchain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,10 @@ namespace Blockchain.Controllers
 {
     [Route("api/transactions")]
     [Produces("application/json")]
-    public class TransactionsController : Controller
+    public class TransactionsController : BlockchainController
     {
+        public TransactionsController(IBlockchainService blockchainService) : base(blockchainService) { }
+
         [HttpPost]
         public void Post([FromBody]TransactionRequest data)
         {
