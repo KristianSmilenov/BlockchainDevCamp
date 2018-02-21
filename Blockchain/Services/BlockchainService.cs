@@ -10,11 +10,22 @@ namespace Blockchain.Services
     {
         private BlockchainInfo info;
         private List<Block> blocks;
+        private List<Transaction> pendingTransactions;
 
         public BlockchainService()
         {
             info = new BlockchainInfo("Overwatch Blockchain", "Genesis");
             blocks = new List<Block>();
+            pendingTransactions = new List<Transaction>();
+            
+            GenerateGenesisBlock();
+        }
+
+        private void GenerateGenesisBlock()
+        {
+            //TODO: Implement
+            //Note: Give faucet some coins in the Genesis block
+            throw new NotImplementedException();
         }
 
         public BlockchainInfo GetBlockchainInfo()
@@ -44,6 +55,12 @@ namespace Blockchain.Services
             //TODO: Implement
             return new TransactionHashInfo();
         }
+
+        private bool ValidateTransaction() {
+
+            return false;
+        }
+
 
         public Balance GetBalance(string address)
         {

@@ -10,8 +10,10 @@ namespace Blockchain.Models
     {
         public string From;
         public string To;
-        public decimal Amount;
         public string SenderPubKey;
+        public decimal Value;
+        public decimal Fee;
+        public DateTime DateCreated;
         public string[] SenderSignature;
     }
 }
