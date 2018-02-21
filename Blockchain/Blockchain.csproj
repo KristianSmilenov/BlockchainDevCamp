@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BlockchainCore\BlockchainCore.csproj" />
+    <ProjectReference Include="..\BlockchainCore\BlockchainCore.csproj" />
   </ItemGroup>
 
 </Project>
