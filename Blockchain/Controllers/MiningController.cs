@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Blockchain.Mining;
+using Blockchain.Models;
+using Blockchain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,26 +11,20 @@ namespace Blockchain.Controllers
 {
     [Produces("application/json")]
     [Route("api/mining")]
-    public class MiningController : Controller
+    public class MiningController : BlockchainController
     {
-        protected readonly IMiningService _miningService;
-
-        public MiningController(IMiningService miningService)
-        {
-            _miningService = miningService ?? throw new ArgumentNullException(nameof(miningService));
-        }
+        public MiningController(IBlockchainService blockchainService) : base(blockchainService) { }
 
         [HttpGet("get-block/{hash}")]
         public MiningBlockInfo Get(string hash)
         {
-            return _miningService.GetMiningBlockInfo(hash);
+            return _blockchainService.GetMiningBlockInfo(hash);
         }
         
-        // POST: api/Mining
         [HttpPost("submit-block/{hash}")]
         public SubmitBlockResponse Post(string hash, [FromBody]MinedBlockInfo data)
         {
-            return _miningService.SubmitBlockInfo(hash, data);
+            return _blockchainService.SubmitBlockInfo(hash, data);
         }
     }
 }

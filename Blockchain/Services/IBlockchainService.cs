@@ -22,9 +22,10 @@ namespace Blockchain.Services
         List<string> GetPeers();
         void AddPeer(string peerUrl);
 
-
-        void ValidateChain();
-        void ResolveConflicts();
-        void CreateBlock();
+        /*
+         * Mining calcuations
+         */
+        MiningBlockInfo GetMiningBlockInfo(string hash);
+        SubmitBlockResponse SubmitBlockInfo(string hash, MinedBlockInfo data);
     }
 }

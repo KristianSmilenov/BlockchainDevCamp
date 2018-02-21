@@ -68,19 +68,20 @@ namespace Blockchain.Services
             //TODO: Implement
         }
 
-        public void CreateBlock()
+        public MiningBlockInfo GetMiningBlockInfo(string hash)
         {
-            throw new NotImplementedException();
-        }
-        
-        public void ResolveConflicts()
-        {
-            throw new NotImplementedException();
+            //TODO: Implement
+
+            //1. Create block mining candidate
+            //2. Add record to the Node Mining Jobs (address => Block)
+
+            return new MiningBlockInfo();
         }
 
-        public void ValidateChain()
+        public SubmitBlockResponse SubmitBlockInfo(string hash, MinedBlockInfo data)
         {
-            throw new NotImplementedException();
+            //TODO: Implement
+            return new SubmitBlockResponse();
         }
     }
 }
