@@ -25,7 +25,7 @@ namespace Blockchain.Services
         {
             //TODO: Implement
             //Note: Give faucet some coins in the Genesis block
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public BlockchainInfo GetBlockchainInfo()
@@ -85,7 +85,7 @@ namespace Blockchain.Services
             //TODO: Implement
         }
 
-        public MiningBlockInfo GetMiningBlockInfo(string hash)
+        public MiningBlockInfo GetMiningBlockInfo(string address)
         {
             //TODO: Implement
 
@@ -95,7 +95,7 @@ namespace Blockchain.Services
             return new MiningBlockInfo();
         }
 
-        public SubmitBlockResponse SubmitBlockInfo(string hash, MinedBlockInfo data)
+        public SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfo data)
         {
             //TODO: Implement
             return new SubmitBlockResponse();

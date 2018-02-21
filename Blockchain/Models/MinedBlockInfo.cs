@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
-    public class MinedBlockInfo
+    public class MinedBlockInfo : MiningBlockInfo
     {
-        public int Nonce;
-        public DateTime DateCreated;
-        public string BlockHash;
+        public int Nonce { get; set; }
+        public DateTime DateCreated { get; set; }
+        public string BlockHash { get; set; }
     }
 }
