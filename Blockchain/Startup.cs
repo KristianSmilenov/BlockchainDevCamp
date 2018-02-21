@@ -26,10 +26,13 @@ namespace Blockchain
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
+
+            services.AddOptions();
+            services.Configure<AppSettings>(Configuration.GetSection("ApplicationSettings"));
+
             services.AddSingleton<IBlockchainService, BlockchainService>();
             services.AddSingleton<IDBService, DBService>();
-
-            services.AddMvc();
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>

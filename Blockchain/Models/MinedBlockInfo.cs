@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BlockchainCore.Utils;
+using System;
 
 namespace Blockchain.Models
 {
@@ -9,6 +7,17 @@ namespace Blockchain.Models
     {
         public int Nonce { get; set; }
         public DateTime DateCreated { get; set; }
-        public string BlockHash { get; set; }
+
+        public string BlockHash
+        {
+            get
+            {
+                var str = BlockDataHash;
+                str += DateCreated;
+                str += Nonce;
+
+                return CryptoUtils.GetSha256String(str);
+            }
+        }
     }
 }
