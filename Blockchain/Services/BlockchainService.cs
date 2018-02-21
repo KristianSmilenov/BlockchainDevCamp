@@ -11,9 +11,11 @@ namespace Blockchain.Services
         private BlockchainInfo info;
         private List<Block> blocks;
         private List<Transaction> pendingTransactions;
+        private IDBService dbService;
 
-        public BlockchainService()
+        public BlockchainService(IDBService dbService)
         {
+            this.dbService = dbService;
             info = new BlockchainInfo("Overwatch Blockchain", "Genesis");
             blocks = new List<Block>();
             pendingTransactions = new List<Transaction>();
@@ -93,6 +95,7 @@ namespace Blockchain.Services
             //2. Add record to the Node Mining Jobs (address => Block)
 
             return new MiningBlockInfo();
+
         }
 
         public SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfo data)

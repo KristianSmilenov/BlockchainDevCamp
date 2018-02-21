@@ -27,6 +27,7 @@ namespace Blockchain
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IBlockchainService, BlockchainService>();
+            services.AddSingleton<IDBService, DBService>();
 
             services.AddMvc();
 
