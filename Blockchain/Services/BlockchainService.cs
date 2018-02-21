@@ -1,8 +1,16 @@
 ﻿using Blockchain.Models;
+using Blockchain.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Blockchain.Services
 {
@@ -10,6 +18,7 @@ namespace Blockchain.Services
     {
         private BlockchainInfo info;
         private List<Block> blocks;
+        private List<string> peers;
         private List<Transaction> pendingTransactions;
         private IDBService dbService;
 
@@ -18,6 +27,7 @@ namespace Blockchain.Services
             this.dbService = dbService;
             info = new BlockchainInfo("Overwatch Blockchain", "Genesis");
             blocks = new List<Block>();
+            peers = new List<string>();
             pendingTransactions = new List<Transaction>();
             
             GenerateGenesisBlock();
@@ -52,18 +62,21 @@ namespace Blockchain.Services
             throw new NotImplementedException();
         }
 
-        public TransactionHashInfo CreateTransaction(TransactionRequest data)
+        public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
         {
             //TODO: Implement
+            ValidateTransaction(signedData);
             return new TransactionHashInfo();
         }
 
-        private bool ValidateTransaction() {
-
+        private bool ValidateTransaction(TransactionDataSigned signedData)
+        {
+            string privateKey = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP78zkvFD3";
+            //TODO: Test CryptoUtils BouncyCastle.NetCore
+            //TODO: Cryptography.ECDSA.Secp256k1
             return false;
         }
-
-
+        
         public Balance GetBalance(string address)
         {
             //TODO: Implement
@@ -78,13 +91,13 @@ namespace Blockchain.Services
 
         public List<string> GetPeers()
         {
-            //TODO: Implement
-            return new List<string>();
+            return peers;
         }
 
         public void AddPeer(string peerUrl)
         {
-            //TODO: Implement
+            if(!peers.Contains(peerUrl))
+                peers.Add(peerUrl);
         }
 
         public MiningBlockInfo GetMiningBlockInfo(string address)

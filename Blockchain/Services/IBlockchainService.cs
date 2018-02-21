@@ -17,7 +17,7 @@ namespace Blockchain.Services
         Block GetBlock(int index);
         void NotifyBlock(int index);
         Balance GetBalance(string address);
-        TransactionHashInfo CreateTransaction(TransactionRequest data);
+        TransactionHashInfo CreateTransaction(TransactionDataSigned data);
         Transaction GetTransaction(string transactionHash);
         List<string> GetPeers();
         void AddPeer(string peerUrl);

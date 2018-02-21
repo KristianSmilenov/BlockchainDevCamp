@@ -18,7 +18,7 @@ namespace Blockchain.Controllers
         /// Create new transaction
         /// </summary>
         [HttpPost("new")]
-        public TransactionHashInfo Post([FromBody]TransactionRequest data)
+        public TransactionHashInfo Post([FromBody]TransactionDataSigned data)
         {
             return _blockchainService.CreateTransaction(data);
         }
