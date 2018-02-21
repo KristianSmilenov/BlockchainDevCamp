@@ -1,19 +1,8 @@
 ﻿using Blockchain.Models;
-<<<<<<< HEAD
-using Blockchain.Utils;
-using Newtonsoft.Json;
-=======
 using Microsoft.Extensions.Options;
->>>>>>> ccb7bc73c3bf0e281086d90435870d06dad976b4
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Blockchain.Services
