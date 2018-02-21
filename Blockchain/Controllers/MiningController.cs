@@ -21,10 +21,10 @@ namespace Blockchain.Controllers
             return _blockchainService.GetMiningBlockInfo(address);
         }
         
-        [HttpPost("submit-block/{address}")]
-        public SubmitBlockResponse Post(string address, [FromBody]MinedBlockInfo data)
+        [HttpPost("submit-block/{blockId}")]
+        public SubmitBlockResponse Post(string blockId, [FromBody]MinedBlockInfo data)
         {
-            return _blockchainService.SubmitBlockInfo(address, data);
+            return _blockchainService.SubmitBlockInfo(blockId, data);
         }
     }
 }

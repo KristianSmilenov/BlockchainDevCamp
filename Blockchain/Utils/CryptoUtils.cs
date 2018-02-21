@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Blockchain.Utils
@@ -19,12 +20,12 @@ namespace Blockchain.Utils
 
         public static string GetSha256String(string content)
         {
-            return Encoding.ASCII.GetString(GetSha256Bytes(content));
+            return BitConverter.ToString(GetSha256Bytes(content));
         }
 
         public static string GetSha256String(byte[] content)
         {
-            return Encoding.ASCII.GetString(GetSha256Bytes(content));
+            return BitConverter.ToString(GetSha256Bytes(content));
         }
     }
 }
