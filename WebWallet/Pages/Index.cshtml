@@ -1,0 +1,100 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#create-wallet" role="tab" aria-controls="home" aria-selected="true">Create Wallet</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#exisiting-wallet" role="tab" aria-controls="profile" aria-selected="false">Open Existing Wallet</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#account-balance" role="tab" aria-controls="contact" aria-selected="false">Account Balance</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#send-transaction" role="tab" aria-controls="contact" aria-selected="false">Send Transaction</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="create-wallet" role="tabpanel" aria-labelledby="home-tab">
+        <h2>Create new wallet</h2>
+        <p>Generate a new wallet: random private key -> public key -> address.</p>
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary">Generate now</button>
+        </div>
+        <textarea style="width:600px"></textarea>
+    </div>
+    <div class="tab-pane fade" id="exisiting-wallet" role="tabpanel" aria-labelledby="profile-tab">
+        <h2>Open an existing wallet</h2>
+        <p>Enter your private key (compressed ECDSA key, 65 hex digits).</p>
+
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Key</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary">Open wallet</button>
+        </div>
+        <textarea style="width:600px"></textarea>
+    </div>
+    <div class="tab-pane fade" id="account-balance" role="tabpanel" aria-labelledby="contact-tab">
+        <h2>View account balance</h2>
+
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Address</span>
+            </div>
+            <input type="text" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Blockchain Node</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary">Display Balance</button>
+        </div>
+        <textarea style="width:600px"></textarea>
+    </div>
+    <div class="tab-pane fade" id="send-transaction" role="tabpanel" aria-labelledby="contact-tab">
+        <h2>Send transaction</h2>
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Sender</span>
+            </div>
+            <input type="text" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Recipient</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Value</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary">Sign transaction</button>
+        </div>
+        <textarea style="width:600px"></textarea>
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Blockchain Node</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary">Send Transaction</button>
+        </div>
+        <textarea style="width:600px"></textarea>
+    </div>
+</div>
