@@ -85,7 +85,7 @@ namespace BlockchainCore.Utils
                 Asn1Sequence seq = (Asn1Sequence)asn1.ReadObject();
                 DerInteger r = DerInteger.GetInstance(seq[0]);
                 DerInteger s = DerInteger.GetInstance(seq[1]);
-                return signer.VerifySignature(hash, r.Value, s.Value);
+                return signer.VerifySignature(hash, r.PositiveValue, s.PositiveValue);
             }
             catch (Exception e)
             {
