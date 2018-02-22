@@ -1,7 +1,9 @@
 ﻿using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Math;
@@ -37,24 +39,17 @@ namespace BlockchainCore.Utils
             return Encoding.ASCII.GetString(GetSha256Bytes(content));
         }
 
-        #region Cryptography.ECDSA.Secp256k1
-
-        private string SignTransaction(string text, string privateKey)
+        public static String GetHash(String text, String key)
         {
-            var msg = Encoding.UTF8.GetBytes(text);
-            var hex = Cryptography.ECDSA.Base58.GetBytes(privateKey);
-            var sha256 = Cryptography.ECDSA.Proxy.GetMessageHash(msg);
-            var signature = Cryptography.ECDSA.Proxy.SignCompressedCompact(sha256, hex);
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            Byte[] textBytes = encoding.GetBytes(text);
+            Byte[] keyBytes = encoding.GetBytes(key);
 
-            return Cryptography.ECDSA.Hex.ToString(signature);
+            HMACSHA256 hash = new HMACSHA256(keyBytes);
+            Byte[] hashBytes = hash.ComputeHash(textBytes);
+
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
-
-        private void VerifyTransaction(byte[] message, byte[] signature, byte[] publicKey, bool normalizeSignatureOnFailure)
-        {
-            var result = Cryptography.ECDSA.Proxy.Verify(message, signature, publicKey, false);
-        }
-
-        #endregion
 
         #region BouncyCastle.NetCore
 
@@ -63,7 +58,23 @@ namespace BlockchainCore.Utils
         static SecureRandom secureRandom = new SecureRandom();
         static BigInteger HALF_CURVE_ORDER = curve.N.ShiftRight(1);
 
-        public bool BouncyCastleVerify(byte[] hash, byte[] signature, byte[] publicKey)
+        public static byte[] CreateNewPrivateKey()
+        {
+            ECKeyPairGenerator generator = new ECKeyPairGenerator();
+            ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(domain, secureRandom);
+            generator.Init(keygenParams);
+            AsymmetricCipherKeyPair keypair = generator.GenerateKeyPair();
+            ECPrivateKeyParameters privParams = (ECPrivateKeyParameters)keypair.Private;
+            return privParams.D.ToByteArray();
+        }
+
+        public static byte[] GetPublicFor(byte[] privateKey)
+        {
+            return curve.G.Multiply(new BigInteger(privateKey)).GetEncoded(true);
+        }
+
+
+        public static bool BouncyCastleVerify(byte[] hash, byte[] signature, byte[] publicKey)
         {
             Asn1InputStream asn1 = new Asn1InputStream(signature);
             try
@@ -76,7 +87,7 @@ namespace BlockchainCore.Utils
                 DerInteger s = DerInteger.GetInstance(seq[1]);
                 return signer.VerifySignature(hash, r.Value, s.Value);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
@@ -93,7 +104,7 @@ namespace BlockchainCore.Utils
 
         }
 
-        public byte[] BouncyCastleSign(byte[] hash, byte[] privateKey)
+        public static byte[] BouncyCastleSign(byte[] hash, byte[] privateKey)
         {
             ECDsaSigner signer = new ECDsaSigner(new HMacDsaKCalculator(new Sha256Digest()));
             signer.Init(true, new ECPrivateKeyParameters(new BigInteger(privateKey), domain));
@@ -113,7 +124,7 @@ namespace BlockchainCore.Utils
             }
         }
 
-        private BigInteger ToCanonicalS(BigInteger s)
+        private static BigInteger ToCanonicalS(BigInteger s)
         {
             if (s.CompareTo(HALF_CURVE_ORDER) <= 0)
             {

@@ -1,4 +1,5 @@
 ﻿using Blockchain.Models;
+using BlockchainCore.Utils;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -76,9 +77,16 @@ namespace Blockchain.Services
 
         private bool ValidateTransaction(TransactionDataSigned signedData)
         {
-            string privateKey = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP78zkvFD3";
-            //TODO: Test CryptoUtils BouncyCastle.NetCore
-            //TODO: Cryptography.ECDSA.Secp256k1
+            string message = "Some message";
+
+            byte[] privateKey = CryptoUtils.CreateNewPrivateKey();
+            byte[] publicKey = CryptoUtils.GetPublicFor(privateKey);
+
+            byte[] msgHash = CryptoUtils.GetSha256Bytes(message);
+
+            byte[] signedMessage = CryptoUtils.BouncyCastleSign(msgHash, privateKey);
+            bool isValid = CryptoUtils.BouncyCastleVerify(msgHash, signedMessage, publicKey);
+            
             return false;
         }
         
