@@ -12,8 +12,8 @@ namespace Blockchain.Services
         void Set(string key, object value);
         void Remove(string key);
 
-        MinedBlockInfoHashed GetLastBlock();
-        void SetLastBlock(MinedBlockInfoHashed block);
+        MinedBlockInfo GetLastBlock();
+        void SetLastBlock(MinedBlockInfo block);
 
         List<Transaction> GetTransactions();
         void AddTransaction(Transaction transaction);

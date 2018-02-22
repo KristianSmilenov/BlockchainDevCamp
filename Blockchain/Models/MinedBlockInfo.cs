@@ -1,10 +1,11 @@
 ﻿using BlockchainCore.Serializers;
+using BlockchainCore.Utils;
 using Newtonsoft.Json;
 using System;
 
 namespace Blockchain.Models
 {
-    public class MinedBlockInfo : MiningBlockInfoHashed
+    public class MinedBlockInfo: MiningBlockInfo
     {
         [JsonProperty(Order = 8)]
         public int Nonce { get; set; }
@@ -13,6 +14,13 @@ namespace Blockchain.Models
         [JsonConverter(typeof(DateTimeJsonFormatter))]        
         public DateTime DateCreated { get; set; }
 
-        public MinedBlockInfo(MiningBlockInfo blockInfo) : base(blockInfo) { }
+        [JsonIgnore]
+        public string BlockHash
+        {
+            get
+            {
+                return CryptoUtils.GetSha256String(JsonConvert.SerializeObject(this));
+            }
+        }
     }
 }

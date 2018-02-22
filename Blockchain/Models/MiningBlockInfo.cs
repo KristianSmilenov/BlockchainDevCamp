@@ -27,5 +27,8 @@ namespace Blockchain.Models
 
         [JsonProperty(Order = 6)]
         public string MinedBy { get; set; }
+
+        [JsonIgnore]
+        public string BlockDataHash { get { return CryptoUtils.GetSha256String(JsonConvert.SerializeObject(this)); } }
     }
 }

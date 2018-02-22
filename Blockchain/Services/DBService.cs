@@ -9,7 +9,7 @@ namespace Blockchain.Services
     {
         static private Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
-        static private MinedBlockInfoHashed lastBlock;
+        static private MinedBlockInfo lastBlock;
         static private List<Transaction> transactions = new List<Transaction>();
 
         public object Get(string key)
@@ -27,12 +27,12 @@ namespace Blockchain.Services
             dictionary.Remove(key);
         }
 
-        public MinedBlockInfoHashed GetLastBlock()
+        public MinedBlockInfo GetLastBlock()
         {
             return lastBlock;
         }
 
-        public void SetLastBlock(MinedBlockInfoHashed block)
+        public void SetLastBlock(MinedBlockInfo block)
         {
             lastBlock = block;
         }

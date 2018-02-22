@@ -31,14 +31,9 @@ namespace BlockchainCore.Utils
 
         public static string GetSha256String(string content)
         {
-            return Encoding.ASCII.GetString(GetSha256Bytes(content));
+            return ByteArrayToHex(GetSha256Bytes(content));
         }
-
-        public static string GetSha256String(byte[] content)
-        {
-            return Encoding.ASCII.GetString(GetSha256Bytes(content));
-        }
-
+        
         public static String GetHash(String text, String key)
         {
             ASCIIEncoding encoding = new ASCIIEncoding();

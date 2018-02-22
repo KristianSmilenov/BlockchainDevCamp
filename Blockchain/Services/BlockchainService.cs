@@ -32,22 +32,18 @@ namespace Blockchain.Services
         private void GenerateGenesisBlock()
         {
             //TODO: Give faucet some coins in the Genesis block
-            var mi = new MiningBlockInfo
-            {
-                Difficulty = appSettings.Difficulty,
-                Index = 0,
-                MinedBy = "Mr. Bean",
-                PreviousBlockHash = "",
-                Transactions = new List<Transaction>()
-            };
 
             dbService.SetLastBlock(
-                new MinedBlockInfoHashed(
-                    new MiningBlockInfoHashed(mi))
-                    {
-                        DateCreated = DateTime.Now,
-                        Nonce = 0
-                    });
+                new MinedBlockInfo
+                {
+                    Difficulty = appSettings.Difficulty,
+                    Index = 0,
+                    MinedBy = "Mr. Bean",
+                    PreviousBlockHash = "",
+                    Transactions = new List<Transaction>(),
+                    DateCreated = DateTime.Now,
+                    Nonce = 0
+                });
         }
 
         public BlockchainInfo GetBlockchainInfo()
@@ -135,7 +131,7 @@ namespace Blockchain.Services
 
             dbService.Set(info.Id, info);
 
-            return info;
+            return new MiningBlockInfoResponse(info);
         }
 
         public SubmitBlockResponse SubmitBlockInfo(string blockId, MinedBlockInfo data)
@@ -151,9 +147,7 @@ namespace Blockchain.Services
                 };
             }
 
-            var bi = new MinedBlockInfoHashed(data);
-
-            if (bi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
+            if (data.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
             {
                 return new SubmitBlockResponse
                 {
