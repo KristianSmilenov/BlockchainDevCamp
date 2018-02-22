@@ -29,7 +29,7 @@ namespace BlockchainCore.Utils
             return mySHA256.ComputeHash(content);
         }
 
-        public static string GetSha256String(string content)
+        public static string GetSha256Hex(string content)
         {
             return ByteArrayToHex(GetSha256Bytes(content));
         }

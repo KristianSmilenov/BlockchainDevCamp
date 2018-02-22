@@ -4,16 +4,14 @@ using System.Threading.Tasks;
 
 namespace BlockchainCore
 {
-    class HttpUtils
+    public class HttpUtils
     {
-        private const string url = "https://bittrex.com/api/v1.1/";
-
-        public TResponse DoApiPost<TRequest, TResponse>(string path, TRequest requestObject, params Parameter[] parameters) where TResponse : new()
+        public static TResponse DoApiPost<TRequest, TResponse>(string url, string path, TRequest requestObject, params Parameter[] parameters) where TResponse : new()
         {
             try
             {
                 var client = new RestClient(url);
-                var request = new RestRequest(path, Method.GET);
+                var request = new RestRequest(path, Method.POST);
                 request.RequestFormat = DataFormat.Json;
                 request.AddBody(requestObject);
 
@@ -41,7 +39,7 @@ namespace BlockchainCore
             }
         }
 
-        public TResponse DoApiGet<TResponse>(string path, params Parameter[] parameters) where TResponse : new()
+        public static TResponse DoApiGet<TResponse>(string url, string path, params Parameter[] parameters) where TResponse : new()
         {
             try
             {
@@ -59,7 +57,7 @@ namespace BlockchainCore
 
                 if (resp.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    Console.WriteLine($"Get request failed! Response: {resp}, Request: {request}");
+                    Console.WriteLine($"Get request failed! Response: {resp}, Request: {request}, Exception: {resp.ErrorException}, Error Meesage: {resp.ErrorMessage}");
                     return default(TResponse);
                 }
 

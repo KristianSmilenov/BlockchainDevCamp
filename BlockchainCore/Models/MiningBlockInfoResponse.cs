@@ -8,31 +8,19 @@ using System.Threading.Tasks;
 
 namespace Blockchain.Models
 {
-    [DataContract]
     public class MiningBlockInfoResponse : MiningBlockInfo
     {
-        [DataMember]
-        public string Id { get; set; }
-
-        [DataMember]
+        [JsonProperty(Order = 7)]
         public new string BlockDataHash { get; set; }
 
-        [JsonIgnore]
-        public new int Transactions { get; set; }
-
-        [JsonIgnore]
-        public new int PreviousBlockHash { get; set; }
-
-        [JsonIgnore]
-        public new string MinedBy { get; set; }
+        public MiningBlockInfoResponse() { }
 
         public MiningBlockInfoResponse(MiningBlockInfo blockInfo)
         {
-            this.Id = blockInfo.Id;
             this.Index = blockInfo.Index;
             this.Difficulty = blockInfo.Difficulty;
 
-            BlockDataHash = CryptoUtils.GetSha256String(JsonConvert.SerializeObject(blockInfo));
+            BlockDataHash = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(blockInfo));
         }
     }
 }
