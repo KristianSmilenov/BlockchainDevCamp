@@ -77,15 +77,18 @@ namespace Blockchain.Services
 
         private bool ValidateTransaction(TransactionDataSigned signedData)
         {
-            string message = "Some message";
+            string message = "Some super cool message";
 
             byte[] privateKey = CryptoUtils.CreateNewPrivateKey();
             byte[] publicKey = CryptoUtils.GetPublicFor(privateKey);
-
             byte[] msgHash = CryptoUtils.GetSha256Bytes(message);
-
             byte[] signedMessage = CryptoUtils.BouncyCastleSign(msgHash, privateKey);
             bool isValid = CryptoUtils.BouncyCastleVerify(msgHash, signedMessage, publicKey);
+
+            string privateKeyHex = CryptoUtils.ByteArrayToHex(privateKey);
+            string publicKeyHex = CryptoUtils.ByteArrayToHex(publicKey);
+            string msgHashHex = CryptoUtils.ByteArrayToHex(msgHash);
+            string signedMessageHex = CryptoUtils.ByteArrayToHex(signedMessage);
             
             return false;
         }

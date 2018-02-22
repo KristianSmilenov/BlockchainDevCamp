@@ -51,6 +51,25 @@ namespace BlockchainCore.Utils
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
 
+        #region Hex functions
+
+        public static string ByteArrayToHex(byte[] data)
+        {
+            string hex = BitConverter.ToString(data);
+            return hex.Replace("-", "");
+        }
+
+        public static byte[] HexToByteArray(String hex)
+        {
+            int numberChars = hex.Length;
+            byte[] bytes = new byte[numberChars / 2];
+            for (int i = 0; i < numberChars; i += 2)
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
+        }
+
+        #endregion
+
         #region BouncyCastle.NetCore
 
         static X9ECParameters curve = SecNamedCurves.GetByName("secp256k1");
@@ -72,7 +91,6 @@ namespace BlockchainCore.Utils
         {
             return curve.G.Multiply(new BigInteger(privateKey)).GetEncoded(true);
         }
-
 
         public static bool BouncyCastleVerify(byte[] hash, byte[] signature, byte[] publicKey)
         {
