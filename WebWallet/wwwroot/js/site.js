@@ -1,7 +1,7 @@
 ﻿// Write your Javascript code.
 function doGenerate() {
     var f1 = document.form1;
-    var curve = "secp256r1"; //f1.curve1.value;
+    var curve = "secp256k1"; //f1.curve1.value;
     var ec = new KJUR.crypto.ECDSA({ "curve": curve });
     var keypair = ec.generateKeyPairHex();
 
@@ -12,7 +12,7 @@ function doGenerate() {
 function doSign() {
     var f1 = document.form1;
     var prvkey = f1.prvkey1.value;
-    var curve = "secp256r1"; //f1.curve1.value;
+    var curve = "secp256k1"; //f1.curve1.value;
     var sigalg = "SHA256withECDSA"; //f1.sigalg1.value;
     var msg1 = f1.msg1.value;
 
@@ -27,7 +27,7 @@ function doSign() {
 function doVerify() {
     var f1 = document.form1;
     var pubkey = f1.pubkey1.value;
-    var curve = "secp256r1"; //f1.curve1.value;
+    var curve = "secp256k1"; //f1.curve1.value;
     var sigalg = "SHA256withECDSA"; //f1.sigalg1.value;
     var msg1 = f1.msg1.value;
     var sigval = f1.sigval1.value;

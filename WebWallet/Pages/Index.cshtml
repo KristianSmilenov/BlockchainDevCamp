@@ -21,12 +21,8 @@
         <div class="tab-pane fade show active" id="example" role="tabpanel" aria-labelledby="example-tab">
                 <form name="form1">
                     <h4>(Step1) choose supported EC curve name and generate key pair</h4>
-                    ECC curve name: <b>secp256r1 (= NIST P-256, P-256, prime256v1)</b>
-                    @*<select name="curve1">
-                        <option value="secp256r1">secp256r1 (= NIST P-256, P-256, prime256v1)
-                        <option value="secp256k1">secp256k1
-                        <option value="secp384r1">secp384r1 (= NIST P-384, P-384)
-                    </select>*@<br />
+                    ECC curve name: <b>secp256k1</b>
+
                     <input type="button" value="generate EC key pair" onClick="doGenerate();" /><br />
                     <p>
                         EC private key (hex): <input type="text" name="prvkey1" value="" size="100" /><br />

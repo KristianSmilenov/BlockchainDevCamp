@@ -8,6 +8,7 @@ namespace Blockchain.Models
     [Serializable]
     public class TransactionHashInfo
     {
+        public bool IsValid;
         public DateTime DateReceived;
         public string TransactionHash;
     }
