@@ -10,34 +10,22 @@ namespace Blockchain.Models
     {
         private string id = Guid.NewGuid().ToString();
 
+        [JsonProperty(Order = 1)]
         public string Id { get => id; set => id = value; }
 
+        [JsonProperty(Order = 2)]
         public int Index { get; set; }
 
-        public int Difficulty { get; set; }
-        
-        [JsonIgnore]
+        [JsonProperty(Order = 3)]
         public List<Transaction> Transactions { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty(Order = 4)]
+        public int Difficulty { get; set; }
+
+        [JsonProperty(Order = 5)]
         public string PreviousBlockHash { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty(Order = 6)]
         public string MinedBy { get; set; }
-
-        public string BlockDataHash
-        {
-            get
-            {
-                var str = "";
-                str += Index;
-                str += Difficulty;
-                str += PreviousBlockHash;
-                str += MinedBy;
-                str += Transactions != null ? Transactions.Aggregate("", (tr, res) => res + tr.ToString()) : "";
-
-                return CryptoUtils.GetSha256String(str);
-            }
-        }
     }
 }
