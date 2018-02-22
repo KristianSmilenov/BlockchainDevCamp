@@ -8,11 +8,6 @@ namespace Blockchain.Models
 {
     public class MiningBlockInfo
     {
-        private string id = Guid.NewGuid().ToString();
-
-        [JsonProperty(Order = 1)]
-        public string Id { get => id; set => id = value; }
-
         [JsonProperty(Order = 2)]
         public int Index { get; set; }
 
@@ -29,6 +24,6 @@ namespace Blockchain.Models
         public string MinedBy { get; set; }
 
         [JsonIgnore]
-        public string BlockDataHash { get { return CryptoUtils.GetSha256String(JsonConvert.SerializeObject(this)); } }
+        public string BlockDataHash { get { return CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(this)); } }
     }
 }

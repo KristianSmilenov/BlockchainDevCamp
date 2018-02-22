@@ -9,17 +9,17 @@ namespace BlockchainCore.Serializers
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            writer.WriteValue(((DateTime)value).ToString("o"));
+            writer.WriteValue(((DateTime)value).ToUniversalTime().ToString("o"));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return DateTime.Parse(reader.Value.ToString());
+            return reader.Value;
         }
         
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(DateTime);
+            return objectType == typeof(string);
         }
     }
 }

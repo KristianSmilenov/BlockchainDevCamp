@@ -33,7 +33,7 @@ namespace Blockchain.Services
         {
             //TODO: Give faucet some coins in the Genesis block
 
-            dbService.SetLastBlock(
+            dbService.AddBlock(
                 new MinedBlockInfo
                 {
                     Difficulty = appSettings.Difficulty,
@@ -120,7 +120,7 @@ namespace Blockchain.Services
         {
             //1. Create block mining candidate
             //2. Add record to the Node Mining Jobs (address => Block)
-
+            
             var info = new MiningBlockInfo {
                 Difficulty = appSettings.Difficulty,
                 Index = dbService.GetLastBlock().Index + 1,
@@ -129,26 +129,34 @@ namespace Blockchain.Services
                 Transactions = dbService.GetTransactions()
             };
 
-            dbService.Set(info.Id, info);
+            dbService.Set("block_" + address, info);
 
             return new MiningBlockInfoResponse(info);
         }
 
-        public SubmitBlockResponse SubmitBlockInfo(string blockId, MinedBlockInfo data)
+        public SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfoRequest data)
         {
             //TODO: Implement
-            var info = dbService.Get(blockId);
+            var info = dbService.Get<MiningBlockInfo>("block_" + address);
             if (null == info)
             {
                 return new SubmitBlockResponse
                 {
                     Status = "Error",
-                    Message = "Wrong blockId!"
+                    Message = "Wrong address!"
                 };
             }
 
-            if (data.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
+            var mbi = new MinedBlockInfo(info)
             {
+                Nonce = data.Nonce,
+                DateCreated = data.DateCreated,
+            };
+
+            if (mbi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
+            {
+                dbService.AddBlock(mbi);
+
                 return new SubmitBlockResponse
                 {
                     Status = "Success",

@@ -9,17 +9,25 @@ namespace Blockchain.Services
     {
         static private Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
+        static private List<MinedBlockInfo> allBlocks = new List<MinedBlockInfo>();
         static private MinedBlockInfo lastBlock;
         static private List<Transaction> transactions = new List<Transaction>();
 
-        public object Get(string key)
+        public T Get<T>(string key)
         {
-            return dictionary.GetValueOrDefault(key);
+            return (T)dictionary.GetValueOrDefault(key);
         }
 
         public void Set(string key, object value)
         {
-            dictionary.Add(key, value);
+            if (dictionary.ContainsKey(key))
+            {
+                dictionary[key] = value;
+            }
+            else
+            {
+                dictionary.Add(key, value);
+            }
         }
 
         public void Remove(string key)
@@ -29,12 +37,12 @@ namespace Blockchain.Services
 
         public MinedBlockInfo GetLastBlock()
         {
-            return lastBlock;
+            return allBlocks.Last();
         }
 
-        public void SetLastBlock(MinedBlockInfo block)
+        public void AddBlock(MinedBlockInfo block)
         {
-            lastBlock = block;
+            allBlocks.Add(block);
         }
 
         public List<Transaction> GetTransactions()
