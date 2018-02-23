@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blockchain", "Blockchain\Blockchain.csproj", "{EB0F6598-0C5F-452A-8948-D3EB528B3A26}"
 EndProject
@@ -10,11 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miner", "Miner\Miner.csproj", "{4FC175D2-613B-431E-9016-B7768BE0E182}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miner", "Miner\Miner.csproj", "{4FC175D2-613B-431E-9016-B7768BE0E182}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainCore", "BlockchainCore\BlockchainCore.csproj", "{11F49DF4-C682-4833-B6C6-FE443A6353F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebWallet", "WebWallet\WebWallet.csproj", "{12D01C7C-3AF0-4ABE-A0BB-7EEE2A3DC06B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebFaucet", "WebFaucet\WebFaucet.csproj", "{47D0C4A7-CC10-44EE-BE2F-75233B904768}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6390A05F-E25A-4BFB-A510-D10B3113A327}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +42,14 @@ Global
 		{12D01C7C-3AF0-4ABE-A0BB-7EEE2A3DC06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12D01C7C-3AF0-4ABE-A0BB-7EEE2A3DC06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12D01C7C-3AF0-4ABE-A0BB-7EEE2A3DC06B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47D0C4A7-CC10-44EE-BE2F-75233B904768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47D0C4A7-CC10-44EE-BE2F-75233B904768}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47D0C4A7-CC10-44EE-BE2F-75233B904768}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47D0C4A7-CC10-44EE-BE2F-75233B904768}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

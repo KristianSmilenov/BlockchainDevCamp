@@ -1,8 +1,15 @@
 version: '3'
 
 services:
-  blockchain:
-    image: blockchain
+  webfaucet:
+    image: webfaucet
     build:
       context: .
-      dockerfile: Blockchain\Dockerfile
+      dockerfile: WebFaucet\Dockerfile
+
+  webwallet:
+    image: webwallet
+    build:
+      context: .
+      dockerfile: WebWallet\Dockerfile
+

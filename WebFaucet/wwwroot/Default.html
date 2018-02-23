@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockchain Faucet</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/site.css" />
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+<body>
+    <div class="container body-content">
+        <h2>Blockchain Faucet</h2>
+
+        <section id="loadingBox">Loading ...</section>
+        <section id="sendCoins">
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Faucet address</span>
+                </div>
+                <label id="faucetAddress" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+            </div>
+
+            <div class="input-group input-group-sm mb-3 mt-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Your address</span>
+                </div>
+                <input type="text" id="recipientAddress" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+            </div>
+
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Blockchain Node</span>
+                </div>
+                <input type="text" id="blockchainNodeUrl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="http://localhost:5000/api">
+            </div>
+
+            <div class="mb-3">
+                <div class="g-recaptcha" data-sitekey="6LdYPkgUAAAAAG9A0IZ70zYMSMozFwsoW8sVIdq5"></div>
+                <button type="button" id="buttonSendCoins" class="btn btn-primary">Send coins</button>
+            </div>
+        </section>
+
+        <section id="coinsSend">
+            <p>
+                We sent <b><span id="numerOfCoins"></span></b> coins to address
+            </p>
+            <p>
+                <b><span id="addressSent"></span></b>
+            </p>
+            <p>
+                tx:
+                <b><span id="transactionHash"></span></b>
+            </p>
+            <div class="mb-3">
+                <button type="button" id="buttonBack" class="btn btn-primary">Back</button>
+            </div>
+        </section>
+        <hr />
+        <footer>
+            <p>&copy; 2018 - Blockchain Faucet</p>
+        </footer>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="./js/faucet.js"></script>
+    <script src="./lib/hashes.js"></script>
+    <script src="./lib/elliptic.js"></script>
+    <script src="./lib/jsrsasign-all-min.js"></script>
+</body>
+</html>
