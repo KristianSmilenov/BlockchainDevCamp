@@ -1,4 +1,6 @@
 ﻿$(document).ready(function () {
+    Date.prototype.toJSON = function () { return this.toISOString(); }
+
     let curve = "secp256k1";
     let sigalg = "SHA256withECDSA";
     
@@ -65,15 +67,15 @@
             //let publicKey = keyPair.getPublic().getX().toString(16) + (keyPair.getPublic().getY().isOdd() ? "1" : "0");
 
             //let senderPubKey = sessionStorage.getItem("publicKey");//publicKey
-            //let dateCreated = new Date().toString();
+            let dateCreated = new Date();
 
             let dataToSign = {
                 from: address,
                 to: recipient,
                 value: parseInt(value),
                 fee: 2,
-                senderPubKey: sessionStorage.getItem("publicKey")
-                //dateCreated: dateCreated //TODO: Fix date format to be the same as on server
+                senderPubKey: sessionStorage.getItem("publicKey"),
+                dateCreated: dateCreated
             }
             //let dataHex = toHex(JSON.stringify(dataToSign));
             let dataHex = JSON.stringify(dataToSign);
@@ -121,7 +123,7 @@
             //}
         }
     }
-
+    
     function toHexString(byteArray) {
         return Array.from(byteArray, function (byte) {
             return ('0' + (byte & 0xFF).toString(16)).slice(-2);

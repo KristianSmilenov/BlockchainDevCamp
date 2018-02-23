@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BlockchainCore.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,8 @@ namespace BlockchainCore.Serializers
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            writer.WriteValue(((DateTime)value).ToUniversalTime().ToString("o"));
+            string stringDate = DateTimeUtils.GetISO8601DateFormat((DateTime)value);
+            writer.WriteValue(stringDate);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

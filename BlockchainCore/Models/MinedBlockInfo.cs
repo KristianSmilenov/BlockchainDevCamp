@@ -21,7 +21,7 @@ namespace Blockchain.Models
         {
             get
             {
-                return CryptoUtils.GetSha256Hex(this.BlockDataHash + this.DateCreated.ToUniversalTime().ToString("o") + this.Nonce);
+                return CryptoUtils.GetSha256Hex(this.BlockDataHash + DateTimeUtils.GetISO8601DateFormat(DateCreated) + this.Nonce);
             }
         }
 

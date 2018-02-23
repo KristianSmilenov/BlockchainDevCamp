@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BlockchainCore.Serializers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,9 @@ namespace Blockchain.Models
         public int Fee;
         [JsonProperty(PropertyName = "senderPubKey")]
         public string SenderPubKey;
-        //public DateTime DateCreated;
+        [JsonConverter(typeof(DateTimeJsonFormatter))]
+        [JsonProperty(PropertyName = "dateCreated")]
+        public DateTime DateCreated;
 
         public TransactionData() { }
 
@@ -30,7 +33,7 @@ namespace Blockchain.Models
             Value = data.Value;
             Fee = data.Fee;
             SenderPubKey = data.SenderPubKey;
-            //DateCreated = data.DateCreated;
+            DateCreated = data.DateCreated;
         }
     }
 }
