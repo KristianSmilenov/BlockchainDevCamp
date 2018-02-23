@@ -27,6 +27,7 @@ namespace Blockchain
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddCors();
 
             services.AddOptions();
             services.Configure<AppSettings>(Configuration.GetSection("ApplicationSettings"));
@@ -62,6 +63,14 @@ namespace Blockchain
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blockchain API V1");
             });
+
+            app.UseCors(
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+            );
 
             app.UseMvc();
         }
