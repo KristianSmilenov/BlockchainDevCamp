@@ -8,26 +8,31 @@ namespace Blockchain.Models
     [Serializable]
     public class Transaction
     {
+        public Transaction() { }
+
+        public Transaction(TransactionDataSigned data)
+        {
+            From = data.From;
+            To = data.To;
+            Value = data.Value;
+            Fee = data.Fee;
+            DateCreated = data.DateCreated;
+            SenderPubKey = data.SenderPubKey;
+        }
+
         #region Wallet data
         
-        // From address should always match the sender public key
         public string From;
-
-        // 40 hex digits
         public string To;
-        public decimal Value;
-        public decimal Fee;
-
-        // ISO8601 UTC datetime string
+        public int Value;
+        public int Fee;
         public DateTime DateCreated;
-
-        // 65 hex digits
-        public string SenderPubKeyHex;
+        public string SenderPubKey;
 
         #endregion
 
-        // ECDSA signature consists of 2 * 64 hex digits (2 * 256 bits)
-        public string[] SenderSignatureHex;
+        // TODO: Update to 2 * 64 hex digits (2 * 256 bits)
+        public string SenderSignatureHex;
         public string TransactionHashHex;
         public int MinedInBlockIndex;
         public bool TransferSuccessful;

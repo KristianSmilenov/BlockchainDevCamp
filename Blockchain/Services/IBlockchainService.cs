@@ -17,10 +17,15 @@ namespace Blockchain.Services
         MinedBlockInfoResponse GetBlock(int index);
         void NotifyBlock(int index);
         Balance GetBalance(string address);
-        TransactionHashInfo CreateTransaction(TransactionDataSigned data);
-        Transaction GetTransaction(string transactionHash);
         List<string> GetPeers();
         void AddPeer(string peerUrl);
+
+        /*
+         * Transactions
+         */
+        List<Transaction> GetPendingTransactions();
+        Transaction GetTransaction(string transactionHash);
+        TransactionHashInfo CreateTransaction(TransactionDataSigned data);
 
         /*
          * Mining calcuations

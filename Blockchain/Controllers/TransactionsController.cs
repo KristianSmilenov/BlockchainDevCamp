@@ -31,5 +31,14 @@ namespace Blockchain.Controllers
         {
             return _blockchainService.GetTransaction(hash);
         }
+
+        /// <summary>
+        /// Get transaction info
+        /// </summary>
+        [HttpGet("pending")]
+        public List<Transaction> Get()
+        {
+            return _blockchainService.GetPendingTransactions();
+        }
     }
 }

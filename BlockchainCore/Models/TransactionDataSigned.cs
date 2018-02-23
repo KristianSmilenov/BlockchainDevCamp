@@ -9,6 +9,5 @@ namespace Blockchain.Models
     public class TransactionDataSigned : TransactionData
     {
         public string SenderSignature;
-        //public string SenderMessage;
     }
 }

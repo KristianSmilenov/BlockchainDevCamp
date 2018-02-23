@@ -65,10 +65,30 @@ namespace Blockchain.Services
             throw new NotImplementedException();
         }
 
+        public List<Transaction> GetPendingTransactions()
+        {
+            return pendingTransactions;
+        }
+
         public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
         {
-            //TODO: Implement
-            return new TransactionHashInfo() { IsValid = ValidateTransaction(signedData), DateReceived = DateTime.UtcNow, TransactionHash = "" }  ;
+            DateTime dateReceived = DateTime.UtcNow;
+            bool isValidTransaction = ValidateTransaction(signedData);
+            if(isValidTransaction)
+            {
+                Transaction newTransaction = new Transaction(signedData);
+                newTransaction.SenderSignatureHex = signedData.SenderSignature;
+                newTransaction.TransactionHashHex = GetTransactionHash(newTransaction);
+                pendingTransactions.Add(newTransaction);
+                return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
+            }
+
+            return new TransactionHashInfo() { IsValid = isValidTransaction, ErrorMessage = "Transaction data is corrupted.", DateReceived = dateReceived, TransactionHash = "" };
+        }
+
+        private string GetTransactionHash(Transaction transaction)
+        {
+            return CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(transaction));
         }
 
         private bool ValidateTransaction(TransactionDataSigned signedData)
@@ -172,5 +192,6 @@ namespace Blockchain.Services
                 };
             }
         }
+
     }
 }

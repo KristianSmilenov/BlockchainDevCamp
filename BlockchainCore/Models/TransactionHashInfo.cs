@@ -11,5 +11,6 @@ namespace Blockchain.Models
         public bool IsValid;
         public DateTime DateReceived;
         public string TransactionHash;
+        public string ErrorMessage;
     }
 }
