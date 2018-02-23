@@ -16,8 +16,14 @@ namespace Miner
 
         static void Main(string[] args)
         {
-            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]))
-                url = args[0];
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Usage: \t dotnet Miner.dll <NODE_URL> <Miner_Address>");
+                return;
+            }
+
+            url = args[0];
+            myAddress = args[1];
 
             DoStuff().Wait();
         }
@@ -99,7 +105,7 @@ namespace Miner
         {
             var dt = DateTime.UtcNow;
             var str = blockDataHash;
-            str += dt.ToString("o");
+            str += DateTimeUtils.GetISO8601DateFormat(dt);
             var prefix = "".PadLeft(difficulty, '0');
 
             var nonce = (ulong)0;
