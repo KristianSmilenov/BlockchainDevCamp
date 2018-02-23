@@ -59,29 +59,31 @@
 
         privateKey = sessionStorage.getItem("privateKey");
         if (privateKey) {
-            debugger;
-            let ec = new elliptic.ec('secp256k1');
-            let keyPair = ec.keyFromPrivate(privateKey);
-            let publicKey = keyPair.getPublic().getX().toString(16) + (keyPair.getPublic().getY().isOdd() ? "1" : "0");
+            // option 1
+            //let ec = new elliptic.ec('secp256k1');
+            //let keyPair = ec.keyFromPrivate(privateKey);
+            //let publicKey = keyPair.getPublic().getX().toString(16) + (keyPair.getPublic().getY().isOdd() ? "1" : "0");
 
-            let senderPubKey = publicKey
-            let dateCreated = new Date().toString()
+            //let senderPubKey = sessionStorage.getItem("publicKey");//publicKey
+            //let dateCreated = new Date().toString();
 
             let dataToSign = {
                 from: address,
                 to: recipient,
-                value: value,
+                value: parseInt(value),
                 fee: 2,
-                senderPubKey: senderPubKey
+                senderPubKey: sessionStorage.getItem("publicKey")
                 //dateCreated: dateCreated //TODO: Fix date format to be the same as on server
             }
-            let dataHex = toHex(JSON.stringify(dataToSign));
+            //let dataHex = toHex(JSON.stringify(dataToSign));
+            let dataHex = JSON.stringify(dataToSign);
 
             // Sign option 1
-            var signature = ec.sign(dataHex, privateKey);
-            console.log(signature);
-            var signatureHex = toHexString(signature.toDER());
-            console.log(signatureHex);
+            //var signature = ec.sign(dataHex, privateKey);
+            //console.log(signature);
+            //var signatureHex = toHexString(signature.toDER());
+            //console.log(signatureHex);
+            debugger;
 
             // Sign option 2
             var sig = new KJUR.crypto.Signature({ "alg": sigalg });
@@ -101,7 +103,7 @@
                 data: jsonRequest,
                 contentType: "application/json",
                 success: function (data) {
-                    alert(JSON.parse(data));
+                    alert(data.isValid);
                 },
                 error: function (err) {
                     alert(JSON.parse(err));
