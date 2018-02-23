@@ -40,6 +40,11 @@ namespace Blockchain.Services
             return allBlocks.Last();
         }
 
+        public List<MinedBlockInfo> GetAllBlocks()
+        {
+            return allBlocks;
+        }
+
         public void AddBlock(MinedBlockInfo block)
         {
             allBlocks.Add(block);

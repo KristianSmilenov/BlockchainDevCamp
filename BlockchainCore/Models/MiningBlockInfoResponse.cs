@@ -15,12 +15,12 @@ namespace Blockchain.Models
 
         public MiningBlockInfoResponse() { }
 
-        public MiningBlockInfoResponse(MiningBlockInfo blockInfo)
+        public static MiningBlockInfoResponse FromMiningBlockInfo(MiningBlockInfo blockInfo)
         {
-            this.Index = blockInfo.Index;
-            this.Difficulty = blockInfo.Difficulty;
+            var obj = JsonConvert.DeserializeObject<MiningBlockInfoResponse>(JsonConvert.SerializeObject(blockInfo));
+            obj.BlockDataHash = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(blockInfo));
 
-            BlockDataHash = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(blockInfo));
+            return obj;
         }
     }
 }

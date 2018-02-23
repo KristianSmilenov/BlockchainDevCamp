@@ -19,7 +19,7 @@ namespace Blockchain.Controllers
         /// Get all blocks in the blockchain
         /// </summary>
         [HttpGet]
-        public List<Block> Get()
+        public List<MinedBlockInfoResponse> Get()
         {
             return _blockchainService.GetBlocks();
         }
@@ -28,7 +28,7 @@ namespace Blockchain.Controllers
         /// Gets specific block by index
         /// </summary>
         [HttpGet("{index}")]
-        public Block Get(int index)
+        public MinedBlockInfoResponse Get(int index)
         {
             return _blockchainService.GetBlock(index);
         }
@@ -40,6 +40,7 @@ namespace Blockchain.Controllers
         [HttpGet("notify")]
         public void Post([FromBody]int index)
         {
+            //should we push or pull?
             _blockchainService.NotifyBlock(index);
         }
     }

@@ -13,8 +13,8 @@ namespace Blockchain.Services
         /*
          * Blockchain Node
          */
-        List<Block> GetBlocks();
-        Block GetBlock(int index);
+        List<MinedBlockInfoResponse> GetBlocks();
+        MinedBlockInfoResponse GetBlock(int index);
         void NotifyBlock(int index);
         Balance GetBalance(string address);
         TransactionHashInfo CreateTransaction(TransactionDataSigned data);

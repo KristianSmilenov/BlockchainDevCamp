@@ -12,7 +12,6 @@ namespace Blockchain.Services
     public class BlockchainService : IBlockchainService
     {
         private BlockchainInfo info;
-        private List<Block> blocks;
         private List<string> peers;
         private List<Transaction> pendingTransactions;
         private IDBService dbService;
@@ -23,7 +22,6 @@ namespace Blockchain.Services
             this.dbService = dbService;
             this.appSettings = appSettings.Value;
             info = new BlockchainInfo("Overwatch Blockchain", "Genesis");
-            blocks = new List<Block>();
             peers = new List<string>();
             pendingTransactions = new List<Transaction>();
             
@@ -52,16 +50,14 @@ namespace Blockchain.Services
             return info;
         }
         
-        public List<Block> GetBlocks()
+        public List<MinedBlockInfoResponse> GetBlocks()
         {
-            return blocks;
+            return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b));
         }
         
-        public Block GetBlock(int index)
+        public MinedBlockInfoResponse GetBlock(int index)
         {
-            if(blocks.Count + 1 < index)
-                return null;
-            return blocks.ElementAt(index);
+            return MinedBlockInfoResponse.FromMinedBlockInfo(dbService.GetAllBlocks()[index]);
         }
         
         public void NotifyBlock(int index)
@@ -136,7 +132,7 @@ namespace Blockchain.Services
 
             dbService.Set("block_" + address, info);
 
-            return new MiningBlockInfoResponse(info);
+            return MiningBlockInfoResponse.FromMiningBlockInfo(info);
         }
 
         public SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfoRequest data)

@@ -13,6 +13,7 @@ namespace Blockchain.Services
         void Remove(string key);
 
         MinedBlockInfo GetLastBlock();
+        List<MinedBlockInfo> GetAllBlocks();
         void AddBlock(MinedBlockInfo block);
 
         List<Transaction> GetTransactions();
