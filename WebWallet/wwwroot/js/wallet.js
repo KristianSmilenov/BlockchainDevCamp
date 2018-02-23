@@ -72,8 +72,8 @@
                 to: recipient,
                 value: value,
                 fee: 2,
-                senderPubKey: senderPubKey,
-                dateCreated: dateCreated
+                senderPubKey: senderPubKey
+                //dateCreated: dateCreated //TODO: Fix date format to be the same as on server
             }
             let dataHex = toHex(JSON.stringify(dataToSign));
 

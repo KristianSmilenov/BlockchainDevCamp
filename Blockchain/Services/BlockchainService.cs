@@ -1,6 +1,7 @@
 ﻿using Blockchain.Models;
 using BlockchainCore.Utils;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,8 +77,12 @@ namespace Blockchain.Services
 
         private bool ValidateTransaction(TransactionDataSigned signedData)
         {
-            string testMessage = signedData.SenderMessage; //"Awesome stuff";
+            TransactionData toValidate = new TransactionData(signedData);
+            string testMessage = JsonConvert.SerializeObject(toValidate); //"Awesome stuff";
             byte[] testMsgHash = CryptoUtils.GetSha256Bytes(testMessage);
+
+            //TODO: extract message and validate it
+
             string testPublicKeyHex = signedData.SenderPubKey; // "04fba1bcaf719923609b61e32fcccc9e87a0d87ece58a16e9985b68e06db57987b8ad575979564c498537ce1e12ce9699d51f40730dcd0d151dccd3c501d424301";
             string testSignatureHex = signedData.SenderSignature; //"304402207aa1f7153ad98863f236fe27c85c6ab8a46702ef38f06a08eff37443b7dbdf2d02201f64305fdcf6b74a9cec108dbe630f9f840d8b76c48c810cd0fe7e358ced629f";
             byte[] testPublicKey = CryptoUtils.HexToByteArray(testPublicKeyHex);

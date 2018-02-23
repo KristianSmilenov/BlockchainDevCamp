@@ -13,7 +13,7 @@ namespace Blockchain.Models
         public string SenderPubKey;
         public decimal Value;
         public decimal Fee;
-        public DateTime DateCreated;
+        //public DateTime DateCreated;
 
         public TransactionData() { }
 
@@ -24,7 +24,7 @@ namespace Blockchain.Models
             SenderPubKey = data.SenderPubKey;
             Value = data.Value;
             Fee = data.Fee;
-            DateCreated = data.DateCreated;
+            //DateCreated = data.DateCreated;
         }
     }
 }
