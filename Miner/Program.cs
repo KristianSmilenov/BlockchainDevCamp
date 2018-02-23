@@ -12,27 +12,52 @@ namespace Miner
     {
         static CancellationTokenSource runningTaskSource;
         static string myAddress = "123";
-        static string url = "http://localhost:5000"; //TODO: un-hard-code this shit
+        static string url = "http://localhost:5000";
 
         static void Main(string[] args)
         {
+            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]))
+                url = args[0];
+
             DoStuff().Wait();
         }
 
         static async Task DoStuff()
         {
+            MiningBlockInfoResponse lastBlockInfo = null;
+            Task<Tuple<ulong, DateTime>> t = null;
+
             while (true)
             {
                 var bi = GetLatestBlockInfo(myAddress);
-                var t = MineAsync(bi.BlockDataHash, bi.Difficulty);
-
-                //if same block do not cancel job.
-                await Task.Delay(5000);
-
-                if (t.IsCompleted)
-                {
-                    SubmitMinedBlockInfo(myAddress, t.Result.Item1, t.Result.Item2);
+                if (bi == null) {
+                    Console.WriteLine("No connection to server, sleeping for a second..");
+                    await Task.Delay(1000);
+                    continue;
                 }
+
+                if (t == null)//nothing here, let's do some mining
+                {
+                    Console.WriteLine($"Mining started, block {bi.Index}, hash: {bi.BlockDataHash}");
+                    t = MineAsync(bi.BlockDataHash, bi.Difficulty);
+                }
+                else if (t.IsCompleted) //we're done, let's get some $$
+                {
+                    Console.WriteLine($"Found a result for block {bi.Index}, awaiting payment :)");
+                    SubmitMinedBlockInfo(myAddress, t.Result.Item1, t.Result.Item2);
+                    t = null;
+                }
+                else if (lastBlockInfo.BlockDataHash != bi.BlockDataHash)//new block, let's cancel and start mining it
+                {
+                    Console.WriteLine($"New block suggested, ditching the old one and starting the new one");
+                    t = null;
+                }
+                else //same block, and we're still mining, so will sit for a second and see what comes next;
+                {
+                    await Task.Delay(1000);
+                }
+
+                lastBlockInfo = bi;
             }
         }
 

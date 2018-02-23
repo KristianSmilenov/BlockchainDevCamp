@@ -126,15 +126,12 @@ namespace Blockchain.Services
 
         public MiningBlockInfo GetMiningBlockInfo(string address)
         {
-            //1. Create block mining candidate
-            //2. Add record to the Node Mining Jobs (address => Block)
-            
             var info = new MiningBlockInfo {
                 Difficulty = appSettings.Difficulty,
                 Index = dbService.GetLastBlock().Index + 1,
                 MinedBy = address,
                 PreviousBlockHash = dbService.GetLastBlock().BlockHash,
-                Transactions = dbService.GetTransactions()
+                Transactions = new List<Transaction>(dbService.GetTransactions().ToArray())//shallow copy, so we can keep a snapshot
             };
 
             dbService.Set("block_" + address, info);
@@ -144,7 +141,6 @@ namespace Blockchain.Services
 
         public SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfoRequest data)
         {
-            //TODO: Implement
             var info = dbService.Get<MiningBlockInfo>("block_" + address);
             if (null == info)
             {
