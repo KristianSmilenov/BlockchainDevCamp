@@ -1,4 +1,5 @@
 ﻿using Blockchain.Models;
+using BlockchainCore.Models;
 using BlockchainCore.Utils;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -79,24 +80,40 @@ namespace Blockchain.Services
         {
             TransactionData toValidate = new TransactionData(signedData);
             string messageData = JsonConvert.SerializeObject(toValidate);
-            
-            // Validate received message data
-            byte[] senderPublicKey = CryptoUtils.HexToByteArray(signedData.SenderPubKey);
-            byte[] senderSignature = CryptoUtils.HexToByteArray(signedData.SenderSignature);
+
+            //byte[] senderPublicKey = CryptoUtils.HexToByteArray(signedData.SenderPubKey);
+            byte[] senderPublicKey = CryptoUtils.GetSha256Bytes(signedData.SenderPubKey);
             byte[] messageDataHash = CryptoUtils.GetSha256Bytes(messageData);
-            bool isTestValid = CryptoUtils.BouncyCastleVerify(messageDataHash, senderSignature, senderPublicKey);
+
+            //TransactionSignature senderSignature = signedData.SenderSignature;
+            string R = signedData.SenderSignature.ElementAt(0);
+            string S = signedData.SenderSignature.ElementAt(1);
+
+            byte[] RHash = CryptoUtils.GetSha256Bytes(R);
+            byte[] SHash = CryptoUtils.GetSha256Bytes(S);
+
+            TransactionSignature senderSignature = new TransactionSignature();
+            senderSignature.R = new Org.BouncyCastle.Math.BigInteger(RHash);
+            senderSignature.S = new Org.BouncyCastle.Math.BigInteger(SHash);
+            bool isTestValid = CryptoUtils.BouncyCastleVerify(messageDataHash, senderPublicKey, senderSignature.R, senderSignature.S);
+
+            // Validate received message data
+            //byte[] senderPublicKey = CryptoUtils.HexToByteArray(signedData.SenderPubKey);
+            //byte[] senderSignature = CryptoUtils.HexToByteArray(signedData.SenderSignature);
+            //byte[] messageDataHash = CryptoUtils.GetSha256Bytes(messageData);
+            //bool isTestValid = CryptoUtils.BouncyCastleVerify(messageDataHash, senderSignature, senderPublicKey);
 
             // Server side test
-            string message = "Some super cool message";
-            byte[] privateKey = CryptoUtils.CreateNewPrivateKey();
-            byte[] publicKey = CryptoUtils.GetPublicFor(privateKey);
-            byte[] msgHash = CryptoUtils.GetSha256Bytes(message);
-            byte[] signedMessage = CryptoUtils.BouncyCastleSign(msgHash, privateKey);
-            bool isValid = CryptoUtils.BouncyCastleVerify(msgHash, signedMessage, publicKey);
-            string privateKeyHex = CryptoUtils.ByteArrayToHex(privateKey);
-            string publicKeyHex = CryptoUtils.ByteArrayToHex(publicKey);
-            string msgHashHex = CryptoUtils.ByteArrayToHex(msgHash);
-            string signedMessageHex = CryptoUtils.ByteArrayToHex(signedMessage);
+            //string message = "Some super cool message";
+            //byte[] privateKey = CryptoUtils.CreateNewPrivateKey();
+            //byte[] publicKey = CryptoUtils.GetPublicFor(privateKey);
+            //byte[] msgHash = CryptoUtils.GetSha256Bytes(message);
+            //byte[] signedMessage = CryptoUtils.BouncyCastleSign(msgHash, privateKey);
+            //bool isValid = CryptoUtils.BouncyCastleVerify(msgHash, signedMessage, publicKey);
+            //string privateKeyHex = CryptoUtils.ByteArrayToHex(privateKey);
+            //string publicKeyHex = CryptoUtils.ByteArrayToHex(publicKey);
+            //string msgHashHex = CryptoUtils.ByteArrayToHex(msgHash);
+            //string signedMessageHex = CryptoUtils.ByteArrayToHex(signedMessage);
             
             return isTestValid;
         }

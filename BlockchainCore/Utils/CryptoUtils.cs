@@ -87,6 +87,20 @@ namespace BlockchainCore.Utils
             return curve.G.Multiply(new BigInteger(privateKey)).GetEncoded(true);
         }
 
+        public static bool BouncyCastleVerify(byte[] hash, byte[] publicKey, BigInteger R, BigInteger S)
+        {
+            try
+            {
+                ECDsaSigner signer = new ECDsaSigner();
+                signer.Init(false, new ECPublicKeyParameters(curve.Curve.DecodePoint(publicKey), domain));
+                return signer.VerifySignature(hash, R, S);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         public static bool BouncyCastleVerify(byte[] hash, byte[] signature, byte[] publicKey)
         {
             Asn1InputStream asn1 = new Asn1InputStream(signature);
