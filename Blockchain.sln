@@ -16,9 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainCore", "Blockchai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebWallet", "WebWallet\WebWallet.csproj", "{12D01C7C-3AF0-4ABE-A0BB-7EEE2A3DC06B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebFaucet", "WebFaucet\WebFaucet.csproj", "{47D0C4A7-CC10-44EE-BE2F-75233B904768}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebFaucet", "WebFaucet\WebFaucet.csproj", "{47D0C4A7-CC10-44EE-BE2F-75233B904768}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6390A05F-E25A-4BFB-A510-D10B3113A327}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockExplorer", "BlockExplorer\BlockExplorer.csproj", "{E74A97BE-AFEB-425F-AB2E-88323C9C4826}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6390A05F-E25A-4BFB-A510-D10B3113A327}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E74A97BE-AFEB-425F-AB2E-88323C9C4826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E74A97BE-AFEB-425F-AB2E-88323C9C4826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E74A97BE-AFEB-425F-AB2E-88323C9C4826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E74A97BE-AFEB-425F-AB2E-88323C9C4826}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
