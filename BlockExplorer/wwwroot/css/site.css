@@ -36,3 +36,7 @@ body {
 li {
     cursor: pointer;
 }
+#peersNetworkPlaceholder {
+    width: 800px;
+    height: 600px;
+}

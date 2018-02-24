@@ -83,6 +83,31 @@
         });
     }
 
+    function getPeersNetwork() {
+        var imagePath = "./images/pc-icon.png"
+        var nodes = new vis.DataSet([
+            { id: 1, label: 'Node 1', image: imagePath, shape: 'image' },
+            { id: 2, label: 'Node 2', image: imagePath, shape: 'image' },
+            { id: 3, label: 'Node 3', image: imagePath, shape: 'image' },
+            { id: 4, label: 'Node 4', image: imagePath, shape: 'image' },
+            { id: 5, label: 'Node 5', image: imagePath, shape: 'image' }
+        ]);
+        var edges = new vis.DataSet([
+            { from: 1, to: 3 },
+            { from: 1, to: 2 },
+            { from: 2, to: 4 },
+            { from: 2, to: 5 }
+        ]);
+
+        var container = document.getElementById("peersNetworkPlaceholder");
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {};
+        var network = new vis.Network(container, data, options);
+    }
+
     $('#buttonHome').click(function () {
         showView("homeSection");
         $(this).parent().addClass("active");
@@ -110,9 +135,11 @@
         $(this).parent().addClass("active");
     });
 
-    $('#buttonPeersMap').click(function () {
+    $('#buttonPeersNetwork').click(function () {
         showView("peersMapSection");
         $(this).parent().addClass("active");
+
+        getPeersNetwork();
     });
 
     $(document).on({

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
 </head>
 <body>
@@ -32,7 +33,7 @@
                         <a class="nav-link" id="buttonAccounts">Accounts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="buttonPeersMap">Peers map</a>
+                        <a class="nav-link" id="buttonPeersNetwork">Peers network</a>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
@@ -84,7 +85,10 @@
         </section>
 
         <section id="peersMapSection">
-            Peers map
+            <div class="container mt-3">
+                <h5>Peers network</h5>
+                <div id="peersNetworkPlaceholder" align="center">No peers available.</div>
+            </div>
         </section>
 
         <hr />
@@ -202,6 +206,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <script src="./js/explorer.js"></script>
 </body>
 </html>
