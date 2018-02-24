@@ -99,7 +99,7 @@
             jsonRequest = JSON.stringify(dataToSign);
 
             $.ajax({
-                url: nodeUrl + '/transactions/new',
+                url: nodeUrl + '/transactions',
                 method: 'post',
                 dataType: 'json',
                 data: jsonRequest,

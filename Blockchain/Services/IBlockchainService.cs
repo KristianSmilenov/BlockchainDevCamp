@@ -29,8 +29,8 @@ namespace Blockchain.Services
         /*
          * Transactions
          */
-        List<Transaction> GetPendingTransactions();
         Transaction GetTransaction(string transactionHash);
+        List<Transaction> GetTransactions(string status);
         TransactionHashInfo CreateTransaction(TransactionDataSigned data);
 
         /*

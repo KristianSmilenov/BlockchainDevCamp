@@ -20,5 +20,8 @@ namespace Blockchain.Services
         void AddTransaction(Transaction transaction);
         void RemoveTransaction(Transaction transaction);
         void ClearTransactions();
+
+        List<string> GetPeers();
+        void AddPeer(string peerUrl);
     }
 }

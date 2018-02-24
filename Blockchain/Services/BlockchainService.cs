@@ -13,8 +13,6 @@ namespace Blockchain.Services
     public class BlockchainService : IBlockchainService
     {
         private BlockchainInfo info;
-        private List<string> peers;
-        private List<Transaction> pendingTransactions;
         private IDBService dbService;
         private AppSettings appSettings;
 
@@ -22,9 +20,6 @@ namespace Blockchain.Services
         {
             this.dbService = dbService;
             this.appSettings = appSettings.Value;
-            info = new BlockchainInfo("Overwatch Blockchain", "Genesis");
-            peers = new List<string>();
-            pendingTransactions = new List<Transaction>();
 
             GenerateGenesisBlock();
         }
@@ -48,6 +43,11 @@ namespace Blockchain.Services
 
         public BlockchainInfo GetBlockchainInfo()
         {
+            var info = new BlockchainInfo("B-Chain", "MainNode");
+            info.Difficulty = appSettings.Difficulty;
+            info.Peers = dbService.GetPeers().Count;
+            info.PendingTransactions = dbService.GetTransactions().Count;
+            info.Blocks = dbService.GetAllBlocks().Count;
             return info;
         }
 
@@ -66,13 +66,35 @@ namespace Blockchain.Services
             throw new NotImplementedException();
         }
 
-        public List<Transaction> GetPendingTransactions()
+        public Transaction GetTransaction(string transactionHash)
         {
-            return pendingTransactions.OrderByDescending(t => t.DateCreated).ToList();
+            Transaction transaction = dbService.GetTransactions().Find(t => t.TransactionHashHex.Equals(transactionHash));
+            if(transaction == null)
+            {
+                //TODO: Iterate all blocks and look for the transcation
+            }
+
+            return transaction;
+        }
+        
+        public List<Transaction> GetTransactions(string status)
+        {
+            List<Transaction> pending = dbService.GetTransactions().OrderByDescending(t => t.DateCreated).ToList();
+            if (!String.IsNullOrEmpty(status))
+            {
+                if(status.Equals("pending"))
+                    return pending;
+                if (status.Equals("confirmed"))
+                    //TODO: Implement retrieval of confirmed transactions
+                    return new List<Transaction>();
+            }
+            return pending;
         }
 
         public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
         {
+            //TODO: Make all fields required
+
             DateTime dateReceived = DateTime.UtcNow;
             bool isValidTransaction = ValidateTransaction(signedData);
             if (isValidTransaction)
@@ -80,10 +102,11 @@ namespace Blockchain.Services
                 Transaction newTransaction = new Transaction(signedData);
                 newTransaction.SenderSignatureHex = signedData.SenderSignature;
                 newTransaction.TransactionHashHex = GetTransactionHash(newTransaction);
-                pendingTransactions.Add(newTransaction);
+                dbService.GetTransactions().Add(newTransaction);
                 return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
             }
 
+            //TODO: Send transaction to Peers
             return new TransactionHashInfo() { IsValid = isValidTransaction, ErrorMessage = "Transaction data is corrupted.", DateReceived = dateReceived, TransactionHash = "" };
         }
 
@@ -124,21 +147,14 @@ namespace Blockchain.Services
             return new Balance();
         }
 
-        public Transaction GetTransaction(string transactionHash)
-        {
-            //TODO: Implement
-            return new Transaction();
-        }
-
         public List<string> GetPeers()
         {
-            return peers;
+            return dbService.GetPeers();
         }
 
         public void AddPeer(string peerUrl)
         {
-            if (!peers.Contains(peerUrl))
-                peers.Add(peerUrl);
+            dbService.AddPeer(peerUrl);
         }
 
         public PeersNetwork GetPeersNetwork()

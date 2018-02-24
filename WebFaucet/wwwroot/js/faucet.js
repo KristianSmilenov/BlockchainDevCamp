@@ -55,7 +55,7 @@
             dataToSign.senderSignature = signature;
 
             $.ajax({
-                url: nodeUrl + '/transactions/new',
+                url: nodeUrl + '/transactions',
                 method: 'post',
                 dataType: 'json',
                 data: JSON.stringify(dataToSign),

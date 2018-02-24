@@ -15,12 +15,18 @@ namespace Blockchain.Controllers
     {
         public MiningController(IBlockchainService blockchainService) : base(blockchainService) { }
 
+        /// <summary>
+        /// Get block template for mining
+        /// </summary>
         [HttpGet("get-block/{address}")]
         public MiningBlockInfo Get(string address)
         {
             return _blockchainService.GetMiningBlockInfo(address);
         }
         
+        /// <summary>
+        /// Validate found block nonce
+        /// </summary>
         [HttpPost("submit-block/{address}")]
         public SubmitBlockResponse Post(string address, [FromBody]MinedBlockInfoRequest data)
         {

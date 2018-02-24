@@ -1,5 +1,6 @@
 ﻿using Blockchain.Models;
 using Blockchain.Services;
+using BlockchainCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Create new transaction
         /// </summary>
-        [HttpPost("new")]
+        [HttpPost]
         public TransactionHashInfo Post([FromBody]TransactionDataSigned data)
         {
             return _blockchainService.CreateTransaction(data);
@@ -26,19 +27,20 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Get transaction info
         /// </summary>
-        [HttpGet("{hash}/info")]
+        [HttpGet("{hash}")]
         public Transaction Get(string hash)
         {
             return _blockchainService.GetTransaction(hash);
         }
 
         /// <summary>
-        /// Get transaction info
+        /// Get list of transactions
         /// </summary>
-        [HttpGet("pending")]
-        public List<Transaction> Get()
+        /// <param name="status">Fitler by status: pending and confirmed</param>
+        [HttpGet()]
+        public List<Transaction> GetAll([FromQuery]string status)
         {
-            return _blockchainService.GetPendingTransactions();
+            return _blockchainService.GetTransactions(status);
         }
     }
 }

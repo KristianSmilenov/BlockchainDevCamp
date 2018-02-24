@@ -14,8 +14,7 @@ namespace Blockchain.Models
         public int Blocks;
         public int ConfirmedTransactions;
         public int PendingTransactions;
-        public int Addresses;
-        public int Coins;
+        public int Difficulty;
 
         public BlockchainInfo(string about, string nodeName)
         {

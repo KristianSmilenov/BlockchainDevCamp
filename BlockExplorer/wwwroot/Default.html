@@ -75,8 +75,16 @@
 
         <section id="transactionsSection">
             <div class="container mt-3">
-                <h5>Transactions</h5>
-                <div id="transactionsListPlaceHolder">No transactions available.</div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Transactions</h5>
+                    </div>
+                    <div class="col-md-4 col-md-offset-4">
+                        <a class="ml-2" id="buttonPending" style="cursor: pointer">Pending</a>
+                        <a class="ml-2" id="buttonConfirmed" style="cursor: pointer">Confirmed</a>
+                    </div>
+                </div>
+                    <div id="transactionsListPlaceHolder">No transactions available.</div>
             </div>
         </section>
 

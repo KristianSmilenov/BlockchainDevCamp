@@ -40,7 +40,7 @@
     }
 
     function getTransactions() {
-        var url = getNodeUrl() + '/api/transactions/pending';
+        var url = getNodeUrl() + '/api/transactions';
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
@@ -61,8 +61,12 @@
         });
     }
 
-    function getTransactionsList() {
-        var url = getNodeUrl() + '/api/transactions/pending';
+    function getTransactionsList(filter) {
+        var url = getNodeUrl() + '/api/transactions';
+        if (filter && filter != '') {
+            url += '?status='+ filter
+        }
+        
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
@@ -101,28 +105,6 @@
                 var network = new vis.Network(container, data, options);
             }
         });
-        
-        //var nodes = new vis.DataSet([
-        //    { id: 1, label: 'Node 1', image: imagePath, shape: 'image' },
-        //    { id: 2, label: 'Node 2', image: imagePath, shape: 'image' },
-        //    { id: 3, label: 'Node 3', image: imagePath, shape: 'image' },
-        //    { id: 4, label: 'Node 4', image: imagePath, shape: 'image' },
-        //    { id: 5, label: 'Node 5', image: imagePath, shape: 'image' }
-        //]);
-        //var edges = new vis.DataSet([
-        //    { from: 1, to: 3 },
-        //    { from: 1, to: 2 },
-        //    { from: 2, to: 4 },
-        //    { from: 2, to: 5 }
-        //]);
-
-        //var container = document.getElementById("peersNetworkPlaceholder");
-        //var data = {
-        //    nodes: nodes,
-        //    edges: edges
-        //};
-        //var options = {};
-        //var network = new vis.Network(container, data, options);
     }
 
     $('#buttonHome').click(function () {
@@ -145,6 +127,16 @@
         $(this).parent().addClass("active");
 
         getTransactionsList();
+    });
+
+    $('#buttonPending').click(function () {
+        $("#transactionsListPlaceHolder").html('No transactions available.');
+        getTransactionsList('pending');
+    });
+
+    $('#buttonConfirmed').click(function () {
+        $("#transactionsListPlaceHolder").html('No transactions available.');
+        getTransactionsList('confirmed');
     });
 
     $('#buttonAccounts').click(function () {

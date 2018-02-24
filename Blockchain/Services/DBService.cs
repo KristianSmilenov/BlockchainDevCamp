@@ -8,10 +8,10 @@ namespace Blockchain.Services
     public class DBService : IDBService
     {
         static private Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
         static private List<MinedBlockInfo> allBlocks = new List<MinedBlockInfo>();
+        static private List<Transaction> allTransactions = new List<Transaction>();
+        static private List<string> allPeers = new List<string>();
         static private MinedBlockInfo lastBlock;
-        static private List<Transaction> transactions = new List<Transaction>();
 
         public T Get<T>(string key)
         {
@@ -52,22 +52,33 @@ namespace Blockchain.Services
 
         public List<Transaction> GetTransactions()
         {
-            return transactions;
+            return allTransactions;
         }
 
         public void AddTransaction(Transaction transaction)
         {
-            transactions.Add(transaction);
+            allTransactions.Add(transaction);
         }
 
         public void RemoveTransaction(Transaction transaction)
         {
-            transactions.Remove(transaction);
+            allTransactions.Remove(transaction);
         }
 
         public void ClearTransactions()
         {
-            transactions.Clear();
+            allTransactions.Clear();
+        }
+
+        public List<string> GetPeers()
+        {
+            return allPeers;
+        }
+
+        public void AddPeer(string peerUrl)
+        {
+            if (!allPeers.Contains(peerUrl))
+                allPeers.Add(peerUrl);
         }
     }
 }
