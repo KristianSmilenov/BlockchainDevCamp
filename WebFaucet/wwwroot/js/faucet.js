@@ -32,7 +32,7 @@
         let faucetAddress = $("#faucetAddress").text();
         let recipient = $("#recipientAddress").val();
         let nodeUrl = $("#blockchainNodeUrl").val();
-        let value = 1;
+        let value = $("#requestedCoins").val() || 10;
 
         privateKey = sessionStorage.getItem("privateKey");
         if (privateKey) {
@@ -41,7 +41,7 @@
                 from: faucetAddress,
                 to: recipient,
                 value: parseInt(value),
-                fee: 2,
+                fee: 0.2,
                 senderPubKey: sessionStorage.getItem("publicKey"),
                 dateCreated: dateCreated
             }

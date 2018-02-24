@@ -67,7 +67,7 @@ namespace Blockchain.Services
 
         public List<Transaction> GetPendingTransactions()
         {
-            return pendingTransactions;
+            return pendingTransactions.OrderByDescending(t=>t.DateCreated).ToList();
         }
 
         public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
