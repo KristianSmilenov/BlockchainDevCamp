@@ -1,4 +1,5 @@
 ﻿using Blockchain.Models;
+using BlockchainCore.Models;
 using BlockchainCore.Utils;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -24,7 +25,7 @@ namespace Blockchain.Services
             info = new BlockchainInfo("Overwatch Blockchain", "Genesis");
             peers = new List<string>();
             pendingTransactions = new List<Transaction>();
-            
+
             GenerateGenesisBlock();
         }
 
@@ -49,17 +50,17 @@ namespace Blockchain.Services
         {
             return info;
         }
-        
+
         public List<MinedBlockInfoResponse> GetBlocks()
         {
             return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b));
         }
-        
+
         public MinedBlockInfoResponse GetBlock(int index)
         {
             return MinedBlockInfoResponse.FromMinedBlockInfo(dbService.GetAllBlocks()[index]);
         }
-        
+
         public void NotifyBlock(int index)
         {
             throw new NotImplementedException();
@@ -67,14 +68,14 @@ namespace Blockchain.Services
 
         public List<Transaction> GetPendingTransactions()
         {
-            return pendingTransactions.OrderByDescending(t=>t.DateCreated).ToList();
+            return pendingTransactions.OrderByDescending(t => t.DateCreated).ToList();
         }
 
         public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
         {
             DateTime dateReceived = DateTime.UtcNow;
             bool isValidTransaction = ValidateTransaction(signedData);
-            if(isValidTransaction)
+            if (isValidTransaction)
             {
                 Transaction newTransaction = new Transaction(signedData);
                 newTransaction.SenderSignatureHex = signedData.SenderSignature;
@@ -95,7 +96,7 @@ namespace Blockchain.Services
         {
             TransactionData toValidate = new TransactionData(signedData);
             string messageData = JsonConvert.SerializeObject(toValidate);
-            
+
             // Validate received message data
             byte[] senderPublicKey = CryptoUtils.HexToByteArray(signedData.SenderPubKey);
             byte[] senderSignature = CryptoUtils.HexToByteArray(signedData.SenderSignature);
@@ -113,10 +114,10 @@ namespace Blockchain.Services
             string publicKeyHex = CryptoUtils.ByteArrayToHex(publicKey);
             string msgHashHex = CryptoUtils.ByteArrayToHex(msgHash);
             string signedMessageHex = CryptoUtils.ByteArrayToHex(signedMessage);
-            
+
             return isTestValid;
         }
-        
+
         public Balance GetBalance(string address)
         {
             //TODO: Implement
@@ -136,13 +137,46 @@ namespace Blockchain.Services
 
         public void AddPeer(string peerUrl)
         {
-            if(!peers.Contains(peerUrl))
+            if (!peers.Contains(peerUrl))
                 peers.Add(peerUrl);
+        }
+
+        public PeersNetwork GetPeersNetwork()
+        {
+            //TODO: Implement
+            return GetMockedPeersNetwork();
+        }
+
+        private PeersNetwork GetMockedPeersNetwork()
+        {
+            PeersNetwork network = new PeersNetwork();
+            List<PeersNetworkNode> nodes = new List<PeersNetworkNode>()
+            {
+                new PeersNetworkNode() {Id=1, Label="Node 1" },
+                new PeersNetworkNode() {Id=2, Label="Node 2" },
+                new PeersNetworkNode() {Id=3, Label="Node 3" },
+                new PeersNetworkNode() {Id=4, Label="Node 4" },
+                new PeersNetworkNode() {Id=5, Label="Node 5" },
+                new PeersNetworkNode() {Id=6, Label="Node 6" }
+            };
+            network.Nodes = nodes;
+
+            List<PeersNetworkEdge> edges = new List<PeersNetworkEdge>()
+            {
+                new PeersNetworkEdge() { From=1, To=2},
+                new PeersNetworkEdge() { From=2, To=4},
+                new PeersNetworkEdge() { From=2, To=5},
+                new PeersNetworkEdge() { From=3, To=5},
+                new PeersNetworkEdge() { From=5, To=6}
+            };
+            network.Edges = edges;
+            return network;
         }
 
         public MiningBlockInfo GetMiningBlockInfo(string address)
         {
-            var info = new MiningBlockInfo {
+            var info = new MiningBlockInfo
+            {
                 Difficulty = appSettings.Difficulty,
                 Index = dbService.GetLastBlock().Index + 1,
                 MinedBy = address,
@@ -192,6 +226,5 @@ namespace Blockchain.Services
                 };
             }
         }
-
     }
 }

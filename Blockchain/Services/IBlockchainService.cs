@@ -1,4 +1,5 @@
 ﻿using Blockchain.Models;
+using BlockchainCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,13 @@ namespace Blockchain.Services
         MinedBlockInfoResponse GetBlock(int index);
         void NotifyBlock(int index);
         Balance GetBalance(string address);
+
+        /*
+         * Transactions
+         */
         List<string> GetPeers();
         void AddPeer(string peerUrl);
+        PeersNetwork GetPeersNetwork();
 
         /*
          * Transactions

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blockchain.Models;
 using Blockchain.Services;
+using BlockchainCore.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace Blockchain.Controllers
         public PeersController(IBlockchainService blockchainService) : base(blockchainService) { }
 
         /// <summary>
-        /// Get registered node peers
+        /// Get node peers
         /// </summary>
         [HttpGet]
         public List<string> Get()
@@ -31,6 +32,15 @@ namespace Blockchain.Controllers
         public void Post([FromBody]AddPeerRequest data)
         {
             _blockchainService.AddPeer(data.PeerUrl);
+        }
+
+        /// <summary>
+        /// Get peers network
+        /// </summary>
+        [HttpGet("network")]
+        public PeersNetwork GetNetwork()
+        {
+            return _blockchainService.GetPeersNetwork();
         }
     }
 }
