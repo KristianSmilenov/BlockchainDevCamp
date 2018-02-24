@@ -4,12 +4,136 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blockchain Explorer</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
 </head>
 <body>
     <div class="container body-content">
-        <h2>Blockchain Explorer</h2>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" style="cursor: pointer" id="buttonHome">Blockchain Explorer</a>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonBlocks">Blocks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonTransactions">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonAccounts">Accounts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonPeersMap">Peers map</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search by Address / Txhash" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <section id="loadingBox">Loading ...</section>
+
+        <section id="homeSection">
+            <div class="container mt-3">
+                <div class="row"></div>
+                <div class="row">
+                    <div class="col">
+                        <h5>Blocks</h5>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Block #1</h5>
+                                                <p class="card-text">> 25 secs ago</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="card-body">
+                                            <p class="card-text">Mined By Ethermine <b>38 txns in 1 sec</b></p>
+                                            <p class="card-text">Block Reward <b>3.02943 Ether</b></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Block #2</h5>
+                                                <p class="card-text">> 1 min ago</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="card-body">
+                                            <p class="card-text">Mined By Ethermine <b>27 txns in 1 sec</b></p>
+                                            <p class="card-text">Block Reward <b>3.02943 Ether</b></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <h5>Transactions</h5>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">From</th>
+                                    <th scope="col">To</th>
+                                    <th scope="col">Transaction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>48.430 Ether</td>
+                                    <td>0x7def6b7455c...</td>
+                                    <td>0xef710b978e6...</td>
+                                    <td>@0X89EEA1EFE7</td>
+                                </tr>
+                                <tr>
+                                    <td>48.430 Ether</td>
+                                    <td>0x7def6b7455c...</td>
+                                    <td>0xef710b978e6...</td>
+                                    <td>@0X89EEA1EFE7</td>
+                                </tr>
+                                <tr>
+                                    <td>48.430 Ether</td>
+                                    <td>0x7def6b7455c...</td>
+                                    <td>0xef710b978e6...</td>
+                                    <td>@0X89EEA1EFE7</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="blocksSection">
+            Blocks
+        </section>
+
+        <section id="transactionsSection">
+            Transactions
+        </section>
+
+        <section id="accountsSection">
+            Accounts
+        </section>
+
+        <section id="peersMapSection">
+            Peers map
+        </section>
+
         <hr />
         <footer>
             <p>&copy; 2018 - Blockchain Explorer</p>

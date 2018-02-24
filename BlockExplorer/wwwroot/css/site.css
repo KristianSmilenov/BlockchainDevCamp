@@ -33,3 +33,6 @@ body {
         display: none;
     }
 }
+li {
+    cursor: pointer;
+}
