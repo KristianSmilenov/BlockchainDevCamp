@@ -55,51 +55,28 @@
                 <div class="row">
                     <div class="col">
                         <h5>Blocks</h5>
-                        <div id="blocksPlaceHolder">Click a button above to transform the raw JS data.</div>
+                        <div id="blocksPlaceHolder">No blocks available.</div>
                     </div>
                     <div class="col">
                         <h5>Transactions</h5>
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Amount</th>
-                                    <th scope="col">From</th>
-                                    <th scope="col">To</th>
-                                    <th scope="col">Transaction</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>48.430 Ether</td>
-                                    <td>0x7def6b7455c...</td>
-                                    <td>0xef710b978e6...</td>
-                                    <td>@0X89EEA1EFE7</td>
-                                </tr>
-                                <tr>
-                                    <td>48.430 Ether</td>
-                                    <td>0x7def6b7455c...</td>
-                                    <td>0xef710b978e6...</td>
-                                    <td>@0X89EEA1EFE7</td>
-                                </tr>
-                                <tr>
-                                    <td>48.430 Ether</td>
-                                    <td>0x7def6b7455c...</td>
-                                    <td>0xef710b978e6...</td>
-                                    <td>@0X89EEA1EFE7</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div id="transactionsPlaceHolder">No transactions available.</div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="blocksSection">
-            Blocks
+            <div class="container mt-3">
+                <h5>Blocks</h5>
+                <div id="blocksListPlaceHolder">No blocks available.</div>
+            </div>
         </section>
 
         <section id="transactionsSection">
-            Transactions
+            <div class="container mt-3">
+                <h5>Transactions</h5>
+                <div id="transactionsListPlaceHolder">No transactions available.</div>
+            </div>
         </section>
 
         <section id="accountsSection">
@@ -135,6 +112,85 @@
                             <p class="card-text">block Reward <b>?? coins</b></p>
                         </div>
                     </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/template" id="blck-list-tmpl">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Transactions</th>
+                    <th scope="col">Mined by</th>
+                    <th scope="col">Block hash</th>
+                    <th scope="col">Previous hash</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each( target, function(i) {%>
+                <tr>
+                    <td>Block <%= i.index %></td>
+                    <td><%= i.dateCreated %></td>
+                    <td><%= i.transactions.length %></td>
+                    <td><%= i.minedBy %></td>
+                    <td><%= i.blockHashLabel %></td>
+                    <td><%= i.previousBlockHash %></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/template" id="trns-tmpl">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Amount</th>
+                    <th scope="col">From</th>
+                    <th scope="col">To</th>
+                    <th scope="col">Transaction</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each( target, function(i) {%>
+                <tr>
+                    <td><%= i.value %> coin </br><small>(<%= i.dateCreated %>)</small></td>
+                    <td><%= i.fromLabel %></td>
+                    <td><%= i.toLabel %></td>
+                    <td><%= i.transactionHashLabel %></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/template" id="trns-list-tmpl">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Status</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Transaction</th>
+                    <th scope="col">Block</th>
+                    <th scope="col">Details</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each( target, function(i) {%>
+                <tr>
+                    <td><%= i.transferSuccessful %></td>
+                    <td><%= i.dateCreated %></td>
+                    <td><%= i.transactionHashLabel %></td>
+                    <td><%= i.minedInBlockIndex %></td>
+                    <td>from: <%= i.from %> </br> to: <%= i.to %></td>
+                    <td><%= i.value %> coin</td>
+                    <td><%= i.fee %> coins</td>
                 </tr>
                 <% }); %>
             </tbody>
