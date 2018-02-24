@@ -28,11 +28,10 @@
     createFaucetWallet();
 
     function buttonSendCoins() {
-
         let faucetAddress = $("#faucetAddress").text();
         let recipient = $("#recipientAddress").val();
         let nodeUrl = $("#blockchainNodeUrl").val();
-        let value = $("#requestedCoins").val() || 10;
+        let value = parseInt($("#requestedCoins").val());
 
         privateKey = sessionStorage.getItem("privateKey");
         if (privateKey) {
@@ -41,7 +40,7 @@
                 from: faucetAddress,
                 to: recipient,
                 value: parseInt(value),
-                fee: 0.2,
+                fee: 2,
                 senderPubKey: sessionStorage.getItem("publicKey"),
                 dateCreated: dateCreated
             }
