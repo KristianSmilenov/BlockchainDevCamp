@@ -107,6 +107,20 @@
         });
     }
 
+    function getNodeInfo() {
+        var url = getNodeUrl() + '/api/info';
+        $.get(url, function (nodeData) {
+            $("#nodeAbout").text("Running on: " + nodeData.about);
+            $("#nodeName").text("Connected to: " + nodeData.nodeName);
+            $("#blockchainDifficulty").text("Difficulty: " + nodeData.difficulty);
+        });
+    }
+
+    $('#buttonSetNodeUrl').click(function () {
+        getNodeInfo();
+        $('#buttonHome').click();
+    });
+
     $('#buttonHome').click(function () {
         showView("homeSection");
         $(this).parent().addClass("active");
@@ -162,4 +176,5 @@
         $('#' + viewName).show();
     }
     $('#buttonHome').click();
+    getNodeInfo();
 });
