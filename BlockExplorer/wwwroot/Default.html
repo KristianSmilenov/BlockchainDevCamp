@@ -36,11 +36,12 @@
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search by Address / Txhash" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    <input class="form-control mr-sm-2" type="search" id="searchBox" placeholder="Search by Address / Txhash" aria-label="Search">
+                    <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="buttonSearch">Search</button>
                 </form>
             </div>
         </nav>
+
         <div class="collapse" id="explorerConfiguration">
             <div class="card card-body">
                 <div class="input-group input-group-sm">
@@ -103,6 +104,15 @@
                 <div id="peersNetworkPlaceholder" align="center">No peers available.</div>
             </div>
         </section>
+
+        <section id="searchResultsSection">
+            <div class="container mt-3">
+                <h5>Search section</h5>
+
+                <div id="searchResultsPlaceHolder">No data found.</div>
+            </div>
+        </section>
+
         <footer>
             <hr style="margin:0px;padding:0px;" />
 

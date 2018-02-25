@@ -1,10 +1,6 @@
 ﻿$(document).ready(function () {
     Date.prototype.toJSON = function () { return this.toISOString(); }
 
-    function getNodeUrl() {
-        return $("#nodeUrl").val();
-    }
-
     function getBlocks() {
         var url = getNodeUrl() + '/api/blocks';
         $.get(url, function (rawData) {
@@ -62,11 +58,13 @@
     }
 
     function getTransactionsList(filter) {
+        // TODO: Fix template to show full transaction hash or allow users to copy it
+
         var url = getNodeUrl() + '/api/transactions';
         if (filter && filter != '') {
-            url += '?status='+ filter
+            url += '?status=' + filter
         }
-        
+
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
@@ -114,6 +112,49 @@
             $("#nodeName").text("Connected to: " + nodeData.nodeName);
             $("#blockchainDifficulty").text("Difficulty: " + nodeData.difficulty);
         });
+    }
+
+    function getNodeUrl() {
+        return $("#nodeUrl").val();
+    }
+
+    $('#buttonSearch').click(function () {
+        showView("searchResultsSection");
+        $("#searchResultsPlaceHolder").text("No data found.");
+        var searchText = $("#searchBox").val();
+        if (searchText.length == 0)
+            return;
+
+        var transactionUrl = getNodeUrl() + '/api/transactions/' + searchText;
+        $.get(transactionUrl, function (data) {
+            setSearchResultData(data, 'transaction');
+        }).fail(function () {
+            tryGetWalletInfo(searchText);
+        });
+    });
+
+    function tryGetWalletInfo(searchText) {
+        var walletInfoUrl = getNodeUrl() + '/api/balance/' + searchText;
+        $.get(walletInfoUrl, function (data) {
+            setSearchResultData(data, 'wallet');
+        }).fail(function () {
+            tryGetBlockInfo(searchText);
+        });
+    }
+
+    function tryGetBlockInfo(searchText) {
+        if (!isNaN(searchText)) {
+            var blockIndex = parseInt(searchText)
+            var urlGetBlock = getNodeUrl() + '/api/blocks/' + blockIndex;
+            $.get(urlGetBlock, function (data) {
+                setSearchResultData(data, 'block');
+            });
+        }
+    }
+
+    function setSearchResultData(data, type) {
+        //TODO: render template
+        $("#searchResultsPlaceHolder").text(JSON.stringify(data, undefined, 2));
     }
 
     $('#buttonSetNodeUrl').click(function () {

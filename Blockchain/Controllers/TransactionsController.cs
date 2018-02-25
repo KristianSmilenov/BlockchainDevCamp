@@ -28,9 +28,12 @@ namespace Blockchain.Controllers
         /// Get transaction info
         /// </summary>
         [HttpGet("{hash}")]
-        public Transaction Get(string hash)
+        public IActionResult Get(string hash)
         {
-            return _blockchainService.GetTransaction(hash);
+            Transaction result = _blockchainService.GetTransaction(hash);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
 
         /// <summary>

@@ -19,9 +19,12 @@ namespace Blockchain.Controllers
         /// Get address balance
         /// </summary>
         [HttpGet("{address}")]
-        public Balance Get(string address)
+        public IActionResult Get(string address)
         {
-            return _blockchainService.GetBalance(address);
+            Balance result = _blockchainService.GetBalance(address);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
     }
 }

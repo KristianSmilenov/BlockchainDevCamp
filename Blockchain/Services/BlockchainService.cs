@@ -12,7 +12,6 @@ namespace Blockchain.Services
 {
     public class BlockchainService : IBlockchainService
     {
-        private BlockchainInfo info;
         private IDBService dbService;
         private AppSettings appSettings;
 
@@ -144,7 +143,7 @@ namespace Blockchain.Services
         public Balance GetBalance(string address)
         {
             //TODO: Implement
-            return new Balance();
+            return null;
         }
 
         public List<string> GetPeers()
