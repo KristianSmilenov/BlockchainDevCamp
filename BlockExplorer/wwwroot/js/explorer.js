@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     Date.prototype.toJSON = function () { return this.toISOString(); }
+    let activeView = "";
 
     function getBlocks() {
         var url = getNodeUrl() + '/api/blocks';
@@ -118,7 +119,8 @@
         return $("#nodeUrl").val();
     }
 
-    $('#buttonSearch').click(function () {
+    $('#buttonSearch').click(loadSearchSection);
+    function loadSearchSection() {
         showView("searchResultsSection");
         $("#searchResultsPlaceHolder").text("No data found.");
         var searchText = $("#searchBox").val();
@@ -131,7 +133,7 @@
         }).fail(function () {
             tryGetWalletInfo(searchText);
         });
-    });
+    }
 
     function tryGetWalletInfo(searchText) {
         var walletInfoUrl = getNodeUrl() + '/api/balance/' + searchText;
@@ -162,27 +164,30 @@
         $('#buttonHome').click();
     });
 
-    $('#buttonHome').click(function () {
+    $('#buttonHome').click(loadHomeSection);
+    function loadHomeSection() {
         showView("homeSection");
         $(this).parent().addClass("active");
 
         getBlocks();
         getTransactions();
-    });
+    }
 
-    $('#buttonBlocks').click(function () {
+    $('#buttonBlocks').click(loadBlocksSection);
+    function loadBlocksSection () {
         showView("blocksSection");
         $(this).parent().addClass("active");
 
         getBlocksList();
-    });
+    }
 
-    $('#buttonTransactions').click(function () {
+    $('#buttonTransactions').click(loadTransactionsSection);
+    function loadTransactionsSection () {
         showView("transactionsSection");
         $(this).parent().addClass("active");
 
         getTransactionsList();
-    });
+    }
 
     $('#buttonPending').click(function () {
         $("#transactionsListPlaceHolder").html('No transactions available.');
@@ -194,28 +199,45 @@
         getTransactionsList('confirmed');
     });
 
-    $('#buttonAccounts').click(function () {
+    $('#buttonAccounts').click(loadAccountsSection);
+    function loadAccountsSection () {
         showView("accountsSection");
         $(this).parent().addClass("active");
-    });
+    }
 
-    $('#buttonPeersNetwork').click(function () {
+    $('#buttonPeersNetwork').click(loadPeersMapSection);
+    function loadPeersMapSection () {
         showView("peersMapSection");
         $(this).parent().addClass("active");
 
         getPeersNetwork();
-    });
+    }
 
-    $(document).on({
-        ajaxStart: function () { $("#loadingBox").show() },
-        ajaxStop: function () { $("#loadingBox").hide() }
-    });
+    //$(document).on({
+    //    ajaxStart: function () { $("#loadingBox").show() },
+    //    ajaxStop: function () { $("#loadingBox").hide() }
+    //});
 
     function showView(viewName) {
+        activeView = viewName;
         $('li.nav-item').removeClass("active");
         $('section').hide();
         $('#' + viewName).show();
     }
     $('#buttonHome').click();
     getNodeInfo();
+
+    setInterval(refreshData, 5000);
+    function refreshData() {
+        var refreshViewMap = {
+            //'searchResultsSection': loadSearchSection,
+            'homeSection': loadHomeSection,
+            'blocksSection': loadBlocksSection,
+            'transactionsSection': loadTransactionsSection,
+            'accountsSection': loadAccountsSection,
+            'peersMapSection': loadPeersMapSection
+        }
+        //this will repeat every 5 seconds
+        refreshViewMap[activeView]();
+    }
 });
