@@ -61,13 +61,9 @@
 
         privateKey = sessionStorage.getItem("privateKey");
         if (privateKey) {
-            // option 1
-            //let ec = new elliptic.ec('secp256k1');
-            //let keyPair = ec.keyFromPrivate(privateKey);
-            //let publicKey = keyPair.getPublic().getX().toString(16) + (keyPair.getPublic().getY().isOdd() ? "1" : "0");
 
-            //let senderPubKey = sessionStorage.getItem("publicKey");//publicKey
-            let dateCreated = new Date();
+            let ec = new elliptic.ec('secp256k1');
+            let keyPair = ec.keyFromPrivate(privateKey);
 
             let dataToSign = {
                 from: address,
@@ -75,34 +71,23 @@
                 value: parseInt(value),
                 fee: 2,
                 senderPubKey: sessionStorage.getItem("publicKey"),
-                dateCreated: dateCreated
+                dateCreated: new Date()
             }
-            //let dataHex = toHex(JSON.stringify(dataToSign));
-            let dataHex = JSON.stringify(dataToSign);
-
-            // Sign option 1
-            //var signature = ec.sign(dataHex, privateKey);
-            //console.log(signature);
-            //var signatureHex = toHexString(signature.toDER());
-            //console.log(signatureHex);
-            debugger;
-
-            // Sign option 2
-            var sig = new KJUR.crypto.Signature({ "alg": sigalg });
-            sig.init({ d: privateKey, curve: curve });
-            sig.updateString(dataHex);
-            var signature2 = sig.sign();
-            console.log(signature2);
-
-            dataToSign.senderSignature = signature2;
-
-            jsonRequest = JSON.stringify(dataToSign);
+            
+            let sha256 = new Hashes.SHA256();
+            let dataHex = sha256.hex(JSON.stringify(dataToSign));
+            var signature = ec.sign(dataHex, privateKey);
+            console.log(signature);
+            keyPair.verify(dataHex, signature)
+            var signatureHex = toHexString(signature.toDER());
+            console.log(signatureHex);
+            dataToSign.senderSignature = signatureHex;
 
             $.ajax({
                 url: nodeUrl + '/transactions',
                 method: 'post',
                 dataType: 'json',
-                data: jsonRequest,
+                data: JSON.stringify(dataToSign),
                 contentType: "application/json",
                 success: function (data) {
                     alert(data.isValid);
@@ -111,16 +96,6 @@
                     alert(JSON.parse(err));
                 }
             })
-            //{
-            //  "senderSignature": "string",
-            //  "senderMessage": "string",
-            //  "from": "string",
-            //  "to": "string",
-            //  "senderPubKey": "string",
-            //  "value": 0,
-            //  "fee": 0,
-            //  "dateCreated": "2018-02-22T23:14:15.488Z"
-            //}
         }
     }
     
