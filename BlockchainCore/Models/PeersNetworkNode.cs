@@ -6,9 +6,7 @@ namespace BlockchainCore.Models
     [Serializable]
     public class PeersNetworkNode
     {
-        [JsonProperty(PropertyName = "id")]
-        public int Id;
-        [JsonProperty(PropertyName = "label")]
-        public String Label;
+        public string Id { get; set; }
+        public String Label { get; set; }
     }
 }

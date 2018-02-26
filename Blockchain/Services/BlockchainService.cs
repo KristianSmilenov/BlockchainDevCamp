@@ -14,18 +14,31 @@ namespace Blockchain.Services
     {
         private IDBService dbService;
         private AppSettings appSettings;
+        private Peer thisPeer = new Peer {
+            Id = Guid.NewGuid().ToString(),
+        };
 
         public BlockchainService(IDBService dbService, IOptions<AppSettings> appSettings)
         {
             this.dbService = dbService;
             this.appSettings = appSettings.Value;
+            thisPeer.Url = appSettings.Value.NodeUrl;
+            thisPeer.Name = appSettings.Value.NodeName;
 
             GenerateGenesisBlock();
         }
 
         private void GenerateGenesisBlock()
         {
-            //TODO: Give faucet some coins in the Genesis block
+            //TODO: Give faucet some coins in the Genesis block. How? How do we know the faucet's address?
+            var tr = new List<Transaction>();
+            tr.Add(new Transaction {
+                To = "Faucet",
+                Value = 1000,
+                TransferSuccessful = true,
+                DateCreated = DateTime.Now,
+                MinedInBlockIndex = 0                
+            });
 
             dbService.AddBlock(
                 new MinedBlockInfo
@@ -34,7 +47,7 @@ namespace Blockchain.Services
                     Index = 0,
                     MinedBy = "Mr. Bean",
                     PreviousBlockHash = "",
-                    Transactions = new List<Transaction>(),
+                    Transactions = tr,
                     DateCreated = DateTime.Now,
                     Nonce = 0
                 });
@@ -67,27 +80,39 @@ namespace Blockchain.Services
 
         public Transaction GetTransaction(string transactionHash)
         {
-            Transaction transaction = dbService.GetTransactions().Find(t => t.TransactionHashHex.Equals(transactionHash));
-            if(transaction == null)
+            var transaction = dbService.GetTransactions().Find(t => t.TransactionHashHex.Equals(transactionHash));
+            if(transaction != null)
             {
-                //TODO: Iterate all blocks and look for the transcation
+                return transaction;
             }
 
-            return transaction;
+            foreach (var b in dbService.GetAllBlocks())
+            {
+                var res = b.Transactions.FirstOrDefault(t => t.TransactionHashHex == transactionHash);
+                if (res != null)
+                    return res;
+            }
+
+            return null;
         }
         
         public List<Transaction> GetTransactions(string status)
         {
-            List<Transaction> pending = dbService.GetTransactions().OrderByDescending(t => t.DateCreated).ToList();
-            if (!String.IsNullOrEmpty(status))
+            switch (status)
             {
-                if(status.Equals("pending"))
-                    return pending;
-                if (status.Equals("confirmed"))
-                    //TODO: Implement retrieval of confirmed transactions
-                    return new List<Transaction>();
+                case "confirmed":
+                    return dbService
+                        .GetAllBlocks()
+                        .Aggregate(new List<Transaction>(), (acc, b) => 
+                        {
+                            acc.AddRange(b.Transactions);
+                            return acc;
+                        });
+
+                case "pending":
+                default:
+                    return dbService.GetTransactions().ToList();
             }
-            return pending;
         }
 
         public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
@@ -96,95 +121,139 @@ namespace Blockchain.Services
 
             DateTime dateReceived = DateTime.UtcNow;
             bool isValidTransaction = ValidateTransaction(signedData);
-            if (isValidTransaction)
+
+            if (!isValidTransaction)
             {
-                Transaction newTransaction = new Transaction(signedData);
-                newTransaction.SenderSignatureHex = signedData.SenderSignature;
-                newTransaction.TransactionHashHex = GetTransactionHash(newTransaction);
-                dbService.GetTransactions().Add(newTransaction);
-                return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
+                return new TransactionHashInfo
+                {
+                    IsValid = isValidTransaction,
+                    ErrorMessage = "Transaction data is corrupted.",
+                    DateReceived = dateReceived,
+                    TransactionHash = ""
+                };
             }
 
-            //TODO: Send transaction to Peers
-            return new TransactionHashInfo() { IsValid = isValidTransaction, ErrorMessage = "Transaction data is corrupted.", DateReceived = dateReceived, TransactionHash = "" };
-        }
+            //validate balance
+            var bal = GetBalance(signedData.From, 1).ConfirmedBalance.Balance;
+            var hasFunds = (bal >= signedData.Value + signedData.Fee);
 
-        private string GetTransactionHash(Transaction transaction)
-        {
-            return CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(transaction));
+            if (!hasFunds)
+            {
+                return new TransactionHashInfo
+                {
+                    IsValid = isValidTransaction,
+                    ErrorMessage = $"Not enough funds. Available funds: {bal}, require funds: {signedData.Value} + {signedData.Fee} for the fee",
+                    DateReceived = dateReceived,
+                    TransactionHash = ""
+                };
+            }
+
+            Transaction newTransaction = new Transaction(signedData);
+            newTransaction.SenderSignatureHex = signedData.SenderSignature;
+            newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
+            dbService.GetTransactions().Add(newTransaction);
+            return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
+
+            //TODO: Send transaction to Peers
         }
 
         private bool ValidateTransaction(TransactionDataSigned signedData)
         {
             TransactionData toValidate = new TransactionData(signedData);
-            string messageData = JsonConvert.SerializeObject(toValidate);
+            var messageData = JsonConvert.SerializeObject(toValidate);
 
-            // Validate received message data
-            byte[] senderPublicKey = CryptoUtils.HexToByteArray(signedData.SenderPubKey);
-            byte[] senderSignature = CryptoUtils.HexToByteArray(signedData.SenderSignature);
-            byte[] messageDataHash = CryptoUtils.GetSha256Bytes(messageData);
-            bool isTestValid = CryptoUtils.BouncyCastleVerify(messageDataHash, senderSignature, senderPublicKey);
-
-            // Server side test
-            string message = "Some super cool message";
-            byte[] privateKey = CryptoUtils.CreateNewPrivateKey();
-            byte[] publicKey = CryptoUtils.GetPublicFor(privateKey);
-            byte[] msgHash = CryptoUtils.GetSha256Bytes(message);
-            byte[] signedMessage = CryptoUtils.BouncyCastleSign(msgHash, privateKey);
-            bool isValid = CryptoUtils.BouncyCastleVerify(msgHash, signedMessage, publicKey);
-            string privateKeyHex = CryptoUtils.ByteArrayToHex(privateKey);
-            string publicKeyHex = CryptoUtils.ByteArrayToHex(publicKey);
-            string msgHashHex = CryptoUtils.ByteArrayToHex(msgHash);
-            string signedMessageHex = CryptoUtils.ByteArrayToHex(signedMessage);
+            // Validate signature
+            var senderPublicKey = CryptoUtils.HexToByteArray(signedData.SenderPubKey);
+            var senderSignature = CryptoUtils.HexToByteArray(signedData.SenderSignature);
+            var messageDataHash = CryptoUtils.GetSha256Bytes(messageData);
+            var isTestValid = CryptoUtils.BouncyCastleVerify(messageDataHash, senderSignature, senderPublicKey);
 
             return isTestValid;
         }
 
-        public Balance GetBalance(string address)
+        public Balance GetBalance(string address, int confirmations)
         {
-            //TODO: Implement
-            return null;
+            var blocks = dbService.GetAllBlocks();
+            var lastBlockIndex = blocks.Last().Index;
+
+            var res = new Balance {
+                Address = address,
+                ConfirmedBalance = new BalanceInfo { Balance = 0, Confirmations = 0},
+                LastMinedBalance = new BalanceInfo { Balance = 0, Confirmations = 0 },
+                PendingBalance = new BalanceInfo { Balance = 0, Confirmations = 0 }
+            };
+
+            foreach (var block in blocks)
+            {
+                BalanceInfo bal;
+                if (lastBlockIndex - confirmations <= block.Index + 1)
+                {
+                    bal = res.ConfirmedBalance;
+                }
+                else {
+                    bal = res.LastMinedBalance;
+                }
+
+                bal.Balance += block.Transactions.Aggregate(0, (sum, val) =>
+                {
+                    if (val.From == address)
+                    {
+                        sum -= val.Value;
+                        bal.Confirmations = lastBlockIndex - block.Index;
+                    }
+                    else if (val.To == address)
+                    {
+                        sum += val.Value;
+                        bal.Confirmations = lastBlockIndex - block.Index;
+                    }
+
+                    return sum;
+                });
+            }
+
+            res.PendingBalance.Balance = dbService.GetTransactions().Aggregate(0, (sum, val) =>
+            {
+                if (val.From == address)
+                {
+                    sum -= val.Value;
+                }
+                else if (val.To == address)
+                {
+                    sum += val.Value;
+                }
+
+                return sum;
+            });
+
+            return res;
         }
 
-        public List<string> GetPeers()
+        public List<Peer> GetPeers()
         {
             return dbService.GetPeers();
         }
 
-        public void AddPeer(string peerUrl)
+        public void AddPeer(Peer peer)
         {
-            dbService.AddPeer(peerUrl);
+            dbService.AddPeer(peer);
         }
 
         public PeersNetwork GetPeersNetwork()
         {
-            //TODO: Implement
-            return GetMockedPeersNetwork();
-        }
-
-        private PeersNetwork GetMockedPeersNetwork()
-        {
-            PeersNetwork network = new PeersNetwork();
-            List<PeersNetworkNode> nodes = new List<PeersNetworkNode>()
+            var network = new PeersNetwork
             {
-                new PeersNetworkNode() {Id=1, Label="Node 1" },
-                new PeersNetworkNode() {Id=2, Label="Node 2" },
-                new PeersNetworkNode() {Id=3, Label="Node 3" },
-                new PeersNetworkNode() {Id=4, Label="Node 4" },
-                new PeersNetworkNode() {Id=5, Label="Node 5" },
-                new PeersNetworkNode() {Id=6, Label="Node 6" }
+                Nodes = new List<PeersNetworkNode>(),
+                Edges = new List<PeersNetworkEdge>()
             };
-            network.Nodes = nodes;
 
-            List<PeersNetworkEdge> edges = new List<PeersNetworkEdge>()
+            network.Nodes.Add(new PeersNetworkNode { Id = thisPeer.Id, Label = thisPeer.Name });
+
+            foreach (var p in dbService.GetPeers())
             {
-                new PeersNetworkEdge() { From=1, To=2},
-                new PeersNetworkEdge() { From=2, To=4},
-                new PeersNetworkEdge() { From=2, To=5},
-                new PeersNetworkEdge() { From=3, To=5},
-                new PeersNetworkEdge() { From=5, To=6}
-            };
-            network.Edges = edges;
+                network.Nodes.Add(new PeersNetworkNode {Id = p.Id, Label = p.Name });
+                network.Edges.Add(new PeersNetworkEdge {From = p.Id, To = thisPeer.Id });
+            }
+
             return network;
         }
 

@@ -17,13 +17,13 @@ namespace Blockchain.Services
         List<MinedBlockInfoResponse> GetBlocks();
         MinedBlockInfoResponse GetBlock(int index);
         void NotifyBlock(int index);
-        Balance GetBalance(string address);
+        Balance GetBalance(string address, int confirmations);
 
         /*
          * Transactions
          */
-        List<string> GetPeers();
-        void AddPeer(string peerUrl);
+        List<Peer> GetPeers();
+        void AddPeer(Peer peer);
         PeersNetwork GetPeersNetwork();
 
         /*

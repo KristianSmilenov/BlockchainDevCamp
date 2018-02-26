@@ -20,7 +20,7 @@ namespace Blockchain.Controllers
         /// Get node peers
         /// </summary>
         [HttpGet]
-        public List<string> Get()
+        public List<Peer> Get()
         {
             return _blockchainService.GetPeers();
         }
@@ -29,9 +29,9 @@ namespace Blockchain.Controllers
         /// Add new node peer
         /// </summary>
         [HttpPost]
-        public void Post([FromBody]AddPeerRequest data)
+        public void Post([FromBody]Peer data)
         {
-            _blockchainService.AddPeer(data.PeerUrl);
+            _blockchainService.AddPeer(data);
         }
 
         /// <summary>

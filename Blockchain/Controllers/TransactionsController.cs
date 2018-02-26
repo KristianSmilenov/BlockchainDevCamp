@@ -33,6 +33,7 @@ namespace Blockchain.Controllers
             Transaction result = _blockchainService.GetTransaction(hash);
             if (result != null)
                 return Ok(result);
+
             return NotFound();
         }
 

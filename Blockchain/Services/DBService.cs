@@ -10,8 +10,7 @@ namespace Blockchain.Services
         static private Dictionary<string, object> dictionary = new Dictionary<string, object>();
         static private List<MinedBlockInfo> allBlocks = new List<MinedBlockInfo>();
         static private List<Transaction> allTransactions = new List<Transaction>();
-        static private List<string> allPeers = new List<string>();
-        static private MinedBlockInfo lastBlock;
+        static private List<Peer> allPeers = new List<Peer>();
 
         public T Get<T>(string key)
         {
@@ -70,15 +69,15 @@ namespace Blockchain.Services
             allTransactions.Clear();
         }
 
-        public List<string> GetPeers()
+        public List<Peer> GetPeers()
         {
             return allPeers;
         }
 
-        public void AddPeer(string peerUrl)
+        public void AddPeer(Peer peer)
         {
-            if (!allPeers.Contains(peerUrl))
-                allPeers.Add(peerUrl);
+            if (!allPeers.Contains(peer))
+                allPeers.Add(peer);
         }
     }
 }

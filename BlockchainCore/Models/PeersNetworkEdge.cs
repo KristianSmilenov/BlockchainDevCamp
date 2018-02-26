@@ -6,9 +6,7 @@ namespace BlockchainCore.Models
     [Serializable]
     public class PeersNetworkEdge
     {
-        [JsonProperty(PropertyName = "from")]
-        public int From;
-        [JsonProperty(PropertyName = "to")]
-        public int To;
+        public string From { get; set; }
+        public string To { get; set; }
     }
 }

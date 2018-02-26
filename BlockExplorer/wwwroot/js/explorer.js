@@ -100,7 +100,11 @@
                     edges: new vis.DataSet(rawData.edges)
                 };
                 var container = document.getElementById("peersNetworkPlaceholder");
-                var options = {};
+                var options = {
+                    layout: {
+                        randomSeed: 25
+                    }
+                };
                 var network = new vis.Network(container, data, options);
             }
         });
