@@ -31,7 +31,7 @@ start dotnet build/Blockchain.dll --server.urls "http://localhost:5103" --AppSet
 @ Faucet:
 @----------------------------------
 
-start dotnet build/WebFaucet.dll  --AppSettings:PrivateKey d9811a2c1baf6a2558f8ff5fb4cc624b6f2c32bb6dea659cf68584fcd028ee36 --AppSettings:Address%faucetAddress% --AppSettings:NodeUrl "http://localhost:5101"
+start dotnet build/WebFaucet.dll  --AppSettings:PrivateKey d9811a2c1baf6a2558f8ff5fb4cc624b6f2c32bb6dea659cf68584fcd028ee36 --AppSettings:Address%faucetAddress%
 
 @----------------------------------
 
@@ -40,7 +40,7 @@ start dotnet build/WebFaucet.dll  --AppSettings:PrivateKey d9811a2c1baf6a2558f8f
 @ Block Explorer:
 @----------------------------------
 
-start dotnet build/BlockExplorer.dll --AppSettings:NodeUrl "http://localhost:5101"
+start dotnet build/BlockExplorer.dll
 
 @----------------------------------
 
@@ -49,7 +49,7 @@ start dotnet build/BlockExplorer.dll --AppSettings:NodeUrl "http://localhost:510
 @ Wallet:
 @----------------------------------
 
-start dotnet build/WebWallet.dll --AppSettings:NodeUrl "http://localhost:5101"
+start dotnet build/WebWallet.dll
 
 @----------------------------------
 
