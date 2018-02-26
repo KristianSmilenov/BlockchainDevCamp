@@ -7,7 +7,6 @@ namespace WebFaucet
 {
     public class AppSettings
     {
-        public string NodeUrl { get; set; }
         public string PrivateKey { get; set; }
         public string Address { get; set; }
     }
