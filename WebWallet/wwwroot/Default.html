@@ -24,6 +24,7 @@
             </li>
         </ul>
         <div class="tab-content">
+
             <div class="tab-pane fade show active" id="create-wallet" role="tabpanel" aria-labelledby="create-wallet-tab">
                 <h2 class="mt-2">Create new wallet</h2>
                 <p>Generate a new wallet (secp256k1 curve): random private key -> public key -> address</p>
@@ -54,30 +55,34 @@
                 <h2 class="mt-2">Open an existing wallet</h2>
                 <p>Enter your private key (compressed ECDSA key, 65 hex digits)</p>
 
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Key</span>
+                <form id="openWalletForm" data-toggle="validator" role="form">
+                    <div class="form-group input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Private Key</span>
+                        </div>
+                        <input type="text" required data-error="Please enter private key" id="existingWalletKey" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <div class="help-block with-errors"></div>
                     </div>
-                    <input type="text" id="existingWalletKey" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                </div>
-                <div class="mb-3">
-                    <button type="button" id="buttonOpenWallet" class="btn btn-primary">Open wallet</button>
-                </div>
-                <div class="input-group  mb-3">
+                    <div class="form-group">
+                        <button type="button" id="buttonOpenWallet" class="btn btn-primary">Open wallet</button>
+                    </div>
+                </form>
+
+                <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Private key</span>
+                        <span class="input-group-text">Private Key</span>
                     </div>
                     <label id="restoredPrivateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group  mb-3">
+                <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Public key</span>
+                        <span class="input-group-text">Public Key</span>
                     </div>
                     <label id="restoredPublicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group  mb-3">
+                <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Wallet address</span>
+                        <span class="input-group-text">Wallet Address</span>
                     </div>
                     <label id="restoredAddressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
@@ -98,7 +103,6 @@
                         </div>
                         <input type="text" required data-error="Please enter address" id="accountBalanceAddress" class="form-control">
                         <div class="help-block with-errors"></div>
-                        <!--<label id="accountBalanceAddress" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />-->
                     </div>
                     <div class="form-group input-group  mb-3">
                         <div class="input-group-prepend">
@@ -108,9 +112,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                     <div class="form-group">
-                        <button type="button" id="buttonDisplayBalance" class="btn btn-primary">
-                            Display Balance
-                        </button>
+                        <button type="button" id="buttonDisplayBalance" class="btn btn-primary">Display balance</button>
                     </div>
                 </form>
 
@@ -132,24 +134,47 @@
                     </div>
                     <label id="balancePending" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-
             </div>
 
             <div class="tab-pane fade" id="send-transaction" role="tabpanel" aria-labelledby="send-transaction-tab">
                 <h2 class="mt-2">Send transaction</h2>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Blockchain Node</span>
+
+                <form id="sendTransactionForm" data-toggle="validator" role="form">
+                    <div class="form-group input-group mb-3">
+                        <div class="input-group-prepend"><span class="input-group-text">Blockchain Node</span></div>
+                        <input type="text" required data-error="Please enter node url" id="transactionNodeUrl" class="form-control" value="http://localhost:5000/api">
+                        <div class="help-block with-errors"></div>
                     </div>
-                    <input type="text" id="transactionNodeUrl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="http://localhost:5000/api">
-                </div>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Address</span>
+                    <div class="form-group input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Address</span>
+                        </div>
+                        <input type="text" required data-error="Please enter address" id="sendTransactionAddress" class="form-control">
+                        <div class="help-block with-errors"></div>
                     </div>
-                    <label id="sendTransactionAddress" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
-                <div class="input-group  mb-3">
+
+                    <div class="form-group input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Recipient</span>
+                        </div>
+                        <input type="text" required data-error="Please enter recipient address" id="transactionRecipient" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="form-group input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Value</span>
+                        </div>
+                        <input type="text" required data-error="Please enter value to transfer" id="transactionValue" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <div class="help-block with-errors"></div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <button type="button" id="buttonSignTransaction" class="btn btn-primary">Sign transaction</button>
+                    </div>
+                </form>
+
+                
+                <!--<div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Recipient</span>
                     </div>
@@ -160,11 +185,10 @@
                         <span class="input-group-text">Value</span>
                     </div>
                     <input type="text" id="transactionValue" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                </div>
-                <div class="mb-3">
+                </div>-->
+                <!--<div class="mb-3">
                     <button type="button" id="buttonSignTransaction" class="btn btn-primary">Sign transaction</button>
-                </div>
-
+                </div>-->
             </div>
         </div>
 

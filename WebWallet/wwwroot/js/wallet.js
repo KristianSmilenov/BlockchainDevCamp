@@ -24,14 +24,19 @@
         //let publicKeyCompressed = compressPublicKey(keyPair.getPublic());
     }
 
+    $("#openWalletForm").validator();
     function openWallet() {
-        let privateKeyInput = $("#existingWalletKey").val();
-        let ec = new elliptic.ec(curve);
-        let keyPair = ec.keyFromPrivate(privateKeyInput);
-        let walletData = saveWalletData(keyPair);
-        $("#restoredPrivateKeyTxt").text(walletData.privateKey);
-        $("#restoredPublicKeyTxt").text(walletData.publicKey);
-        $("#restoredAddressTxt").text(walletData.address);
+        var validator = $("#openWalletForm").data("bs.validator");
+        validator.validate();
+        if (!validator.hasErrors()) {
+            let privateKeyInput = $("#existingWalletKey").val();
+            let ec = new elliptic.ec(curve);
+            let keyPair = ec.keyFromPrivate(privateKeyInput);
+            let walletData = saveWalletData(keyPair);
+            $("#restoredPrivateKeyTxt").text(walletData.privateKey);
+            $("#restoredPublicKeyTxt").text(walletData.publicKey);
+            $("#restoredAddressTxt").text(walletData.address);
+        }
     }
 
     $("#accountBalanceForm").validator();
@@ -56,51 +61,55 @@
         }
     }
 
+    $("#sendTransactionForm").validator();
     function signTransaction() {
+        var validator = $("#sendTransactionForm").data("bs.validator");
+        validator.validate();
+        if (!validator.hasErrors()) {
+            let address = $("#sendTransactionAddress").val();
+            let nodeUrl = $("#transactionNodeUrl").val();
+            let recipient = $("#transactionRecipient").val();
+            let value = $('#transactionValue').val();
 
-        let address = $("#accountBalanceAddress").text();
-        let nodeUrl = $("#transactionNodeUrl").val();
-        let recipient = $("#transactionRecipient").val();
-        let value = $('#transactionValue').val();
+            //let privateKey = window.prompt("To sign a transaction you have to write down your private key:")
+            let privateKey = sessionStorage.getItem("privateKey");
+            if (privateKey) {
 
-        //let privateKey = window.prompt("To sign a transaction you have to write down your private key:")
-        let privateKey = sessionStorage.getItem("privateKey");
-        if (privateKey) {
+                let ec = new elliptic.ec('secp256k1');
+                let keyPair = ec.keyFromPrivate(privateKey);
 
-            let ec = new elliptic.ec('secp256k1');
-            let keyPair = ec.keyFromPrivate(privateKey);
-
-            let dataToSign = {
-                from: address,
-                to: recipient,
-                value: parseInt(value),
-                fee: 2,
-                senderPubKey: sessionStorage.getItem("publicKey"),
-                dateCreated: new Date()
-            }
-
-            let sha256 = new Hashes.SHA256();
-            let dataHex = sha256.hex(JSON.stringify(dataToSign));
-            var signature = ec.sign(dataHex, privateKey);
-            console.log(signature);
-            keyPair.verify(dataHex, signature)
-            var signatureHex = toHexString(signature.toDER());
-            console.log(signatureHex);
-            dataToSign.senderSignature = signatureHex;
-
-            $.ajax({
-                url: nodeUrl + '/transactions',
-                method: 'post',
-                dataType: 'json',
-                data: JSON.stringify(dataToSign),
-                contentType: "application/json",
-                success: function (data) {
-                    alert(data.isValid);
-                },
-                error: function (err) {
-                    alert(JSON.parse(err));
+                let dataToSign = {
+                    from: address,
+                    to: recipient,
+                    value: parseInt(value),
+                    fee: 2,
+                    senderPubKey: sessionStorage.getItem("publicKey"),
+                    dateCreated: new Date()
                 }
-            })
+
+                let sha256 = new Hashes.SHA256();
+                let dataHex = sha256.hex(JSON.stringify(dataToSign));
+                var signature = ec.sign(dataHex, privateKey);
+                console.log(signature);
+                keyPair.verify(dataHex, signature)
+                var signatureHex = toHexString(signature.toDER());
+                console.log(signatureHex);
+                dataToSign.senderSignature = signatureHex;
+
+                $.ajax({
+                    url: nodeUrl + '/transactions',
+                    method: 'post',
+                    dataType: 'json',
+                    data: JSON.stringify(dataToSign),
+                    contentType: "application/json",
+                    success: function (data) {
+                        alert(data.isValid);
+                    },
+                    error: function (err) {
+                        alert(JSON.parse(err));
+                    }
+                })
+            }
         }
     }
 
@@ -134,7 +143,7 @@
     }
 
     function updateWalletAddressFields(address) {
-        $("#sendTransactionAddress").text(address);
+        $("#sendTransactionAddress").val(address);
         $("#accountBalanceAddress").val(address);
     }
 });
