@@ -55,6 +55,19 @@
                 <button type="button" id="buttonBack" class="btn btn-primary">Back</button>
             </div>
         </section>
+        <section id="coinsNotSent">
+            <p>
+                An error occured while trying to send coins to address
+                <b><span id="addressSent"></span></b>
+            </p>
+            <p>
+                Error:
+                <b><span id="errorMessage"></span></b>
+            </p>
+            <div class="mb-3">
+                <button type="button" id="buttonBack2" class="btn btn-primary">Back</button>
+            </div>
+        </section>
         <hr />
         <footer>
             <p>&copy; 2018 B-Faucet</p>
@@ -66,8 +79,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="./js/faucet.js"></script>
-    <script src="./lib/hashes.js"></script>
-    <script src="./lib/elliptic.js"></script>
-    <script src="./lib/jsrsasign-all-min.js"></script>
 </body>
 </html>

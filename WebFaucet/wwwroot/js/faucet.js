@@ -5,6 +5,10 @@
         showView("sendCoins");
     });
 
+    $('#buttonBack2').click(function () {
+        showView("sendCoins");
+    });
+
     let curve = "secp256k1";
     let sigalg = "SHA256withECDSA";
     
@@ -30,11 +34,19 @@
             }),
             contentType: "application/json",
             success: function (data) {
-                showView("coinsSend");
+                if (!data.isValid || data.errorMessage || !data.transactionHash) {
 
-                $("#numerOfCoins").text(value);
+                    showView("coinsNotSent");
+                    $("#errorMessage").text(data.errorMessage);
+                }
+                else {
+                    showView("coinsSend");
+                    $("#numerOfCoins").text(value);
+                    $("#transactionHash").text(data.transactionHash);
+                }
+
+
                 $("#addressSent").text(recipient);
-                $("#transactionHash").text(data.transactionHash);
             },
             error: function (err) {
                 alert(JSON.parse(err));

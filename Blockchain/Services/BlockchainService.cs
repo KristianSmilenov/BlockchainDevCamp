@@ -33,8 +33,8 @@ namespace Blockchain.Services
             //TODO: Give faucet some coins in the Genesis block. How? How do we know the faucet's address?
             var tr = new List<Transaction>();
             tr.Add(new Transaction {
-                To = "Faucet",
-                Value = 1000,
+                To = appSettings.FaucetAddress,
+                Value = 100000,
                 TransferSuccessful = true,
                 DateCreated = DateTime.Now,
                 MinedInBlockIndex = 0                
@@ -142,7 +142,7 @@ namespace Blockchain.Services
                 return new TransactionHashInfo
                 {
                     IsValid = isValidTransaction,
-                    ErrorMessage = $"Not enough funds. Available funds: {bal}, require funds: {signedData.Value} + {signedData.Fee} for the fee",
+                    ErrorMessage = $"Not enough funds. Available funds: {bal}, required funds: {signedData.Value} + {signedData.Fee} for the fee",
                     DateReceived = dateReceived,
                     TransactionHash = ""
                 };
