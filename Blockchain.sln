@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D172DB75-8C78-4BF1-88C9-5E2DA7D9F22C}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		run.bat = run.bat
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miner", "Miner\Miner.csproj", "{4FC175D2-613B-431E-9016-B7768BE0E182}"

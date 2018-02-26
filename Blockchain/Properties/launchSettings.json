@@ -18,6 +18,7 @@
     },
     "Blockchain": {
       "commandName": "Project",
+      "commandLineArgs": "--server.urls \"http://localhost:5102;\" --AppSettings:Difficulty 7",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

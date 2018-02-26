@@ -151,7 +151,7 @@ namespace Blockchain.Services
             Transaction newTransaction = new Transaction(signedData);
             newTransaction.SenderSignatureHex = signedData.SenderSignature;
             newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
-            dbService.GetTransactions().Add(newTransaction);
+            dbService.AddTransaction(newTransaction);
             return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
 
             //TODO: Send transaction to Peers

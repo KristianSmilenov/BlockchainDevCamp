@@ -30,7 +30,7 @@ namespace Blockchain
             services.AddCors();
 
             services.AddOptions();
-            services.Configure<AppSettings>(Configuration.GetSection("ApplicationSettings"));
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddSingleton<IBlockchainService, BlockchainService>();
             services.AddSingleton<IDBService, DBService>();
