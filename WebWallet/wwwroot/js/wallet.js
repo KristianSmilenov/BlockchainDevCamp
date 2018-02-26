@@ -10,23 +10,18 @@
     $('#buttonSignTransaction').click(signTransaction);
 
     function createNewWallet() {
-        //let ec = new elliptic.ec('secp256k1');
-        //let keyPair = ec.genKeyPair();
-        //saveKeys(keyPair);
+        let ec = new elliptic.ec('secp256k1');
+        let keyPair = ec.genKeyPair();
+        let walletData = saveWalletData(keyPair);
+        sessionStorage.setItem("privateKey", walletData.privateKey);
+        sessionStorage.setItem("publicKey", walletData.publicKey);
+        sessionStorage.setItem("address", walletData.address);
+        $("#privateKeyTxt").text(walletData.privateKey);
+        $("#publicKeyTxt").text(walletData.publicKey);
+        $("#addressTxt").text(walletData.address);
+        updateWalletAddressFields(walletData.address);
 
-        let ec = new KJUR.crypto.ECDSA({ "curve": curve });
-        let keypair = ec.generateKeyPairHex();
-        let ripemd160 = new Hashes.RMD160();
-        let walletAddress = ripemd160.hex(keypair.ecpubhex);
-
-        sessionStorage.setItem("privateKey", keypair.ecprvhex);
-        sessionStorage.setItem("publicKey", keypair.ecpubhex);
-        sessionStorage.setItem("address", walletAddress);
-
-        $("#privateKeyTxt").text(keypair.ecprvhex);
-        $("#publicKeyTxt").text(keypair.ecpubhex);
-        $("#addressTxt").text(walletAddress);
-        updateWalletAddressFields(walletAddress);
+        //let publicKeyCompressed = compressPublicKey(keyPair.getPublic());
     }
 
     function openWallet() {
@@ -105,56 +100,18 @@
         }).join('')
     }
 
-    function toHex(str) {
-        var hex = '';
-        for (var i = 0; i < str.length; i++) {
-            hex += '' + str.charCodeAt(i).toString(16);
-        }
-        return hex;
-    }
+    function compressPublicKey(publicKey) {
+        var prefix = publicKey.getY().isOdd() ? "03" : "02";
+        var x = publicKey.getX().toString(16);
 
-    function doSign() {
-        debugger;
-        var f1 = document.form1;
-        var prvkey = f1.prvkey1.value;
-        //var curve = "secp256k1";
-        //var sigalg = "SHA256withECDSA";
-        var msg1 = f1.msg1.value;
-
-        var sig = new KJUR.crypto.Signature({ "alg": sigalg });
-        sig.init({ d: prvkey, curve: curve });
-        sig.updateString(msg1);
-        var sigValueHex = sig.sign();
-
-        f1.sigval1.value = sigValueHex;
-    }
-
-    function doVerify() {
-        debugger;
-        var f1 = document.form1;
-        var pubkey = f1.pubkey1.value;
-        var curve = "secp256k1"; //f1.curve1.value;
-        var sigalg = "SHA256withECDSA"; //f1.sigalg1.value;
-        var msg1 = f1.msg1.value;
-        var sigval = f1.sigval1.value;
-
-        var sig = new KJUR.crypto.Signature({ "alg": sigalg, "prov": "cryptojs/jsrsa" });
-        sig.init({ xy: pubkey, curve: curve });
-        sig.updateString(msg1);
-        var result = sig.verify(sigval);
-        if (result) {
-            alert("valid ECDSA signature");
-        } else {
-            alert("invalid ECDSA signature");
-        }
+        return prefix + x;
     }
 
     function saveWalletData(keyPair) {
         let privateKey = keyPair.getPrivate().toString(16);
         sessionStorage.setItem("privateKey", privateKey);
 
-        let pubKey = keyPair.getPublic().getX().toString(16) +
-            (keyPair.getPublic().getY().isOdd() ? "1" : "0");
+        let pubKey = compressPublicKey(keyPair.getPublic());
         sessionStorage.setItem("publicKey", pubKey);
 
         let ripemd160 = new Hashes.RMD160();
