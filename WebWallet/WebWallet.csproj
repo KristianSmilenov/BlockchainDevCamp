@@ -11,9 +11,4 @@
   <ItemGroup>
     <Folder Include="wwwroot\lib\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Update="appsettings.json">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
 </Project>

@@ -19,15 +19,8 @@ namespace BlockExplorer
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddCommandLine(args)
-                .Build();
-
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseKestrel()
                 .Build();
