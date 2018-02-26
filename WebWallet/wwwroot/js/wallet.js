@@ -3,7 +3,7 @@
 
     let curve = "secp256k1";
     let sigalg = "SHA256withECDSA";
-    
+
     $('#buttonCreateNewWallet').click(createNewWallet);
     $('#buttonOpenWallet').click(openWallet);
     $('#buttonDisplayBalance').click(displayBalance);
@@ -34,27 +34,37 @@
         $("#restoredAddressTxt").text(walletData.address);
     }
 
+    $("#accountBalanceForm").validator();
     function displayBalance() {
-        let address = $("#accountBalanceAddress").val();
-        let nodeUrl = $("#blockchainNodeUrl").val();
+        var validator = $("#accountBalanceForm").data("bs.validator");
+        validator.validate();
+        if (!validator.hasErrors()) {
+            let address = $("#accountBalanceAddress").val();
+            let nodeUrl = $("#blockchainNodeUrl").val();
+            let balanceConfirmations = $("#accountBalanceConfirmations").val();
 
-        //TODO: call node endpoint
+            var requestUrl = nodeUrl + '/balance/' + address + '/' + balanceConfirmations;
+            $.get(requestUrl, function (addressData) {
+                var confirmed = `${addressData.confirmedBalance.balance} coins confirmed with ${addressData.confirmedBalance.confirmations} confirmations`;
+                var lastMined = `${addressData.lastMinedBalance.balance} coins last mined with ${addressData.lastMinedBalance.confirmations} confirmations`;
+                var pending = `${addressData.pendingBalance.balance} coins pending ${addressData.pendingBalance.confirmations} confirmations`;
 
-        $("#balanceConfirmed").text("0");
-        $("#balance1Confirmation").text("0");
-        $("#balancePending").text("0");
+                $("#balanceConfirmed").text(confirmed);
+                $("#balanceLastMined").text(lastMined);
+                $("#balancePending").text(pending);
+            });
+        }
     }
 
     function signTransaction() {
-        
+
         let address = $("#accountBalanceAddress").text();
         let nodeUrl = $("#transactionNodeUrl").val();
         let recipient = $("#transactionRecipient").val();
         let value = $('#transactionValue').val();
 
         //let privateKey = window.prompt("To sign a transaction you have to write down your private key:")
-
-        privateKey = sessionStorage.getItem("privateKey");
+        let privateKey = sessionStorage.getItem("privateKey");
         if (privateKey) {
 
             let ec = new elliptic.ec('secp256k1');
@@ -68,7 +78,7 @@
                 senderPubKey: sessionStorage.getItem("publicKey"),
                 dateCreated: new Date()
             }
-            
+
             let sha256 = new Hashes.SHA256();
             let dataHex = sha256.hex(JSON.stringify(dataToSign));
             var signature = ec.sign(dataHex, privateKey);
@@ -93,7 +103,7 @@
             })
         }
     }
-    
+
     function toHexString(byteArray) {
         return Array.from(byteArray, function (byte) {
             return ('0' + (byte & 0xFF).toString(16)).slice(-2);
@@ -125,6 +135,6 @@
 
     function updateWalletAddressFields(address) {
         $("#sendTransactionAddress").text(address);
-        $("#accountBalanceAddress").text(address);
+        $("#accountBalanceAddress").val(address);
     }
 });

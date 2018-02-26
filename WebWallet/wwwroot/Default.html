@@ -25,36 +25,36 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="create-wallet" role="tabpanel" aria-labelledby="create-wallet-tab">
-                <h2>Create new wallet</h2>
-                <p>Generate a new wallet: random private key -> public key -> address.</p>
+                <h2 class="mt-2">Create new wallet</h2>
+                <p>Generate a new wallet (secp256k1 curve): random private key -> public key -> address</p>
                 <div class="mb-3">
                     <button type="button" id="buttonCreateNewWallet" class="btn btn-primary">Create new wallet</button>
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Private key</span>
                     </div>
                     <label id="privateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Public key</span>
                     </div>
                     <label id="publicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Wallet address</span>
                     </div>
                     <label id="addressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
-            
-            <div class="tab-pane fade" id="exisiting-wallet" role="tabpanel" aria-labelledby="exisiting-wallet-tab">
-                <h2>Open an existing wallet</h2>
-                <p>Enter your private key (compressed ECDSA key, 65 hex digits).</p>
 
-                <div class="input-group input-group-sm mb-3">
+            <div class="tab-pane fade" id="exisiting-wallet" role="tabpanel" aria-labelledby="exisiting-wallet-tab">
+                <h2 class="mt-2">Open an existing wallet</h2>
+                <p>Enter your private key (compressed ECDSA key, 65 hex digits)</p>
+
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Key</span>
                     </div>
@@ -63,85 +63,99 @@
                 <div class="mb-3">
                     <button type="button" id="buttonOpenWallet" class="btn btn-primary">Open wallet</button>
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Private key</span>
                     </div>
                     <label id="restoredPrivateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Public key</span>
                     </div>
                     <label id="restoredPublicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Wallet address</span>
                     </div>
                     <label id="restoredAddressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
-            
-            <div class="tab-pane fade" id="account-balance" role="tabpanel" aria-labelledby="account-balance-tab">
-                <h2>View account balance</h2>
-                <div class="input-group input-group-sm mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Blockchain Node</span>
-                    </div>
-                    <input type="text" id="blockchainNodeUrl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="http://localhost:5000/api">
-                </div>
-                <div class="input-group input-group-sm mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Address</span>
-                    </div>
-                    <label id="accountBalanceAddress" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
 
-                <div class="mb-3">
-                    <button type="button" id="buttonDisplayBalance" class="btn btn-primary">Display Balance</button>
-                </div>
-                <div class="input-group input-group-sm mb-3">
+            <div class="tab-pane fade" id="account-balance" role="tabpanel" aria-labelledby="account-balance-tab">
+                <h2 class="mt-2">View account balance</h2>
+
+                <form id="accountBalanceForm" data-toggle="validator" role="form">
+                    <div class="form-group input-group mb-3">
+                        <div class="input-group-prepend"><span class="input-group-text">Blockchain Node</span></div>
+                        <input type="text" required data-error="Please enter node url" id="blockchainNodeUrl" class="form-control" value="http://localhost:5000/api">
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="form-group input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Address</span>
+                        </div>
+                        <input type="text" required data-error="Please enter address" id="accountBalanceAddress" class="form-control">
+                        <div class="help-block with-errors"></div>
+                        <!--<label id="accountBalanceAddress" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />-->
+                    </div>
+                    <div class="form-group input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Confirmations</span>
+                        </div>
+                        <input type="number" required data-error="Please enter confirmations number" value="6" id="accountBalanceConfirmations" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" id="buttonDisplayBalance" class="btn btn-primary">
+                            Display Balance
+                        </button>
+                    </div>
+                </form>
+
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Balance (confirmed):</span>
+                        <span class="input-group-text">Confirmed</span>
                     </div>
                     <label id="balanceConfirmed" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Balance (1 confirmation):</span>
+                        <span class="input-group-text">Last mined</span>
                     </div>
-                    <label id="balance1Confirmation" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    <label id="balanceLastMined" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Balance (pending):</span>
+                        <span class="input-group-text">Pending</span>
                     </div>
                     <label id="balancePending" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
+
             </div>
 
             <div class="tab-pane fade" id="send-transaction" role="tabpanel" aria-labelledby="send-transaction-tab">
-                <h2>Send transaction</h2>
-                <div class="input-group input-group-sm mb-3">
+                <h2 class="mt-2">Send transaction</h2>
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Blockchain Node</span>
                     </div>
                     <input type="text" id="transactionNodeUrl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="http://localhost:5000/api">
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Address</span>
                     </div>
                     <label id="sendTransactionAddress" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Recipient</span>
                     </div>
                     <input type="text" id="transactionRecipient" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                 </div>
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group  mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Value</span>
                     </div>
@@ -150,7 +164,7 @@
                 <div class="mb-3">
                     <button type="button" id="buttonSignTransaction" class="btn btn-primary">Sign transaction</button>
                 </div>
-               
+
             </div>
         </div>
 
@@ -163,9 +177,9 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
     <script src="./js/wallet.js"></script>
     <script src="./lib/hashes.js"></script>
     <script src="./lib/elliptic.js"></script>
-    <script src="./lib/jsrsasign-all-min.js"></script>
 </body>
 </html>

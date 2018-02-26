@@ -38,7 +38,7 @@ namespace Blockchain
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Blockchain API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Blockchain REST API", Version = "v1" });
                 
                 // Set the comments path for the Swagger JSON and UI.
                 var basePath = AppContext.BaseDirectory;
@@ -61,6 +61,8 @@ namespace Blockchain
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
+                //c.RoutePrefix = "api-docs";
+                c.DocumentTitle("B-Chain REST API");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blockchain API V1");
             });
 
