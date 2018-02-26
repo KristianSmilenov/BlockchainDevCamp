@@ -12,14 +12,19 @@ namespace Blockchain.Models
     {
         [JsonProperty(PropertyName = "from")]
         public string From;
+
         [JsonProperty(PropertyName = "to")]
         public string To;
+
         [JsonProperty(PropertyName = "value")]
         public int Value;
+
         [JsonProperty(PropertyName = "fee")]
         public int Fee;
+
         [JsonProperty(PropertyName = "senderPubKey")]
         public string SenderPubKey;
+
         [JsonConverter(typeof(DateTimeJsonFormatter))]
         [JsonProperty(PropertyName = "dateCreated")]
         public DateTime DateCreated;

@@ -8,6 +8,6 @@ namespace WebFaucet
     public class AppSettings
     {
         public string PrivateKey { get; set; }
-        public string Address { get; set; }
+        public string FaucetAddress { get; set; }
     }
 }
