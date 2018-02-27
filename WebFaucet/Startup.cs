@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebFaucet.Services;
 
 namespace WebFaucet
 {
@@ -23,6 +24,7 @@ namespace WebFaucet
         {
             services.AddMvc();
             services.AddOptions();
+            services.AddSingleton<IDBService, DBService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
 
