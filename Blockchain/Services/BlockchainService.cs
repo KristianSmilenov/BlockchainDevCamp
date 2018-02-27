@@ -17,6 +17,7 @@ namespace Blockchain.Services
         const int FAUCET_START_VOLUME = 1000000;
         const string ZERO_HASH = "0000000000000000000000000000000000000000";
         const string TRANSACTION_API_PATH = "api/transactions";
+        const string NOTIFY_API_PATH = "api/blocks/notify";
 
         private IDBService dbService;
         private AppSettings appSettings;
@@ -82,9 +83,26 @@ namespace Blockchain.Services
             return MinedBlockInfoResponse.FromMinedBlockInfo(dbService.GetAllBlocks()[index]);
         }
 
-        public void NotifyBlock(int index)
+        public void NotifyBlock(MinedBlockInfo block)
         {
-            throw new NotImplementedException();
+            if (dbService.GetLastBlock().Index >= block.Index)
+            { //reject, do nothing
+                return;
+            }
+
+            //valdiate block
+
+            //see if we should use MinedBLockInfo (is BlockHash properly calculated on the fly? ) - mb recreate the object from the data
+
+            //find common ancestor - fetch all previous blocks if needed (previous block might be the common ancestor, in which case, do not fetch
+
+            //validate all previous blocks since the common ancestor
+
+            //replace my blocks with other blocks
+
+            //remove from the pending transaction list all the ones that are already inside of this block
+
+            //add to pending transactions all the transaction that have been verified with you but not with the other chain
         }
 
         public Transaction GetTransaction(string transactionHash)
@@ -390,7 +408,16 @@ namespace Blockchain.Services
 
         private void PropagateBlockToPeers(MinedBlockInfo block)
         {
-            throw new NotImplementedException();
+
+            var tasks = new List<Task>();
+            dbService.GetPeers().ForEach(p =>
+            {
+                var body = MinedBlockInfoResponse.FromMinedBlockInfo(block);
+                tasks.Add(Task.Run(() =>
+                HttpUtils.DoApiPost<MinedBlockInfoResponse, object>(p.Url, NOTIFY_API_PATH, body)));
+            });
+
+            Task.WaitAll(tasks.ToArray());
         }
     }
 }

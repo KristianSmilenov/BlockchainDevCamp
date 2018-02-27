@@ -16,7 +16,7 @@ namespace Blockchain.Services
          */
         List<MinedBlockInfoResponse> GetBlocks();
         MinedBlockInfoResponse GetBlock(int index);
-        void NotifyBlock(int index);
+        void NotifyBlock(MinedBlockInfo block);
         Balance GetBalance(string address, int confirmations);
 
         /*

@@ -30,6 +30,8 @@ namespace Blockchain
                 .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseKestrel()
+                //Uncomment, if you want to run 2 debuggers on the same project, it will cause the web server to bind to different ports
+                //.UseUrls("http://0.0.0.0:0") 
                 .Build();
         }
     }
