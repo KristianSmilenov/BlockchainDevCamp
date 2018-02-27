@@ -44,18 +44,18 @@ namespace Miner
 
                 if (t == null)//nothing here, let's do some mining
                 {
-                    Console.WriteLine($"Mining started, block {bi.Index}, hash: {bi.BlockDataHash}");
+                    Console.WriteLine($"[{DateTime.Now}] Mining started, block {bi.Index}, hash: {bi.BlockDataHash}");
                     t = MineAsync(bi.BlockDataHash, bi.Difficulty);
                 }
                 else if (t.IsCompleted) //we're done, let's get some $$
                 {
-                    Console.WriteLine($"Found a result for block {bi.Index}, awaiting payment :)");
+                    Console.WriteLine($"F[{DateTime.Now}] ound a result for block {bi.Index}, awaiting payment :)");
                     SubmitMinedBlockInfo(myAddress, t.Result.Item1, t.Result.Item2);
                     t = null;
                 }
                 else if (lastBlockInfo.BlockDataHash != bi.BlockDataHash)//new block, let's cancel and start mining it
                 {
-                    Console.WriteLine($"New block suggested, ditching the old one and starting the new one");
+                    Console.WriteLine($"[{DateTime.Now}] New block suggested, ditching the old one and starting the new one");
                     t = null;
                 }
                 else //same block, and we're still mining, so will sit for a second and see what comes next;

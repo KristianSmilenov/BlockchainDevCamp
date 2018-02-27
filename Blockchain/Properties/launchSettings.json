@@ -18,7 +18,7 @@
     },
     "Blockchain": {
       "commandName": "Project",
-      "commandLineArgs": "--server.urls \"http://localhost:5102;\" --AppSettings:Difficulty 7",
+      "commandLineArgs": " --server.urls \"http://localhost:5101\" --AppSettings:NodeName \"Ivan\" --AppSettings:NodeUrl \"http://localhost:5101\" --AppSettings:FaucetAddress %faucetAddress% ",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
