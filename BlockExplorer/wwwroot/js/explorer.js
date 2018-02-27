@@ -120,7 +120,7 @@
     }
 
     function getNodeUrl() {
-        return $("#nodeUrl").val();
+        return $("#blockchainNodeUrl").val();
     }
 
     $('#buttonSearch').click(loadSearchSection);
@@ -163,9 +163,14 @@
         $("#searchResultsPlaceHolder").text(JSON.stringify(data, undefined, 2));
     }
 
+    $("#blockchainNodeForm").validator();
     $('#buttonSetNodeUrl').click(function () {
+        var validator = $("#blockchainNodeForm").data("bs.validator");
+        validator.validate();
+        if (!validator.hasErrors()) {
+            $("#explorerConfiguration").collapse('hide');
+        }
         getNodeInfo();
-        $('#buttonHome').click();
     });
 
     $('#buttonHome').click(loadHomeSection);

@@ -48,7 +48,7 @@
         var validator = $("#blockchainNodeForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
-            $("#explorerConfiguration").collapse('hide');;
+            $("#walletConfiguration").collapse('hide');
         }
     }
 
