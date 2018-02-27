@@ -18,7 +18,7 @@
     },
     "Blockchain": {
       "commandName": "Project",
-      "commandLineArgs": " --server.urls \"http://localhost:5101\" --AppSettings:NodeName \"Ivan\" --AppSettings:NodeUrl \"http://localhost:5101\" --AppSettings:FaucetAddress %faucetAddress% ",
+      "commandLineArgs": " --server.urls \"http://localhost:5101\" --AppSettings:NodeName \"Tosho\" --AppSettings:NodeUrl \"http://localhost:5101\" --AppSettings:FaucetAddress a4a239576a1d25b32cf2a037e3540f6a2326fdc3 --AppSettings:Difficulty 5 --AppSettings:MinerReward 60",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

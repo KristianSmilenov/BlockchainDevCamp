@@ -27,10 +27,10 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Validate found block nonce
         /// </summary>
-        [HttpPost("submit-block/{address}")]
-        public SubmitBlockResponse Post(string address, [FromBody]MinedBlockInfoRequest data)
+        [HttpPost("submit-block/")]
+        public SubmitBlockResponse Post([FromBody]MinedBlockInfoRequest data)
         {
-            return _blockchainService.SubmitBlockInfo(address, data);
+            return _blockchainService.SubmitBlockInfo(data);
         }
     }
 }
