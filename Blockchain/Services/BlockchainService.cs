@@ -87,7 +87,7 @@ namespace Blockchain.Services
 
         public Transaction GetTransaction(string transactionHash)
         {
-            var transaction = dbService.GetTransactions().Find(t => t.TransactionHashHex.Equals(transactionHash));
+            var transaction = dbService.GetTransactions().Find(t => t.TransactionHashHex == transactionHash);
             if(transaction != null)
             {
                 return transaction;
@@ -273,17 +273,21 @@ namespace Blockchain.Services
                 var transactions = new List<Transaction>(dbService.GetTransactions().ToArray());//shallow copy, so we can keep a snapshot
                 var lbi = dbService.GetLastBlock().Index + 1;
 
-                transactions.Insert(0, new Transaction
-                {  //reward for the miner
+                //reward for the miner
+                var t = new Transaction()
+                {
                     DateCreated = DateTime.Now,
                     Fee = 0,
                     To = address,
-                    Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, t) => sum + t.Fee),
+                    Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, tr) => sum + tr.Fee),
                     From = ZERO_HASH,
                     MinedInBlockIndex = lbi,
-                    TransactionHashHex = ZERO_HASH,
                     TransferSuccessful = true
-                });
+                };
+
+                t.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(t));
+
+                transactions.Insert(0, t);
 
                 var info = new MiningBlockInfo
                 {

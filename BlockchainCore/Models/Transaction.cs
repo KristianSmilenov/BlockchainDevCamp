@@ -17,7 +17,7 @@ namespace Blockchain.Models
 
         public Transaction() { }
 
-        public Transaction(TransactionDataSigned data)
+        public Transaction(TransactionData data)
         {
             From = data.From;
             To = data.To;
@@ -25,6 +25,11 @@ namespace Blockchain.Models
             Fee = data.Fee;
             DateCreated = data.DateCreated;
             SenderPubKey = data.SenderPubKey;
+        }
+
+        public Transaction(TransactionDataSigned data)
+            : this((TransactionData)data)
+        {
             SenderSignature = data.SenderSignature;
         }
     }
