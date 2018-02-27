@@ -34,7 +34,9 @@ start dotnet Blockchain/bin/Release/netcoreapp2.0/publish/Blockchain.dll --serve
 :: Faucet:
 ::----------------------------------
 
-:: start dotnet WebFaucet/bin/Release/netcoreapp2.0/publish/WebFaucet.dll  --server.urls "http://localhost:5201" --AppSettings:PrivateKey d9811a2c1baf6a2558f8ff5fb4cc624b6f2c32bb6dea659cf68584fcd028ee36 --AppSettings:Address %faucetAddress%
+pushd WebFaucet/bin/Release/netcoreapp2.0/publish
+start dotnet WebFaucet.dll  --server.urls "http://localhost:5201" --AppSettings:PrivateKey d9811a2c1baf6a2558f8ff5fb4cc624b6f2c32bb6dea659cf68584fcd028ee36 --AppSettings:Address %faucetAddress%
+popd
 
 ::----------------------------------
 
@@ -43,7 +45,9 @@ start dotnet Blockchain/bin/Release/netcoreapp2.0/publish/Blockchain.dll --serve
 :: Block Explorer:
 ::----------------------------------
 
-:: start dotnet BlockExplorer/bin/Release/netcoreapp2.0/publish/BlockExplorer.dll --server.urls "http://localhost:5301"
+:: pushd BlockExplorer/bin/Release/netcoreapp2.0/publish/
+:: start dotnet BlockExplorer.dll --server.urls "http://localhost:5301"
+:: popd
 
 ::----------------------------------
 
@@ -52,7 +56,9 @@ start dotnet Blockchain/bin/Release/netcoreapp2.0/publish/Blockchain.dll --serve
 :: Wallet:
 ::----------------------------------
 
-:: start dotnet WebWallet/bin/Release/netcoreapp2.0/publish/WebWallet.dll --server.urls "http://localhost:5401"
+:: pushd WebWallet/bin/Release/netcoreapp2.0/publish/
+:: start dotnet WebWallet.dll --server.urls "http://localhost:5401"
+:: popd
 
 ::----------------------------------
 
