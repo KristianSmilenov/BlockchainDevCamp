@@ -98,7 +98,61 @@
         </section>
 
         <section id="accountsSection">
-            Accounts
+
+
+                <div class="container mt-3">
+                    <h5>View account</h5>
+                    <form id="accountBalanceForm" data-toggle="validator" role="form">
+                        <div class="form-group input-group  mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Address</span>
+                            </div>
+                            <input type="text" required data-error="Please enter address" id="accountBalanceAddress" class="form-control">
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        <div class="form-group input-group  mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Confirmations</span>
+                            </div>
+                            <input type="number" required data-error="Please enter confirmations number" value="6" id="accountBalanceConfirmations" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="buttonDisplayBalance" class="btn btn-outline-primary">Display balance</button>
+                        </div>
+                    </form>
+
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Confirmed</span>
+                        </div>
+                        <label id="balanceConfirmed" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Last mined</span>
+                        </div>
+                        <label id="balanceLastMined" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pending</span>
+                        </div>
+                        <label id="balancePending" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
         </section>
 
         <section id="peersMapSection">

@@ -1,9 +1,33 @@
 ﻿$(document).ready(function () {
     Date.prototype.toJSON = function () { return this.toISOString(); }
-    let activeView = "";
+    $('#buttonDisplayBalance').click(displayBalance);
 
+    let activeView = "";
+    $("#accountBalanceForm").validator();
+
+    function displayBalance() {
+        var validator = $("#accountBalanceForm").data("bs.validator");
+        validator.validate();
+        if (!validator.hasErrors()) {
+            let address = $("#accountBalanceAddress").val();
+            let nodeUrl = getNodeUrl();
+            let balanceConfirmations = $("#accountBalanceConfirmations").val();
+
+            var requestUrl = nodeUrl + '/balance/' + address + '/' + balanceConfirmations;
+            $.get(requestUrl, function (addressData) {
+                var confirmed = `${addressData.confirmedBalance.balance} coins confirmed with ${addressData.confirmedBalance.confirmations} confirmations`;
+                var lastMined = `${addressData.lastMinedBalance.balance} coins last mined with ${addressData.lastMinedBalance.confirmations} confirmations`;
+                var pending = `${addressData.pendingBalance.balance} coins pending ${addressData.pendingBalance.confirmations} confirmations`;
+
+                $("#balanceConfirmed").text(confirmed);
+                $("#balanceLastMined").text(lastMined);
+                $("#balancePending").text(pending);
+            });
+        }
+    }
+    
     function getBlocks() {
-        var url = getNodeUrl() + '/api/blocks';
+        var url = getNodeUrl() + '/blocks';
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
@@ -19,7 +43,7 @@
     }
 
     function getBlocksList() {
-        var url = getNodeUrl() + '/api/blocks';
+        var url = getNodeUrl() + '/blocks';
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
@@ -37,7 +61,7 @@
     }
 
     function getTransactions() {
-        var url = getNodeUrl() + '/api/transactions';
+        var url = getNodeUrl() + '/transactions';
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
@@ -61,7 +85,7 @@
     function getTransactionsList(filter) {
         // TODO: Fix template to show full transaction hash or allow users to copy it
 
-        var url = getNodeUrl() + '/api/transactions';
+        var url = getNodeUrl() + '/transactions';
         if (filter && filter != '') {
             url += '?status=' + filter
         }
@@ -88,7 +112,7 @@
 
     function getPeersNetwork() {
         var imagePath = "./images/pc-icon.png";
-        var url = getNodeUrl() + '/api/peers/network';
+        var url = getNodeUrl() + '/peers/network';
         $.get(url, function (rawData) {
             if (rawData.nodes.length > 0) {
                 _.each(rawData.nodes, function (node) {
@@ -111,7 +135,7 @@
     }
 
     function getNodeInfo() {
-        var url = getNodeUrl() + '/api/info';
+        var url = getNodeUrl() + '/info';
         $.get(url, function (nodeData) {
             $("#nodeAbout").text("Running on: " + nodeData.about);
             $("#nodeName").text("Connected to: " + nodeData.nodeName);
@@ -120,7 +144,7 @@
     }
 
     function getNodeUrl() {
-        return $("#blockchainNodeUrl").val();
+        return $("#blockchainNodeUrl").val() + '/api';
     }
 
     $('#buttonSearch').click(loadSearchSection);

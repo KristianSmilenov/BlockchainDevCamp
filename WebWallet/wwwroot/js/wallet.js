@@ -57,7 +57,7 @@
         validator.validate();
         if (!validator.hasErrors()) {
             let address = $("#accountBalanceAddress").val();
-            let nodeUrl = getBlockchainNodeUrl(); //$("#blockchainNodeUrl").val();
+            let nodeUrl = getBlockchainNodeUrl();
             let balanceConfirmations = $("#accountBalanceConfirmations").val();
 
             var requestUrl = nodeUrl + '/balance/' + address + '/' + balanceConfirmations;
