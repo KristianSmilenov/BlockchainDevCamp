@@ -44,40 +44,55 @@ namespace Miner
 
                 if (t == null)//nothing here, let's do some mining
                 {
-                    Console.WriteLine($"[{DateTime.Now}] Mining started, block {bi.Index}, hash: {bi.BlockDataHash}");
+                    Console.WriteLine($"[{DateTime.Now}] Mining started, block {bi.Index}, hash: {bi.BlockDataHash}, difficulty: {bi.Difficulty}");
                     t = MineAsync(bi.BlockDataHash, bi.Difficulty);
+                    lastBlockInfo = bi;
                 }
                 else if (t.IsCompleted) //we're done, let's get some $$
                 {
-                    Console.WriteLine($"F[{DateTime.Now}] ound a result for block {bi.Index}, awaiting payment :)");
-                    SubmitMinedBlockInfo(myAddress, t.Result.Item1, t.Result.Item2);
+                    if (SubmitMinedBlockInfo(myAddress, t.Result.Item1, t.Result.Item2, lastBlockInfo.BlockDataHash))
+                    {
+                        Console.WriteLine($"[{DateTime.Now}] Found a result for block {bi.Index}, $$ is on the way");
+                    }
+
                     t = null;
                 }
-                else if (lastBlockInfo.BlockDataHash != bi.BlockDataHash)//new block, let's cancel and start mining it
-                {
-                    Console.WriteLine($"[{DateTime.Now}] New block suggested, ditching the old one and starting the new one");
+                else if (lastBlockInfo.BlockDataHash != bi.BlockDataHash && lastBlockInfo.Transactions[0].Value < bi.Transactions[0].Value)
+                {//new block, let's cancel and start mining it
+                    Console.WriteLine($"[{DateTime.Now}] New block has higher reward, ditching the old one and starting the new one");
                     t = null;
                 }
                 else //same block, and we're still mining, so will sit for a second and see what comes next;
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(10000);
                 }
-
-                lastBlockInfo = bi;
             }
         }
 
-        static void SubmitMinedBlockInfo(string myAddress, ulong nonce, DateTime dateCreated)
+        static bool SubmitMinedBlockInfo(string myAddress, ulong nonce, DateTime dateCreated, string blockHash)
         {
-            var p = new Parameter() { Name = "address", Value = myAddress, Type = ParameterType.UrlSegment };
-
             var body = new MinedBlockInfoRequest
             {
                 DateCreated = dateCreated,
-                Nonce = nonce
+                Nonce = nonce,
+                BlockDataHash = blockHash
             };
 
-            HttpUtils.DoApiPost<MinedBlockInfoRequest, SubmitBlockResponse>(url, "api/mining/submit-block/{address}", body, p);
+            var res = HttpUtils.DoApiPost<MinedBlockInfoRequest, SubmitBlockResponse>(url, "api/mining/submit-block/", body);
+
+            if (res == null)
+            {
+                Console.WriteLine($"[{DateTime.Now}] Error occured while trying to call the node API..");
+                return false;
+            }
+
+            if (res.Status == BlockResponseStatus.Error)
+            {
+                Console.WriteLine($"[{DateTime.Now}] New block has higher reward, ditching the old one and starting the new one");
+                return false;
+            }
+
+            return true;
         }
 
         static MiningBlockInfoResponse GetLatestBlockInfo(string address)
