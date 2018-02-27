@@ -73,12 +73,14 @@
         }
     }
 
+    $("#successAlert").hide();
+    $("#errorAlert").hide();
     function signTransaction() {
         var validator = $("#sendTransactionForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
             let address = $("#sendTransactionAddress").val();
-            let nodeUrl = getBlockchainNodeUrl(); //$("#transactionNodeUrl").val();
+            let nodeUrl = getBlockchainNodeUrl();
             let recipient = $("#transactionRecipient").val();
             let value = $('#transactionValue').val();
 
@@ -94,8 +96,8 @@
                     to: recipient,
                     value: parseInt(value),
                     fee: 2,
-                    senderPubKey: sessionStorage.getItem("publicKey"),
-                    dateCreated: new Date()
+                    dateCreated: new Date(),
+                    senderPubKey: sessionStorage.getItem("publicKey")
                 }
 
                 let sha256 = new Hashes.SHA256();
@@ -114,14 +116,30 @@
                     data: JSON.stringify(dataToSign),
                     contentType: "application/json",
                     success: function (data) {
-                        alert(data.isValid);
+                        if (data.isValid) {
+                            $("#successAlertMessage").text("Transaction send successfully.");
+                            $("#successAlert").fadeTo(2000, 500).slideUp(500, function () {
+                                $("#successAlert").slideUp(500);
+                            });
+                        } else {
+                            showSignTransactionError(data);
+                        }
                     },
-                    error: function (err) {
-                        alert(JSON.parse(err));
+                    error: function (data) {
+                        showSignTransactionError(data);
                     }
                 })
             }
         }
+    }
+
+    function showSignTransactionError(data) {
+        if (data.errorMessage) {
+            $("#errorAlertMessage").text(data.errorMessage);
+        }
+        $("#errorAlert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#errorAlert").slideUp(500);
+        });
     }
 
     function toHexString(byteArray) {

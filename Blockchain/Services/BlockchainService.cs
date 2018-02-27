@@ -72,7 +72,7 @@ namespace Blockchain.Services
 
         public List<MinedBlockInfoResponse> GetBlocks()
         {
-            return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b));
+            return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b)).OrderByDescending(b=>b.DateCreated).ToList();
         }
 
         public MinedBlockInfoResponse GetBlock(int index)
@@ -114,11 +114,11 @@ namespace Blockchain.Services
                         {
                             acc.AddRange(b.Transactions);
                             return acc;
-                        });
+                        }).OrderByDescending(t=>t.DateCreated).ToList();
 
                 case "pending":
                 default:
-                    return dbService.GetTransactions().ToList();
+                    return dbService.GetTransactions().OrderByDescending(t=>t.DateCreated).ToList();
             }
         }
 
@@ -148,7 +148,7 @@ namespace Blockchain.Services
             {
                 return new TransactionHashInfo
                 {
-                    IsValid = isValidTransaction,
+                    IsValid = false,
                     ErrorMessage = $"Not enough funds. Available funds: {bal}, required funds: {signedData.Value} + {signedData.Fee} for the fee",
                     DateReceived = dateReceived,
                     TransactionHash = ""

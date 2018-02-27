@@ -51,6 +51,10 @@
                     d.dateCreated = timeAgoString;
                     var blockHashLabel = d.blockHash.substring(0, 25) + '...';
                     d.blockHashLabel = blockHashLabel;
+                    var previousBlockHashLabel = d.previousBlockHash.substring(0, 25) + '...';
+                    d.previousBlockHashLabel = previousBlockHashLabel;
+                    var minedByLabel = d.minedBy.substring(0, 25) + '...';
+                    d.minedByLabel = minedByLabel;
                 });
 
                 var templateData = { target: rawData };
@@ -86,7 +90,7 @@
         // TODO: Fix template to show full transaction hash or allow users to copy it
 
         var url = getNodeUrl() + '/transactions';
-        if (filter && filter != '') {
+        if (filter && filter !== '') {
             url += '?status=' + filter
         }
 
@@ -152,10 +156,10 @@
         showView("searchResultsSection");
         $("#searchResultsPlaceHolder").text("No data found.");
         var searchText = $("#searchBox").val();
-        if (searchText.length == 0)
+        if (searchText.length === 0)
             return;
 
-        var transactionUrl = getNodeUrl() + '/api/transactions/' + searchText;
+        var transactionUrl = getNodeUrl() + '/transactions/' + searchText;
         $.get(transactionUrl, function (data) {
             setSearchResultData(data, 'transaction');
         }).fail(function () {
@@ -164,7 +168,7 @@
     }
 
     function tryGetWalletInfo(searchText) {
-        var walletInfoUrl = getNodeUrl() + '/api/balance/' + searchText;
+        var walletInfoUrl = getNodeUrl() + '/balance/' + searchText;
         $.get(walletInfoUrl, function (data) {
             setSearchResultData(data, 'wallet');
         }).fail(function () {
@@ -175,7 +179,7 @@
     function tryGetBlockInfo(searchText) {
         if (!isNaN(searchText)) {
             var blockIndex = parseInt(searchText)
-            var urlGetBlock = getNodeUrl() + '/api/blocks/' + blockIndex;
+            var urlGetBlock = getNodeUrl() + '/blocks/' + blockIndex;
             $.get(urlGetBlock, function (data) {
                 setSearchResultData(data, 'block');
             });
@@ -183,8 +187,7 @@
     }
 
     function setSearchResultData(data, type) {
-        //TODO: render template
-        $("#searchResultsPlaceHolder").text(JSON.stringify(data, undefined, 2));
+        $("#searchResultsPlaceHolder").html(JSON.stringify(data, undefined, 2));
     }
 
     $("#blockchainNodeForm").validator();
@@ -271,6 +274,8 @@
             'peersMapSection': loadPeersMapSection
         }
         //this will repeat every 5 seconds
-        refreshViewMap[activeView]();
+        if (refreshViewMap[activeView]) {
+            refreshViewMap[activeView]();
+        }
     }
 });
