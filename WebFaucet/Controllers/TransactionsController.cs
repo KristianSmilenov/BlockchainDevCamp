@@ -19,33 +19,18 @@ namespace WebFaucet
     {
         protected readonly IDBService _dbService;
         
-        private AppSettings appSettings;
+        private AppSettings _appSettings;
 
         public TransactionsController(IOptions<AppSettings> appSettings, IDBService dbService)
         {
-            this.appSettings = appSettings.Value;
+            _appSettings = appSettings.Value;
             _dbService = dbService ?? throw new ArgumentNullException(nameof(dbService));
-        }
-
-        private bool ShouldSendCoins(string address)
-        {
-            TransactionHistory addressHistory;
-            var hasSentCoins = _dbService.TryGetValue(address, out addressHistory);
-            if(hasSentCoins)
-            {
-                if(addressHistory.DateReceived.AddHours(1) < DateTime.UtcNow)
-                {
-                    return true;
-                }
-                return false;
-            }
-            return true;
         }
 
         [HttpPost]
         public TransactionHashInfo Post([FromBody]TransactionModel request)
         {
-            if(!ShouldSendCoins(request.RecipientAddress))
+            if (!ShouldSendCoins(request.RecipientAddress))
             {
                 return new TransactionHashInfo()
                 {
@@ -54,28 +39,28 @@ namespace WebFaucet
                 };
             }
 
-            var privateKey = CryptoUtils.HexToByteArray(appSettings.PrivateKey);
+            if (request.Value > _appSettings.MaxAddressDonationPerHour)
+            {
+                return new TransactionHashInfo()
+                {
+                    IsValid = false,
+                    ErrorMessage = String.Format("User cannot receive more than {0} coins per hour.", _appSettings.MaxAddressDonationPerHour)
+                };
+            }
+
+            var privateKey = CryptoUtils.HexToByteArray(_appSettings.PrivateKey);
             var publicKey = CryptoUtils.GetPublicFor(privateKey);
             var date = DateTime.UtcNow;
-
-            var dataToSign = new TransactionData
-            {
-                From = appSettings.FaucetAddress,
-                To = request.RecipientAddress,
-                Value = request.Value,
-                Fee = 0,
-                SenderPubKey = CryptoUtils.ByteArrayToHex(publicKey),
-                DateCreated = date
-            };
+            TransactionData dataToSign = GetDataToSign(request, publicKey, date);
 
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(dataToSign);
             var msgHash = CryptoUtils.GetSha256Bytes(json);
             var signedMessage = CryptoUtils.BouncyCastleSign(msgHash, privateKey);
 
             // send http request to node
-            var d = new TransactionDataSigned
+            var signedTransactionData = new TransactionDataSigned
             {
-                From = appSettings.FaucetAddress,
+                From = _appSettings.FaucetAddress,
                 To = request.RecipientAddress,
                 Value = request.Value,
                 Fee = 0,
@@ -84,8 +69,8 @@ namespace WebFaucet
                 SenderSignature = CryptoUtils.ByteArrayToHex(signedMessage)
             };
 
-            var res = HttpUtils.DoApiPost<TransactionDataSigned, TransactionHashInfo>(request.NodeUrl, "api/transactions", d);
-            if(res.IsValid)
+            var res = HttpUtils.DoApiPost<TransactionDataSigned, TransactionHashInfo>(request.NodeUrl, "api/transactions", signedTransactionData);
+            if (res.IsValid)
             {
                 // add transaction record with limits
                 var recordHistory = new TransactionHistory
@@ -97,6 +82,34 @@ namespace WebFaucet
                 _dbService.Add(request.RecipientAddress, recordHistory);
             }
             return res;
+        }
+
+        private TransactionData GetDataToSign(TransactionModel request, byte[] publicKey, DateTime date)
+        {
+            return new TransactionData
+            {
+                From = _appSettings.FaucetAddress,
+                To = request.RecipientAddress,
+                Value = request.Value,
+                Fee = 0,
+                SenderPubKey = CryptoUtils.ByteArrayToHex(publicKey),
+                DateCreated = date
+            };
+        }
+
+        private bool ShouldSendCoins(string address)
+        {
+            TransactionHistory addressHistory;
+            var hasSentCoins = _dbService.TryGetValue(address, out addressHistory);
+            if (hasSentCoins)
+            {
+                if (addressHistory.DateReceived.AddHours(1) < DateTime.UtcNow)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return true;
         }
     }
 }

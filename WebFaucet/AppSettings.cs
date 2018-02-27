@@ -9,5 +9,6 @@ namespace WebFaucet
     {
         public string PrivateKey { get; set; }
         public string FaucetAddress { get; set; }
+        public int MaxAddressDonationPerHour { get; set; }
     }
 }

@@ -23,7 +23,7 @@ $(document).ready(function () {
         var validator = $("#blockchainNodeForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
-            $("#faucetConfiguration").toggle();
+            $("#faucetConfiguration").collapse('hide');
         }
     }
 
@@ -55,7 +55,6 @@ $(document).ready(function () {
                 $("#recaptchaError").text("Please validate captcha");
                 return;
             }
-
             let value = parseInt($("#transactionValue").val());
             let recipient = $("#transactionRecipient").val();
             let nodeUrl = getNodeUrl();
