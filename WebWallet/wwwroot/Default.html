@@ -9,24 +9,49 @@
 </head>
 <body>
     <div class="container body-content">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="create-wallet-tab" data-toggle="tab" href="#create-wallet" role="tab">Create Wallet</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="exisiting-wallet-tab" data-toggle="tab" href="#exisiting-wallet" role="tab">Open Existing Wallet</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="account-balance-tab" data-toggle="tab" href="#account-balance" role="tab">Account Balance</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="send-transaction-tab" data-toggle="tab" href="#send-transaction" role="tab">Send Transaction</a>
-            </li>
-        </ul>
-        <div class="tab-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" data-toggle="collapse" href="#explorerConfiguration" style="cursor: pointer">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>Blockchain Wallet
+            </a>
 
-            <div class="tab-pane fade show active" id="create-wallet" role="tabpanel" aria-labelledby="create-wallet-tab">
-                <h2 class="mt-2">Create new wallet</h2>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonCreateWalletView">Create Wallet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonOpenWalletView">Open Wallet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonAccountBalanceView">Account Balance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="buttonSendTransactionView">Send Transaction</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="collapse" id="explorerConfiguration">
+            <div class="card card-body">
+                <form id="blockchainNodeForm" data-toggle="validator" role="form">
+                    <div class="input-group input-group-sm">
+                        <div class="form-group input-group mb-3">
+                            <div class="input-group-prepend"><span class="input-group-text">Blockchain Node</span></div>
+                            <input type="text" required data-error="Please enter node url" id="blockchainNodeUrl" class="form-control" value="http://localhost:5000">
+                            <div class="help-block with-errors"></div>
+                            <button type="button" id="buttonSetNodeUrl" class="btn btn-outline-dark">Connect to Node</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <section id="loadingBox">Loading ...</section>
+
+        <section id="createWalletSection">
+            <div class="container mt-3">
+                <h5>Create new wallet</h5>
                 <p>Generate a new wallet (secp256k1 curve): random private key -> public key -> address</p>
                 <div class="mb-3">
                     <button type="button" id="buttonCreateNewWallet" class="btn btn-primary">Create new wallet</button>
@@ -50,9 +75,11 @@
                     <label id="addressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
+        </section>
 
-            <div class="tab-pane fade" id="exisiting-wallet" role="tabpanel" aria-labelledby="exisiting-wallet-tab">
-                <h2 class="mt-2">Open an existing wallet</h2>
+        <section id="openWalletSection">
+            <div class="container mt-3">
+                <h5>Open existing wallet</h5>
                 <p>Enter your private key (compressed ECDSA key, 65 hex digits)</p>
 
                 <form id="openWalletForm" data-toggle="validator" role="form">
@@ -87,16 +114,12 @@
                     <label id="restoredAddressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
+        </section>
 
-            <div class="tab-pane fade" id="account-balance" role="tabpanel" aria-labelledby="account-balance-tab">
-                <h2 class="mt-2">View account balance</h2>
-
+        <section id="viewAccountSection">
+            <div class="container mt-3">
+                <h5>View account</h5>
                 <form id="accountBalanceForm" data-toggle="validator" role="form">
-                    <div class="form-group input-group mb-3">
-                        <div class="input-group-prepend"><span class="input-group-text">Blockchain Node</span></div>
-                        <input type="text" required data-error="Please enter node url" id="blockchainNodeUrl" class="form-control" value="http://localhost:5000/api">
-                        <div class="help-block with-errors"></div>
-                    </div>
                     <div class="form-group input-group  mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Address</span>
@@ -135,16 +158,12 @@
                     <label id="balancePending" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
+        </section>
 
-            <div class="tab-pane fade" id="send-transaction" role="tabpanel" aria-labelledby="send-transaction-tab">
-                <h2 class="mt-2">Send transaction</h2>
-
+        <section id="sendTransactionSection">
+            <div class="container mt-3">
+                <h5>Send transaction</h5>
                 <form id="sendTransactionForm" data-toggle="validator" role="form">
-                    <div class="form-group input-group mb-3">
-                        <div class="input-group-prepend"><span class="input-group-text">Blockchain Node</span></div>
-                        <input type="text" required data-error="Please enter node url" id="transactionNodeUrl" class="form-control" value="http://localhost:5000/api">
-                        <div class="help-block with-errors"></div>
-                    </div>
                     <div class="form-group input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Address</span>
@@ -172,25 +191,8 @@
                         <button type="button" id="buttonSignTransaction" class="btn btn-primary">Sign transaction</button>
                     </div>
                 </form>
-
-                
-                <!--<div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Recipient</span>
-                    </div>
-                    <input type="text" id="transactionRecipient" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                </div>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Value</span>
-                    </div>
-                    <input type="text" id="transactionValue" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                </div>-->
-                <!--<div class="mb-3">
-                    <button type="button" id="buttonSignTransaction" class="btn btn-primary">Sign transaction</button>
-                </div>-->
             </div>
-        </div>
+        </section>
 
         <hr />
         <footer>

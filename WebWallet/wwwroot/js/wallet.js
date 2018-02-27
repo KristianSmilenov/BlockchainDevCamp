@@ -8,6 +8,12 @@
     $('#buttonOpenWallet').click(openWallet);
     $('#buttonDisplayBalance').click(displayBalance);
     $('#buttonSignTransaction').click(signTransaction);
+    $('#buttonSetNodeUrl').click(updateBlockchainNodeUrl);
+
+    $("#openWalletForm").validator();
+    $("#blockchainNodeForm").validator();
+    $("#accountBalanceForm").validator();
+    $("#sendTransactionForm").validator();
 
     function createNewWallet() {
         let ec = new elliptic.ec('secp256k1');
@@ -24,7 +30,6 @@
         //let publicKeyCompressed = compressPublicKey(keyPair.getPublic());
     }
 
-    $("#openWalletForm").validator();
     function openWallet() {
         var validator = $("#openWalletForm").data("bs.validator");
         validator.validate();
@@ -39,13 +44,20 @@
         }
     }
 
-    $("#accountBalanceForm").validator();
+    function updateBlockchainNodeUrl() {
+        var validator = $("#blockchainNodeForm").data("bs.validator");
+        validator.validate();
+        if (!validator.hasErrors()) {
+            $("#explorerConfiguration").toggle();
+        }
+    }
+
     function displayBalance() {
         var validator = $("#accountBalanceForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
             let address = $("#accountBalanceAddress").val();
-            let nodeUrl = $("#blockchainNodeUrl").val();
+            let nodeUrl = getBlockchainNodeUrl(); //$("#blockchainNodeUrl").val();
             let balanceConfirmations = $("#accountBalanceConfirmations").val();
 
             var requestUrl = nodeUrl + '/balance/' + address + '/' + balanceConfirmations;
@@ -61,13 +73,12 @@
         }
     }
 
-    $("#sendTransactionForm").validator();
     function signTransaction() {
         var validator = $("#sendTransactionForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
             let address = $("#sendTransactionAddress").val();
-            let nodeUrl = $("#transactionNodeUrl").val();
+            let nodeUrl = getBlockchainNodeUrl(); //$("#transactionNodeUrl").val();
             let recipient = $("#transactionRecipient").val();
             let value = $('#transactionValue').val();
 
@@ -142,8 +153,44 @@
         return { privateKey: privateKey, publicKey: pubKey, address: walletAddress };
     }
 
+    function getBlockchainNodeUrl() {
+        return $("#blockchainNodeUrl").val() + '/api';
+    }
+
     function updateWalletAddressFields(address) {
         $("#sendTransactionAddress").val(address);
         $("#accountBalanceAddress").val(address);
     }
+
+    $('#buttonCreateWalletView').click(showCreateWalletView);
+    function showCreateWalletView() {
+        showView("createWalletSection");
+        $(this).parent().addClass("active");
+    }
+
+    $('#buttonOpenWalletView').click(showExistingWalletView);
+    function showExistingWalletView() {
+        showView("openWalletSection");
+        $(this).parent().addClass("active");
+    }
+
+    $('#buttonAccountBalanceView').click(showAccountView);
+    function showAccountView() {
+        showView("viewAccountSection");
+        $(this).parent().addClass("active");
+    }
+
+    $('#buttonSendTransactionView').click(showSendTransactionView);
+    function showSendTransactionView() {
+        showView("sendTransactionSection");
+        $(this).parent().addClass("active");
+    }
+
+    function showView(viewName) {
+        activeView = viewName;
+        $('li.nav-item').removeClass("active");
+        $('section').hide();
+        $('#' + viewName).show();
+    }
+    $('#buttonCreateWalletView').click();
 });
