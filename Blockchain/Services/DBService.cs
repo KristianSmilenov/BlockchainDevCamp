@@ -1,5 +1,6 @@
 ﻿using Blockchain.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,10 +9,15 @@ namespace Blockchain.Services
     public class DBService : IDBService
     {
         static private Dictionary<string, object> dictionary = new Dictionary<string, object>();
-        static private List<MinedBlockInfo> allBlocks = new List<MinedBlockInfo>();
+        static private ConcurrentDictionary<int, MinedBlockInfo> allBlocks = new ConcurrentDictionary<int, MinedBlockInfo>();
         static private List<Transaction> allTransactions = new List<Transaction>();
         static private List<Peer> allPeers = new List<Peer>();
         static private Dictionary<string, MiningBlockInfo> allBlockInfos = new Dictionary<string, MiningBlockInfo>();
+
+        public object GetTransactionsLockObject()
+        {
+            return allTransactions;
+        }
 
         public T Get<T>(string key)
         {
@@ -37,17 +43,19 @@ namespace Blockchain.Services
 
         public MinedBlockInfo GetLastBlock()
         {
-            return allBlocks.Last();
+            var keys = allBlocks.Keys.ToList();
+            keys.Sort();
+            return allBlocks[keys.Last()];
         }
 
         public List<MinedBlockInfo> GetAllBlocks()
         {
-            return allBlocks;
+            return allBlocks.Values.ToList();
         }
 
-        public void AddBlock(MinedBlockInfo block)
+        public bool TryAddBlock(MinedBlockInfo block)
         {
-            allBlocks.Add(block);
+            return allBlocks.TryAdd(block.Index, block);
         }
 
         public List<Transaction> GetTransactions()

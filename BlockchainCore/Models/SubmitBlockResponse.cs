@@ -7,8 +7,8 @@ namespace Blockchain.Models
 {
     public class SubmitBlockResponse
     {
-        public BlockResponseStatus Status;
-        public string Message;
+        public BlockResponseStatus Status { get; set; }
+        public string Message { get; set; }
     }
 
     public enum BlockResponseStatus

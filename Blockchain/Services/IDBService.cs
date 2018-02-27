@@ -8,6 +8,8 @@ namespace Blockchain.Services
 {
     public interface IDBService
     {
+        object GetTransactionsLockObject();
+
         T Get<T>(string key);
         void Set(string key, object value);
         void Remove(string key);
@@ -18,7 +20,7 @@ namespace Blockchain.Services
 
         MinedBlockInfo GetLastBlock();
         List<MinedBlockInfo> GetAllBlocks();
-        void AddBlock(MinedBlockInfo block);
+        bool TryAddBlock(MinedBlockInfo block);
 
         List<Transaction> GetTransactions();
         void AddTransaction(Transaction transaction);

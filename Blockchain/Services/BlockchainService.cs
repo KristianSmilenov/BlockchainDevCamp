@@ -40,7 +40,7 @@ namespace Blockchain.Services
                 MinedInBlockIndex = 0                
             });
 
-            dbService.AddBlock(
+            dbService.TryAddBlock(
                 new MinedBlockInfo
                 {
                     Difficulty = appSettings.Difficulty,
@@ -224,6 +224,9 @@ namespace Blockchain.Services
                 return sum;
             });
 
+            res.LastMinedBalance.Balance += res.ConfirmedBalance.Balance;
+            res.PendingBalance.Balance += res.LastMinedBalance.Balance;
+
             return res;
         }
 
@@ -258,66 +261,89 @@ namespace Blockchain.Services
 
         public MiningBlockInfo GetMiningBlockInfo(string address)
         {
-            var transactions = new List<Transaction>(dbService.GetTransactions().ToArray());//shallow copy, so we can keep a snapshot
-
-            transactions.Insert(0, new Transaction
-            {  //reward for the miner
-                DateCreated = DateTime.Now,
-                Fee = 0,
-                To = address,
-                Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, t) => sum + t.Fee)
-            });
-
-            var info = new MiningBlockInfo
+            lock (dbService.GetTransactionsLockObject())
             {
-                Difficulty = appSettings.Difficulty,
-                Index = dbService.GetLastBlock().Index + 1,
-                MinedBy = address,
-                PreviousBlockHash = dbService.GetLastBlock().BlockHash,
-                Transactions = transactions
-            };
+                var transactions = new List<Transaction>(dbService.GetTransactions().ToArray());//shallow copy, so we can keep a snapshot
 
-            dbService.AddMiningInfo(info);
+                transactions.Insert(0, new Transaction
+                {  //reward for the miner
+                    DateCreated = DateTime.Now,
+                    Fee = 0,
+                    To = address,
+                    Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, t) => sum + t.Fee)
+                });
 
-            return MiningBlockInfoResponse.FromMiningBlockInfo(info);
+                var info = new MiningBlockInfo
+                {
+                    Difficulty = appSettings.Difficulty,
+                    Index = dbService.GetLastBlock().Index + 1,
+                    MinedBy = address,
+                    PreviousBlockHash = dbService.GetLastBlock().BlockHash,
+                    Transactions = transactions
+                };
+
+                dbService.AddMiningInfo(info);
+
+                return MiningBlockInfoResponse.FromMiningBlockInfo(info);
+            }
         }
 
         public SubmitBlockResponse SubmitBlockInfo(MinedBlockInfoRequest data)
         {
-            var info = dbService.GetMiningInfo(data.BlockDataHash);
-            if (null == info)
+            lock (dbService.GetTransactionsLockObject())
             {
-                return new SubmitBlockResponse
+                var info = dbService.GetMiningInfo(data.BlockDataHash);
+                if (null == info)
                 {
-                    Status = BlockResponseStatus.Error,
-                    Message = "Wrong address!"
-                };
-            }
+                    return new SubmitBlockResponse
+                    {
+                        Status = BlockResponseStatus.Error,
+                        Message = "Wrong block hash!"
+                    };
+                }
 
-            var mbi = new MinedBlockInfo(info)
-            {
-                Nonce = data.Nonce,
-                DateCreated = data.DateCreated,
-            };
-
-            if (mbi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
-            {
-                dbService.AddBlock(mbi);
-
-                return new SubmitBlockResponse
+                var mbi = new MinedBlockInfo(info)
                 {
-                    Status = BlockResponseStatus.Success,
-                    Message = $"Block is valid"
+                    Nonce = data.Nonce,
+                    DateCreated = data.DateCreated,
                 };
-            }
-            else
-            {
-                return new SubmitBlockResponse
+
+                if (mbi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
                 {
-                    Status = BlockResponseStatus.Error,
-                    Message = $"Hash must start with {appSettings.Difficulty} zeroes"
-                };
-            }
+                    var success = dbService.TryAddBlock(mbi);
+
+                    if (!success)
+                    {
+                        return new SubmitBlockResponse
+                        {
+                            Status = BlockResponseStatus.Error,
+                            Message = "Old block! Someone mined it already"
+                        };
+                    }
+
+                    //UPDATE transactions in the block.
+                    mbi.Transactions.ForEach(t =>
+                    {
+                        t.MinedInBlockIndex = info.Index;
+                        t.TransferSuccessful = true;
+                        dbService.RemoveTransaction(t);
+                    });
+
+                    return new SubmitBlockResponse
+                    {
+                        Status = BlockResponseStatus.Success,
+                        Message = $"Block is valid"
+                    };
+                }
+                else
+                {
+                    return new SubmitBlockResponse
+                    {
+                        Status = BlockResponseStatus.Error,
+                        Message = $"Hash must start with {appSettings.Difficulty} zeroes"
+                    };
+                }
+            }            
         }
     }
 }

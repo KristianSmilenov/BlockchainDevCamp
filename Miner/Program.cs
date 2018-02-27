@@ -52,19 +52,24 @@ namespace Miner
                 {
                     if (SubmitMinedBlockInfo(myAddress, t.Result.Item1, t.Result.Item2, lastBlockInfo.BlockDataHash))
                     {
-                        Console.WriteLine($"[{DateTime.Now}] Found a result for block {bi.Index}, $$ is on the way");
+                        Console.WriteLine($"[{DateTime.Now}] Found a result for block {lastBlockInfo.Index}, $$ is on the way");
                     }
 
                     t = null;
                 }
+                else if (lastBlockInfo.Index < bi.Index)
+                {//new block, start mining it
+                    Console.WriteLine($"[{DateTime.Now}] New block, ditching the old one and starting the new one");
+                    t = null;
+                }
                 else if (lastBlockInfo.BlockDataHash != bi.BlockDataHash && lastBlockInfo.Transactions[0].Value < bi.Transactions[0].Value)
-                {//new block, let's cancel and start mining it
-                    Console.WriteLine($"[{DateTime.Now}] New block has higher reward, ditching the old one and starting the new one");
+                {//better reward, let's cancel and start mining again
+                    Console.WriteLine($"[{DateTime.Now}] Higher reward, ditching the old job and starting the new one");
                     t = null;
                 }
                 else //same block, and we're still mining, so will sit for a second and see what comes next;
                 {
-                    await Task.Delay(10000);
+                    await Task.Delay(1000);
                 }
             }
         }
@@ -79,7 +84,6 @@ namespace Miner
             };
 
             var res = HttpUtils.DoApiPost<MinedBlockInfoRequest, SubmitBlockResponse>(url, "api/mining/submit-block/", body);
-
             if (res == null)
             {
                 Console.WriteLine($"[{DateTime.Now}] Error occured while trying to call the node API..");
@@ -88,7 +92,7 @@ namespace Miner
 
             if (res.Status == BlockResponseStatus.Error)
             {
-                Console.WriteLine($"[{DateTime.Now}] New block has higher reward, ditching the old one and starting the new one");
+                Console.WriteLine($"Error {res.Message}");
                 return false;
             }
 
