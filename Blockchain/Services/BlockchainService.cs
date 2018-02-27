@@ -173,19 +173,19 @@ namespace Blockchain.Services
         public Balance GetBalance(string address, int confirmations)
         {
             var blocks = dbService.GetAllBlocks();
-            var lastBlockIndex = blocks.Last().Index;
+            var lastBlockIndex = dbService.GetLastBlock().Index;
 
             var res = new Balance {
                 Address = address,
-                ConfirmedBalance = new BalanceInfo { Balance = 0, Confirmations = 0},
-                LastMinedBalance = new BalanceInfo { Balance = 0, Confirmations = 0 },
+                ConfirmedBalance = new BalanceInfo { Balance = 0, Confirmations = int.MaxValue },
+                LastMinedBalance = new BalanceInfo { Balance = 0, Confirmations = int.MaxValue },
                 PendingBalance = new BalanceInfo { Balance = 0, Confirmations = 0 }
             };
 
             foreach (var block in blocks)
             {
                 BalanceInfo bal;
-                if (lastBlockIndex - confirmations <= block.Index + 1)
+                if (lastBlockIndex - block.Index + 1 >= confirmations)
                 {
                     bal = res.ConfirmedBalance;
                 }
@@ -198,12 +198,12 @@ namespace Blockchain.Services
                     if (val.From == address)
                     {
                         sum -= val.Value + val.Fee;
-                        bal.Confirmations = lastBlockIndex - block.Index;
+                        bal.Confirmations = Math.Min(bal.Confirmations, lastBlockIndex - block.Index + 1);
                     }
                     else if (val.To == address)
                     {
                         sum += val.Value + val.Fee;
-                        bal.Confirmations = lastBlockIndex - block.Index;
+                        bal.Confirmations = Math.Min(bal.Confirmations, lastBlockIndex - block.Index + 1);
                     }
 
                     return sum;
