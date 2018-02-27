@@ -10,24 +10,24 @@ namespace Blockchain.Models
     [Serializable]
     public class TransactionData
     {
-        [JsonProperty(PropertyName = "from")]
-        public string From;
+        [JsonProperty(PropertyName = "from", Order = 1)]
+        public string From { get; set; }
 
-        [JsonProperty(PropertyName = "to")]
-        public string To;
+        [JsonProperty(PropertyName = "to", Order = 2)]
+        public string To { get; set; }
 
-        [JsonProperty(PropertyName = "value")]
-        public int Value;
+        [JsonProperty(PropertyName = "value", Order = 3)]
+        public int Value { get; set; }
 
-        [JsonProperty(PropertyName = "fee")]
-        public int Fee;
-
-        [JsonProperty(PropertyName = "senderPubKey")]
-        public string SenderPubKey;
+        [JsonProperty(PropertyName = "fee", Order = 4)]
+        public int Fee { get; set; }
 
         [JsonConverter(typeof(DateTimeJsonFormatter))]
-        [JsonProperty(PropertyName = "dateCreated")]
-        public DateTime DateCreated;
+        [JsonProperty(PropertyName = "dateCreated", Order = 5)]
+        public DateTime DateCreated { get; set; }
+
+        [JsonProperty(PropertyName = "senderPubKey", Order = 6)]
+        public string SenderPubKey { get; set; }
 
         public TransactionData() { }
 

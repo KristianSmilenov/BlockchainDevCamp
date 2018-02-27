@@ -7,7 +7,13 @@ namespace Blockchain.Models
 {
     public class SubmitBlockResponse
     {
-        public string Status;
+        public BlockResponseStatus Status;
         public string Message;
+    }
+
+    public enum BlockResponseStatus
+    {
+        Success,
+        Error
     }
 }
