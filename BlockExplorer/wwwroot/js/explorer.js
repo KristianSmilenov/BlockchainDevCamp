@@ -69,13 +69,13 @@
         $.get(url, function (rawData) {
             if (rawData.length > 0) {
                 _.each(rawData, function (d) {
-                    var timeAgoString = moment(d.dateCreated).fromNow();
+                    var timeAgoString = moment(d.dateCreated || new Date()).fromNow();
                     d.dateCreated = timeAgoString;
-                    var fromLabel = d.from.substring(0, 10) + '...';
+                    var fromLabel = (d.from || "").substring(0, 10) + '...';
                     d.fromLabel = fromLabel;
-                    var toLabel = d.to.substring(0, 10) + '...';
+                    var toLabel = (d.to || "").substring(0, 10) + '...';
                     d.toLabel = toLabel;
-                    var transactionHashLabel = d.transactionHashHex.substring(0, 10) + '...';
+                    var transactionHashLabel = (d.transactionHashHex || "").substring(0, 10) + '...';
                     d.transactionHashLabel = transactionHashLabel;
                 });
 
