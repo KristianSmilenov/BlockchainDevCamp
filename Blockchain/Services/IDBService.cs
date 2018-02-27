@@ -12,6 +12,10 @@ namespace Blockchain.Services
         void Set(string key, object value);
         void Remove(string key);
 
+        MiningBlockInfo GetMiningInfo(string blockDataHash);
+        void AddMiningInfo(MiningBlockInfo info);
+        void PurgeMiningInfos(int beforeBlockIndex);
+
         MinedBlockInfo GetLastBlock();
         List<MinedBlockInfo> GetAllBlocks();
         void AddBlock(MinedBlockInfo block);

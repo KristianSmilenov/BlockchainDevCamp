@@ -37,6 +37,6 @@ namespace Blockchain.Services
          * Mining calcuations
          */
         MiningBlockInfo GetMiningBlockInfo(string address);
-        SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfoRequest data);
+        SubmitBlockResponse SubmitBlockInfo(MinedBlockInfoRequest data);
     }
 }

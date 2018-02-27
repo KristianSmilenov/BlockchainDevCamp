@@ -11,6 +11,7 @@ namespace Blockchain.Services
         static private List<MinedBlockInfo> allBlocks = new List<MinedBlockInfo>();
         static private List<Transaction> allTransactions = new List<Transaction>();
         static private List<Peer> allPeers = new List<Peer>();
+        static private Dictionary<string, MiningBlockInfo> allBlockInfos = new Dictionary<string, MiningBlockInfo>();
 
         public T Get<T>(string key)
         {
@@ -78,6 +79,23 @@ namespace Blockchain.Services
         {
             if (!allPeers.Contains(peer))
                 allPeers.Add(peer);
+        }
+
+        public MiningBlockInfo GetMiningInfo(string blockDataHash)
+        {
+            return allBlockInfos.GetValueOrDefault(blockDataHash);
+        }
+
+        public void AddMiningInfo(MiningBlockInfo info)
+        {
+            allBlockInfos.TryAdd(info.BlockDataHash, info);
+        }
+
+        public void PurgeMiningInfos(int beforeBlockIndex)
+        {
+            allBlockInfos
+                .Where(b => b.Value.Index < beforeBlockIndex).ToList()
+                .ForEach(i => allBlockInfos.Remove(i.Key));
         }
     }
 }

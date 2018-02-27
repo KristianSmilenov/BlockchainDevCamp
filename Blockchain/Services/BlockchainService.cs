@@ -149,7 +149,6 @@ namespace Blockchain.Services
             }
 
             var newTransaction = new Transaction(signedData);
-            newTransaction.SenderSignatureHex = signedData.SenderSignature;
             newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
             dbService.AddTransaction(newTransaction);
             return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
@@ -259,28 +258,38 @@ namespace Blockchain.Services
 
         public MiningBlockInfo GetMiningBlockInfo(string address)
         {
+            var transactions = new List<Transaction>(dbService.GetTransactions().ToArray());//shallow copy, so we can keep a snapshot
+
+            transactions.Insert(0, new Transaction
+            {  //reward for the miner
+                DateCreated = DateTime.Now,
+                Fee = 0,
+                To = address,
+                Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, t) => sum + t.Fee)
+            });
+
             var info = new MiningBlockInfo
             {
                 Difficulty = appSettings.Difficulty,
                 Index = dbService.GetLastBlock().Index + 1,
                 MinedBy = address,
                 PreviousBlockHash = dbService.GetLastBlock().BlockHash,
-                Transactions = new List<Transaction>(dbService.GetTransactions().ToArray())//shallow copy, so we can keep a snapshot
+                Transactions = transactions
             };
 
-            dbService.Set("block_" + address, info);
+            dbService.AddMiningInfo(info);
 
             return MiningBlockInfoResponse.FromMiningBlockInfo(info);
         }
 
-        public SubmitBlockResponse SubmitBlockInfo(string address, MinedBlockInfoRequest data)
+        public SubmitBlockResponse SubmitBlockInfo(MinedBlockInfoRequest data)
         {
-            var info = dbService.Get<MiningBlockInfo>("block_" + address);
+            var info = dbService.GetMiningInfo(data.BlockDataHash);
             if (null == info)
             {
                 return new SubmitBlockResponse
                 {
-                    Status = "Error",
+                    Status = BlockResponseStatus.Error,
                     Message = "Wrong address!"
                 };
             }
@@ -297,7 +306,7 @@ namespace Blockchain.Services
 
                 return new SubmitBlockResponse
                 {
-                    Status = "Success",
+                    Status = BlockResponseStatus.Success,
                     Message = $"Block is valid"
                 };
             }
@@ -305,7 +314,7 @@ namespace Blockchain.Services
             {
                 return new SubmitBlockResponse
                 {
-                    Status = "Error",
+                    Status = BlockResponseStatus.Error,
                     Message = $"Hash must start with {appSettings.Difficulty} zeroes"
                 };
             }
