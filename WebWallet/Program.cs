@@ -22,6 +22,7 @@ namespace WebWallet
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls("http://localhost:5401")
                 .UseKestrel()
                 .Build();
         }

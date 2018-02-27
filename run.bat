@@ -48,7 +48,7 @@ popd
 
 pushd BlockExplorer/bin/Release/netcoreapp2.0/publish/
 pushd BlockExplorer\bin\Release\netcoreapp2.0\publish\
-start dotnet BlockExplorer.dll
+:: start dotnet BlockExplorer.dll
 popd
 
 ::----------------------------------
@@ -58,10 +58,10 @@ popd
 :: Wallet:
 ::----------------------------------
 
-:: pushd WebWallet/bin/Release/netcoreapp2.0/publish/
-:: pushd WebWallet\bin\Release\netcoreapp2.0\publish\
-:: start dotnet WebWallet.dll --server.urls "http://localhost:5401"
-:: popd
+pushd WebWallet/bin/Release/netcoreapp2.0/publish/
+pushd WebWallet\bin\Release\netcoreapp2.0\publish\
+start dotnet WebWallet.dll
+popd
 
 ::----------------------------------
 
