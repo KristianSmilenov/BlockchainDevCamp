@@ -1,4 +1,5 @@
 ﻿using Blockchain.Models;
+using BlockchainCore;
 using BlockchainCore.Models;
 using BlockchainCore.Utils;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Blockchain.Services
 {
@@ -14,6 +16,7 @@ namespace Blockchain.Services
     {
         const int FAUCET_START_VOLUME = 1000000;
         const string ZERO_HASH = "0000000000000000000000000000000000000000";
+        const string TRANSACTION_API_PATH = "api/transactions";
 
         private IDBService dbService;
         private AppSettings appSettings;
@@ -33,7 +36,6 @@ namespace Blockchain.Services
 
         private void GenerateGenesisBlock()
         {
-            //TODO: Give faucet some coins in the Genesis block. How? How do we know the faucet's address?
             var tr = new List<Transaction>();
             tr.Add(new Transaction {
                 To = appSettings.FaucetAddress,
@@ -124,9 +126,21 @@ namespace Blockchain.Services
 
         public TransactionHashInfo CreateTransaction(TransactionDataSigned signedData)
         {
-            //TODO: Make all fields required
+            var dateReceived = DateTime.UtcNow;
+            var newTransaction = new Transaction(signedData);
+            newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
 
-            DateTime dateReceived = DateTime.UtcNow;
+            if (dbService.GetTransactions().Any(t => t.TransactionHashHex == newTransaction.TransactionHashHex))
+            {
+                return new TransactionHashInfo
+                {
+                    IsValid = true,
+                    ErrorMessage = $"Duplicate transaction",
+                    DateReceived = dateReceived,
+                    TransactionHash = newTransaction.TransactionHashHex
+                };
+            }
+
             bool isValidTransaction = ValidateTransaction(signedData);
 
             if (!isValidTransaction)
@@ -155,12 +169,22 @@ namespace Blockchain.Services
                 };
             }
 
-            var newTransaction = new Transaction(signedData);
-            newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
             dbService.AddTransaction(newTransaction);
-            return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
+            PropagateTransactionToPeers(newTransaction);
 
-            //TODO: Send transaction to Peers
+            return new TransactionHashInfo() { IsValid = isValidTransaction, DateReceived = dateReceived, TransactionHash = newTransaction.TransactionHashHex };
+        }
+
+        private void PropagateTransactionToPeers(TransactionDataSigned transaction)
+        {
+            var tasks = new List<Task>();
+            dbService.GetPeers().ForEach(p => 
+            {
+                tasks.Add(Task.Run(() =>
+                HttpUtils.DoApiPost<TransactionDataSigned, TransactionHashInfo>(p.Url, TRANSACTION_API_PATH, transaction)));
+            });
+
+            Task.WaitAll(tasks.ToArray());
         }
 
         private bool ValidateTransaction(TransactionDataSigned signedData)
@@ -345,6 +369,8 @@ namespace Blockchain.Services
                         dbService.RemoveTransaction(t);
                     });
 
+                    PropagateBlockToPeers(mbi);
+
                     return new SubmitBlockResponse
                     {
                         Status = BlockResponseStatus.Success,
@@ -360,6 +386,11 @@ namespace Blockchain.Services
                     };
                 }
             }            
+        }
+
+        private void PropagateBlockToPeers(MinedBlockInfo block)
+        {
+            throw new NotImplementedException();
         }
     }
 }
