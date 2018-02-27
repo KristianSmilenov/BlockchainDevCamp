@@ -12,6 +12,9 @@ namespace Blockchain.Services
 {
     public class BlockchainService : IBlockchainService
     {
+        const int FAUCET_START_VOLUME = 1000000;
+        const string ZERO_HASH = "0000000000000000000000000000000000000000";
+
         private IDBService dbService;
         private AppSettings appSettings;
         private Peer thisPeer = new Peer {
@@ -34,10 +37,13 @@ namespace Blockchain.Services
             var tr = new List<Transaction>();
             tr.Add(new Transaction {
                 To = appSettings.FaucetAddress,
-                Value = 100000,
+                From = ZERO_HASH,
+                Value = FAUCET_START_VOLUME,
                 TransferSuccessful = true,
                 DateCreated = DateTime.Now,
-                MinedInBlockIndex = 0                
+                MinedInBlockIndex = 0,
+                Fee = 0,
+                TransactionHashHex = ZERO_HASH,
             });
 
             dbService.TryAddBlock(
@@ -46,7 +52,8 @@ namespace Blockchain.Services
                     Difficulty = appSettings.Difficulty,
                     Index = 0,
                     MinedBy = "Mr. Bean",
-                    PreviousBlockHash = "",
+                    PreviousBlockHash = ZERO_HASH,
+                    BlockDataHash = ZERO_HASH,
                     Transactions = tr,
                     DateCreated = DateTime.Now,
                     Nonce = 0
@@ -264,19 +271,24 @@ namespace Blockchain.Services
             lock (dbService.GetTransactionsLockObject())
             {
                 var transactions = new List<Transaction>(dbService.GetTransactions().ToArray());//shallow copy, so we can keep a snapshot
+                var lbi = dbService.GetLastBlock().Index + 1;
 
                 transactions.Insert(0, new Transaction
                 {  //reward for the miner
                     DateCreated = DateTime.Now,
                     Fee = 0,
                     To = address,
-                    Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, t) => sum + t.Fee)
+                    Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, t) => sum + t.Fee),
+                    From = ZERO_HASH,
+                    MinedInBlockIndex = lbi,
+                    TransactionHashHex = ZERO_HASH,
+                    TransferSuccessful = true
                 });
 
                 var info = new MiningBlockInfo
                 {
                     Difficulty = appSettings.Difficulty,
-                    Index = dbService.GetLastBlock().Index + 1,
+                    Index = lbi,
                     MinedBy = address,
                     PreviousBlockHash = dbService.GetLastBlock().BlockHash,
                     Transactions = transactions
