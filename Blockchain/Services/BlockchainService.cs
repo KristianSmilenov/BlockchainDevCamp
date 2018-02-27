@@ -148,7 +148,7 @@ namespace Blockchain.Services
                 };
             }
 
-            Transaction newTransaction = new Transaction(signedData);
+            var newTransaction = new Transaction(signedData);
             newTransaction.SenderSignatureHex = signedData.SenderSignature;
             newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
             dbService.AddTransaction(newTransaction);
@@ -198,12 +198,12 @@ namespace Blockchain.Services
                 {
                     if (val.From == address)
                     {
-                        sum -= val.Value;
+                        sum -= val.Value + val.Fee;
                         bal.Confirmations = lastBlockIndex - block.Index;
                     }
                     else if (val.To == address)
                     {
-                        sum += val.Value;
+                        sum += val.Value + val.Fee;
                         bal.Confirmations = lastBlockIndex - block.Index;
                     }
 
@@ -215,11 +215,11 @@ namespace Blockchain.Services
             {
                 if (val.From == address)
                 {
-                    sum -= val.Value;
+                    sum -= val.Value + val.Fee;
                 }
                 else if (val.To == address)
                 {
-                    sum += val.Value;
+                    sum += val.Value + val.Fee;
                 }
 
                 return sum;
