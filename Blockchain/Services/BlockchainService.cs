@@ -375,7 +375,10 @@ namespace Blockchain.Services
 
         public void AddPeer(Peer peer)
         {
-            dbService.AddPeer(peer);
+            if (!dbService.GetPeers().Any(p => p.Id == peer.Id || p.Url == peer.Url))
+            {
+                dbService.AddPeer(peer);
+            }
         }
 
         public PeersNetwork GetPeersNetwork()
