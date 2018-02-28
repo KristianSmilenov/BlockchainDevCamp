@@ -365,6 +365,9 @@ namespace Blockchain.Services
             res.LastMinedBalance.Balance += res.ConfirmedBalance.Balance;
             res.PendingBalance.Balance += res.LastMinedBalance.Balance;
 
+            res.LastMinedBalance.Balance = res.LastMinedBalance.Balance == int.MaxValue ? 0 : res.LastMinedBalance.Balance;
+            res.ConfirmedBalance.Balance = res.ConfirmedBalance.Balance == int.MaxValue ? 0 : res.ConfirmedBalance.Balance;
+
             return res;
         }
 
