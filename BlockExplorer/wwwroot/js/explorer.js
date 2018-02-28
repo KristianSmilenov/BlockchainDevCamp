@@ -130,7 +130,7 @@
                 var container = document.getElementById("peersNetworkPlaceholder");
                 var options = {
                     layout: {
-                        randomSeed: 25
+                        randomSeed: 25//so the layour stays the same
                     }
                 };
                 var network = new vis.Network(container, data, options);
@@ -270,8 +270,7 @@
             'homeSection': loadHomeSection,
             'blocksSection': loadBlocksSection,
             'transactionsSection': loadTransactionsSection,
-            'accountsSection': loadAccountsSection,
-            'peersMapSection': loadPeersMapSection
+            'accountsSection': loadAccountsSection
         }
         //this will repeat every 5 seconds
         if (refreshViewMap[activeView]) {
