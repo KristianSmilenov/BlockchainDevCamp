@@ -18,6 +18,7 @@ namespace Blockchain.Services
         const string ZERO_HASH = "0000000000000000000000000000000000000000";
         const string TRANSACTION_API_PATH = "api/transactions";
         const string NOTIFY_API_PATH = "api/blocks/notify";
+        const string GET_BLOCKCHAIN_API_PATH = "api/blocks";
 
         private IDBService dbService;
         private AppSettings appSettings;
@@ -83,14 +84,19 @@ namespace Blockchain.Services
             return MinedBlockInfoResponse.FromMinedBlockInfo(dbService.GetAllBlocks()[index]);
         }
 
-        public void NotifyBlock(MinedBlockInfo block)
+        public void NotifyBlock(NewBlockNotification info)
         {
-            if (dbService.GetLastBlock().Index >= block.Index)
+            if (dbService.GetLastBlock().Index >= info.LastBlock.Index)
             { //reject, do nothing
                 return;
             }
 
-            //valdiate block
+            if (!IsPeersBlockValid(info.LastBlock))
+            { //reject, do nothing
+                return;
+            }
+
+            UpdateChain(info);
 
             //see if we should use MinedBLockInfo (is BlockHash properly calculated on the fly? ) - mb recreate the object from the data
 
@@ -100,9 +106,92 @@ namespace Blockchain.Services
 
             //replace my blocks with other blocks
 
+            //Lock all transactions while doing the following:
             //remove from the pending transaction list all the ones that are already inside of this block
+        }
 
-            //add to pending transactions all the transaction that have been verified with you but not with the other chain
+        private void UpdateChain(NewBlockNotification info)
+        {
+            var lastBlock = dbService.GetLastBlock();
+
+            if (lastBlock.Index == info.LastBlock.Index - 1
+                && lastBlock.BlockHash == info.LastBlock.PreviousBlockHash)
+            {
+                //we're only missing this last block, just add it
+                AddToCurrentChain(info.LastBlock);
+            }
+            else
+            {
+                //Just replace the whole thing
+                var chain = GetWholeChainFromPeer(info.Sender);
+                if (chain.All(b => IsPeersBlockValid(b)))
+                {
+                    ReplaceCurrentChain(chain);
+                }                
+            }
+        }
+
+        private List<MinedBlockInfo> GetWholeChainFromPeer(Peer peer)
+        {
+            var resp = HttpUtils.DoApiGet<List<MinedBlockInfoResponse>>(peer.Url, GET_BLOCKCHAIN_API_PATH);
+
+            var chain = resp?.ConvertAll(i => 
+                new MinedBlockInfo(MiningBlockInfo.FromMinedBlockInfo(i))
+                {
+                    DateCreated = i.DateCreated,
+                    Nonce = i.Nonce
+                });
+
+            return chain;
+        }
+
+        private void AddToCurrentChain(MinedBlockInfo block)
+        {
+            lock (dbService.GetBlocksLockObject())
+            {
+                lock (dbService.GetTransactionsLockObject())
+                {
+                    if (dbService.TryAddBlock(block))
+                    {
+                        //remove pending transactions that are already verified in the other chain
+                        block.Transactions.ForEach(t => dbService.RemoveTransaction(t));
+                    }
+                }
+            }
+        }
+
+        private void ReplaceCurrentChain(List<MinedBlockInfo> chain)
+        {
+            chain.Sort((a, b) => a.Index - b.Index);//TODO test that - might be in reverse
+
+            lock (dbService.GetBlocksLockObject())
+            {
+                lock (dbService.GetTransactionsLockObject())
+                {
+                    dbService.ReplaceBlocks(chain);
+
+                    chain.ForEach(b =>
+                    {
+                        //remove pending transactions that are already verified in the other chain
+                        b.Transactions.ForEach(t => dbService.RemoveTransaction(t));
+                    });
+                }
+            }
+        }
+
+        private bool IsPeersBlockValid(MinedBlockInfo block)
+        {
+            var mbi = new MinedBlockInfo(MiningBlockInfo.FromMinedBlockInfo(block))
+            {
+                Nonce = block.Nonce,
+                DateCreated = block.DateCreated,
+            };
+
+            var isGenesisBlock = block.Index == 0;
+            var hashCoversDifficulty = mbi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0'));
+            var hashesMatch = mbi.BlockHash == block.BlockHash;
+
+            return hashesMatch && (hashCoversDifficulty || isGenesisBlock);
         }
 
         public Transaction GetTransaction(string transactionHash)
@@ -348,73 +437,80 @@ namespace Blockchain.Services
 
         public SubmitBlockResponse SubmitBlockInfo(MinedBlockInfoRequest data)
         {
-            lock (dbService.GetTransactionsLockObject())
+            lock (dbService.GetBlocksLockObject())
             {
-                var info = dbService.GetMiningInfo(data.BlockDataHash);
-                if (null == info)
+                lock (dbService.GetTransactionsLockObject())
                 {
-                    return new SubmitBlockResponse
-                    {
-                        Status = BlockResponseStatus.Error,
-                        Message = "Wrong block hash!"
-                    };
-                }
-
-                var mbi = new MinedBlockInfo(info)
-                {
-                    Nonce = data.Nonce,
-                    DateCreated = data.DateCreated,
-                };
-
-                if (mbi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
-                {
-                    var success = dbService.TryAddBlock(mbi);
-
-                    if (!success)
+                    var info = dbService.GetMiningInfo(data.BlockDataHash);
+                    if (null == info)
                     {
                         return new SubmitBlockResponse
                         {
                             Status = BlockResponseStatus.Error,
-                            Message = "Old block! Someone mined it already"
+                            Message = "Wrong block hash!"
                         };
                     }
 
-                    //UPDATE transactions in the block.
-                    mbi.Transactions.ForEach(t =>
+                    var mbi = new MinedBlockInfo(info)
                     {
-                        t.MinedInBlockIndex = info.Index;
-                        t.TransferSuccessful = true;
-                        dbService.RemoveTransaction(t);
-                    });
-
-                    PropagateBlockToPeers(mbi);
-
-                    return new SubmitBlockResponse
-                    {
-                        Status = BlockResponseStatus.Success,
-                        Message = $"Block is valid"
+                        Nonce = data.Nonce,
+                        DateCreated = data.DateCreated,
                     };
-                }
-                else
-                {
-                    return new SubmitBlockResponse
+
+                    if (mbi.BlockHash.StartsWith("".PadLeft(appSettings.Difficulty, '0')))
                     {
-                        Status = BlockResponseStatus.Error,
-                        Message = $"Hash must start with {appSettings.Difficulty} zeroes"
-                    };
+                        var success = dbService.TryAddBlock(mbi);
+
+                        if (!success)
+                        {
+                            return new SubmitBlockResponse
+                            {
+                                Status = BlockResponseStatus.Error,
+                                Message = "Old block! Someone mined it already"
+                            };
+                        }
+
+                        //UPDATE transactions in the block.
+                        mbi.Transactions.ForEach(t =>
+                        {
+                            t.MinedInBlockIndex = info.Index;
+                            t.TransferSuccessful = true;
+                            dbService.RemoveTransaction(t);
+                        });
+
+                        PropagateBlockToPeers(mbi);
+
+                        return new SubmitBlockResponse
+                        {
+                            Status = BlockResponseStatus.Success,
+                            Message = $"Block is valid"
+                        };
+                    }
+                    else
+                    {
+                        return new SubmitBlockResponse
+                        {
+                            Status = BlockResponseStatus.Error,
+                            Message = $"Hash must start with {appSettings.Difficulty} zeroes"
+                        };
+                    }
                 }
-            }            
+            }
         }
 
         private void PropagateBlockToPeers(MinedBlockInfo block)
         {
-
             var tasks = new List<Task>();
+            var body = new NewBlockNotification
+            {
+                LastBlock = MinedBlockInfoResponse.FromMinedBlockInfo(block),
+                Sender = thisPeer
+            };
+
             dbService.GetPeers().ForEach(p =>
             {
-                var body = MinedBlockInfoResponse.FromMinedBlockInfo(block);
                 tasks.Add(Task.Run(() =>
-                HttpUtils.DoApiPost<MinedBlockInfoResponse, object>(p.Url, NOTIFY_API_PATH, body)));
+                    HttpUtils.DoApiPost<NewBlockNotification, object>(p.Url, NOTIFY_API_PATH, body)));
             });
 
             Task.WaitAll(tasks.ToArray());

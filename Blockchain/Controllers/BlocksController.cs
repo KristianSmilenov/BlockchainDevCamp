@@ -40,10 +40,10 @@ namespace Blockchain.Controllers
         /// Notifies node about new block
         /// </summary>
         [HttpPost("notify")]
-        public void Post([FromBody]MinedBlockInfo block)
+        public void Post([FromBody]NewBlockNotification notification)
         {
             //should we push or pull?
-            _blockchainService.NotifyBlock(block);
+            _blockchainService.NotifyBlock(notification);
         }
     }
 }

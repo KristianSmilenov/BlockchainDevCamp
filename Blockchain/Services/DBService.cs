@@ -19,6 +19,11 @@ namespace Blockchain.Services
             return allTransactions;
         }
 
+        public object GetBlocksLockObject()
+        {
+            return allBlocks;
+        }
+
         public T Get<T>(string key)
         {
             return (T)dictionary.GetValueOrDefault(key);
@@ -56,6 +61,15 @@ namespace Blockchain.Services
         public bool TryAddBlock(MinedBlockInfo block)
         {
             return allBlocks.TryAdd(block.Index, block);
+        }
+
+        public void ReplaceBlocks(List<MinedBlockInfo> newBlocks)
+        {
+            lock (allBlocks)
+            {
+                allBlocks = new ConcurrentDictionary<int, MinedBlockInfo>();
+                newBlocks.ForEach(b => allBlocks.TryAdd(b.Index, b));
+            }
         }
 
         public List<Transaction> GetTransactions()

@@ -12,7 +12,7 @@ namespace Blockchain.Models
         public new string BlockDataHash { get; set; }
         public new string BlockHash { get; set; }
 
-        public static MinedBlockInfoResponse FromMinedBlockInfo(MinedBlockInfo mbi)
+        public static new MinedBlockInfoResponse FromMinedBlockInfo(MinedBlockInfo mbi)
         {
             var obj = JsonConvert.DeserializeObject<MinedBlockInfoResponse>(JsonConvert.SerializeObject(mbi));
             obj.BlockHash = mbi.BlockHash;

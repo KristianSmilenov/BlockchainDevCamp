@@ -25,5 +25,10 @@ namespace Blockchain.Models
 
         [JsonIgnore]
         public string BlockDataHash { get { return CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(this)); } }
+
+        public static MiningBlockInfo FromMinedBlockInfo(MinedBlockInfo mbi)
+        {
+            return JsonConvert.DeserializeObject<MiningBlockInfo>(JsonConvert.SerializeObject(mbi));
+        }
     }
 }
