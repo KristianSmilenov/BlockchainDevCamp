@@ -74,9 +74,11 @@ namespace Blockchain.Services
             return info;
         }
 
-        public List<MinedBlockInfoResponse> GetBlocks()
+        public List<MinedBlockInfoResponse> GetBlocks(int skip, int take)
         {
-            return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b)).OrderByDescending(b=>b.DateCreated).ToList();
+            return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b))
+                .OrderByDescending(b=>b.DateCreated)
+                .Skip(skip).Take(take).ToList();
         }
 
         public MinedBlockInfoResponse GetBlock(int index)
@@ -212,7 +214,7 @@ namespace Blockchain.Services
             return null;
         }
         
-        public List<Transaction> GetTransactions(string status)
+        public List<Transaction> GetTransactions(string status, int skip, int take)
         {
             switch (status)
             {
@@ -223,11 +225,13 @@ namespace Blockchain.Services
                         {
                             acc.AddRange(b.Transactions);
                             return acc;
-                        }).OrderByDescending(t=>t.DateCreated).ToList();
+                        }).OrderByDescending(t=>t.DateCreated)
+                        .Skip(skip).Take(take).ToList();
 
                 case "pending":
                 default:
-                    return dbService.GetTransactions().OrderByDescending(t=>t.DateCreated).ToList();
+                    return dbService.GetTransactions().OrderByDescending(t=>t.DateCreated)
+                        .Skip(skip).Take(take).ToList();
             }
         }
 

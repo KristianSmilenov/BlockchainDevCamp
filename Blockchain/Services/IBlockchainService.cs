@@ -14,7 +14,7 @@ namespace Blockchain.Services
         /*
          * Blockchain Node
          */
-        List<MinedBlockInfoResponse> GetBlocks();
+        List<MinedBlockInfoResponse> GetBlocks(int skip, int take);
         MinedBlockInfoResponse GetBlock(int index);
         void NotifyBlock(NewBlockNotification notification);
         Balance GetBalance(string address, int confirmations);
@@ -30,7 +30,7 @@ namespace Blockchain.Services
          * Transactions
          */
         Transaction GetTransaction(string transactionHash);
-        List<Transaction> GetTransactions(string status);
+        List<Transaction> GetTransactions(string status, int skip, int take);
         TransactionHashInfo CreateTransaction(TransactionDataSigned data);
 
         /*

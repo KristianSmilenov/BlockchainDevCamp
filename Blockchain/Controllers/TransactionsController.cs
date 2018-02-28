@@ -41,10 +41,12 @@ namespace Blockchain.Controllers
         /// Get list of transactions
         /// </summary>
         /// <param name="status">Fitler by status: pending and confirmed</param>
+        /// <param name="skip">Number of transactions to skip</param>
+        /// <param name="take">Number of transactions to take</param>
         [HttpGet()]
-        public List<Transaction> GetAll([FromQuery]string status)
+        public List<Transaction> GetAll([FromQuery]string status, [FromQuery]int? skip = 0, [FromQuery]int? take = 20)
         {
-            return _blockchainService.GetTransactions(status);
+            return _blockchainService.GetTransactions(status, skip.Value, take.Value);
         }
     }
 }

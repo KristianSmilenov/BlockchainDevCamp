@@ -18,10 +18,12 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Get all blocks in the blockchain
         /// </summary>
+        /// <param name="skip">Number of blocks to skip</param>
+        /// <param name="take">Number of blocks to take</param>
         [HttpGet]
-        public List<MinedBlockInfoResponse> Get()
+        public List<MinedBlockInfoResponse> Get([FromQuery]int? skip = 0, [FromQuery]int? take = 20)
         {
-            return _blockchainService.GetBlocks();
+            return _blockchainService.GetBlocks(skip.Value, take.Value);
         }
 
         /// <summary>
