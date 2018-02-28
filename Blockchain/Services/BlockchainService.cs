@@ -44,7 +44,7 @@ namespace Blockchain.Services
                 From = ZERO_HASH,
                 Value = FAUCET_START_VOLUME,
                 TransferSuccessful = true,
-                DateCreated = DateTime.Now,
+                DateCreated = DateTime.UtcNow,
                 MinedInBlockIndex = 0,
                 Fee = 0,
                 TransactionHashHex = ZERO_HASH,
@@ -59,7 +59,7 @@ namespace Blockchain.Services
                     PreviousBlockHash = ZERO_HASH,
                     BlockDataHash = ZERO_HASH,
                     Transactions = tr,
-                    DateCreated = DateTime.Now,
+                    DateCreated = DateTime.UtcNow,
                     Nonce = 0
                 });
         }
@@ -417,7 +417,7 @@ namespace Blockchain.Services
                 //reward for the miner
                 var t = new Transaction()
                 {
-                    DateCreated = DateTime.Now,
+                    DateCreated = DateTime.UtcNow,
                     Fee = 0,
                     To = address,
                     Value = appSettings.MinerReward + transactions.Aggregate(0, (sum, tr) => sum + tr.Fee),

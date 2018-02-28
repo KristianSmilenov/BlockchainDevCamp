@@ -96,7 +96,7 @@
                     to: recipient,
                     value: parseInt(value),
                     fee: 2,
-                    dateCreated: new Date(),
+                    dateCreated: new Date().toISOString(),
                     senderPubKey: sessionStorage.getItem("publicKey")
                 }
 
