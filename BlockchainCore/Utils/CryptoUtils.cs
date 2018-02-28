@@ -20,14 +20,8 @@ namespace BlockchainCore.Utils
     {
         public static byte[] GetSha256Bytes(string content)
         {
-            var bytes = Encoding.ASCII.GetBytes(content);
-            return GetSha256Bytes(bytes);
-        }
-
-        public static byte[] GetSha256Bytes(byte[] content)
-        {
-            var mySHA256 = SHA256Managed.Create();
-            return mySHA256.ComputeHash(content);
+            return SHA256Managed.Create()
+                .ComputeHash(Encoding.ASCII.GetBytes(content));
         }
 
         public static string GetSha256Hex(string content)
@@ -35,24 +29,12 @@ namespace BlockchainCore.Utils
             return ByteArrayToHex(GetSha256Bytes(content));
         }
         
-        public static String GetHash(String text, String key)
-        {
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            Byte[] textBytes = encoding.GetBytes(text);
-            Byte[] keyBytes = encoding.GetBytes(key);
-
-            HMACSHA256 hash = new HMACSHA256(keyBytes);
-            Byte[] hashBytes = hash.ComputeHash(textBytes);
-
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-        }
-
-        #region Hex functions
-
         public static string ByteArrayToHex(byte[] data)
         {
-            string hex = BitConverter.ToString(data);
-            return hex.Replace("-", "");
+            return BitConverter
+                .ToString(data)
+                .Replace("-", "")
+                .ToLower();
         }
 
         public static byte[] HexToByteArray(String hex)
@@ -62,10 +44,6 @@ namespace BlockchainCore.Utils
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
         }
-
-        #endregion
-
-        #region BouncyCastle.NetCore
 
         static X9ECParameters curve = SecNamedCurves.GetByName("secp256k1");
         static ECDomainParameters domain = new ECDomainParameters(curve.Curve, curve.G, curve.N, curve.H);
@@ -148,7 +126,5 @@ namespace BlockchainCore.Utils
                 return curve.N.Subtract(s);
             }
         }
-
-        #endregion
     }
 }
