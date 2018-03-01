@@ -216,13 +216,12 @@
                 <% _.each( target, function(i) {%>
                 <tr>
                     <td><small class="badge badge-success">#<%= i.index %></small><br /><small><%= i.dateCreated %></small></td>
-                    <td><small><%= i.blockHash %></small><br /><small>contains: <%= i.transactions.length %> txns</small></td>
+                    <td><small><%= i.blockHash %></small><br /><small>txns: <%= i.transactions.length %>  miner: <%= i.minedBy %></small></td>
                     <td>
                         <% _.each( i.transactions, function(j) {%>
                         <small><%= j.value %> coins with <%= j.fee %> fee </small><br /><small>tx: <%= j.transactionHashHex %></small>
                         <% }); %>
                     </td>
-                    <!--<td><%= i.minedByLabel %></td>-->
                 </tr>
                 <% }); %>
             </tbody>
