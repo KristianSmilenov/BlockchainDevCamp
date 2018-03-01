@@ -65,6 +65,16 @@
                 <div class="row">
                     <div class="col">
                         <div class="d-flex">
+                            <h5>Unconfirmed transactions</h5>
+                        </div>
+                        <div id="unconfirmedTransactionsPlaceHolder">No unconfirmed transactions.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex">
                             <h5>Last 5 blocks</h5>
                             <a class="ml-auto" style="cursor: pointer;" id="viewAllBlocks">View all</a>
                         </div>
@@ -230,8 +240,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <p class="card-title">Transaction <small>(<%= i.dateCreated %>)</small> - <%= i.value %> coins</p>
-                                <small>tx: <%= i.transactionHashHex %></small>
-                                <small>from: <i><%= i.from %></i></small> <br />
+                                <small>tx: <%= i.transactionHashHex %></small><br />
+                                <small>from: <i><%= i.from %></i></small><br />
                                 <small>to: <i><%= i.to %></i></small>
                             </div>
                         </div>
@@ -241,54 +251,48 @@
             </tbody>
         </table>
     </script>
-    <!--<script type="text/template" id="trns-tmpl">
+    <script type="text/template" id="unconf-trns-tmpl">
         <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Amount</th>
-                    <th scope="col">From</th>
-                    <th scope="col">To</th>
-                    <th scope="col">Transaction</th>
-                </tr>
-            </thead>
             <tbody>
+                <tr>
+                    <td scope="col">Amount</td>
+                    <td scope="col">Transaction</td>
+                    <td scope="col">Details</td>
+                </tr>
                 <% _.each( target, function(i) {%>
                 <tr>
-                    <td><%= i.value %> coin </br><small>(<%= i.dateCreated %>)</small></td>
-                    <td><%= i.fromLabel %></td>
-                    <td><%= i.toLabel %></td>
-                    <td><%= i.transactionHashLabel %></td>
+                    <td><small><%= i.value %> coins </small><br /><small>(<%= i.dateCreated %>)</small></td>
+                    <td><small>tx: <%= i.transactionHashHex %></small></td>
+                    <td><small>from: <%= i.from %></small><br/><small>to: <%= i.to %></small></td>
                 </tr>
                 <% }); %>
             </tbody>
         </table>
-    </script>-->
+    </script>
 
     <script type="text/template" id="trns-list-tmpl">
         <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Status</th>
-                    <th scope="col">Created</th>
-                    <th scope="col">Transaction</th>
-                    <th scope="col">Block</th>
-                    <th scope="col">Details</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Fee</th>
-                </tr>
-            </thead>
             <tbody>
+                <tr>
+                    <td scope="col">Status</td>
+                    <td scope="col">Transaction</td>
+                    <td scope="col">Details</td>
+                </tr>
                 <% _.each( target, function(i) {%>
                 <tr>
-                    <td><%= i.transferSuccessful %></td>
-                    <td><%= i.dateCreated %></td>
-                    <td><%= i.transactionHashLabel %></td>
-                    <td><%= i.minedInBlockIndex %></td>
-                    <td>from: <%= i.from %> </br> to: <%= i.to %></td>
-                    <td><%= i.value %> coin</td>
-                    <td><%= i.fee %> coins</td>
+                    <td>
+                        <% if (i.transferSuccessful) { %>
+                        <small class="badge badge-success">Success</small>
+                        <% } else { %>
+                        <small class="badge badge-danger">Error</small>
+                        <% } %>
+                        <br /><small><%= i.dateCreated %></small>
+                    </td>
+                    <td><small><%= i.value %> coins with <%= i.fee %> fee in block <small>#<%= i.minedInBlockIndex %></small> </small><br /><small>tx: <%= i.transactionHashHex %></small></td>
+                    <td><small>from: <%= i.from %></small><br /><small>to: <%= i.to %></small></td>
                 </tr>
                 <% }); %>
+
             </tbody>
         </table>
     </script>

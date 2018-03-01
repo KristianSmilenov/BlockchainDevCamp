@@ -34,7 +34,7 @@
      */
 
     function getBlocks() {
-        getBlocksListPage(0, 5, function (data) {
+        getBlocksListPage(0, 7, function (data) {
             formatBlockListData(data.items);
             renderTemplateData(data.items, "#blck-tmpl", "#blocksPlaceHolder");
         });
@@ -62,7 +62,7 @@
     }
 
     function getBlocksList(pageNumber) {
-        if (typeof pageNumber == 'undefined')
+        if (typeof pageNumber === 'undefined')
             pageNumber = 0;
         getBlocksListPage(pageNumber, itemsListPageSize, function (data) {
             formatBlockListData(data.items);
@@ -101,8 +101,12 @@
      * TRANSACTIONS
      */
 
-    function getTransactionsListPage(pageNumber, pageSize, callback) {
+    function getTransactionsListPage(pageNumber, pageSize, callback, filter) {
         var url = getNodeUrl() + '/transactions?pageNumber=' + pageNumber + '&pageSize=' + pageSize;
+        if (filter && filter !== '') {
+            url += '&status=' + filter
+        }
+
         $.get(url, function (data) {
             callback(data);
         });
@@ -134,6 +138,13 @@
         });
     }
 
+    function getUnconfirmedTransactions() {
+        getTransactionsListPage(0, 5, function (data) {
+            formatTransactionListData(data.items);
+            renderTemplateData(data.items, "#unconf-trns-tmpl", "#unconfirmedTransactionsPlaceHolder");
+        }, "pending");
+    }
+
     function getTransactions() {
         getTransactionsListPage(0, 5, function (data) {
             formatTransactionListData(data.items);
@@ -149,11 +160,6 @@
             renderTemplateData(data.items, "#trns-list-tmpl", "#transactionsListPlaceHolder");
             initTransactionsListPagination(data);
         });
-
-        var url = getNodeUrl() + '/transactions';
-        if (filter && filter !== '') {
-            url += '?status=' + filter
-        }
     }
 
     /*
@@ -256,6 +262,7 @@
 
         getBlocks();
         getTransactions();
+        getUnconfirmedTransactions();
     }
 
     $('#buttonBlocks').click(loadBlocksSection);
@@ -280,17 +287,7 @@
             getTransactionsList();
         }
     }
-
-    $('#buttonPending').click(function () {
-        $("#transactionsListPlaceHolder").html('No transactions available.');
-        getTransactionsList('pending');
-    });
-
-    $('#buttonConfirmed').click(function () {
-        $("#transactionsListPlaceHolder").html('No transactions available.');
-        getTransactionsList('confirmed');
-    });
-
+    
     $('#buttonAccounts').click(loadAccountsSection);
     function loadAccountsSection() {
         showView("accountsSection");
