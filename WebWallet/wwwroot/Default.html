@@ -208,6 +208,28 @@
         </footer>
     </div>
 
+    <div id="passwordModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enter password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Do not lose this password!!! You won't be able to access your wallet if you do.</p>
+                    <br />
+                    <label style="width:100%;">Password x1: <input type="password" id="passwordModalInput1"/></label>
+                    <label style="width:100%;">Password x2: <input type="password" id="passwordModalInput2" /></label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="passwordModalOkButton">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -217,6 +239,6 @@
     <script src="./lib/elliptic.js"></script>
     <script src="./lib/aesjs.js"></script>
     <script src="./lib/scrypt.js"></script>
-    <script src="./lib/bootbox.min.js"></script>
+    <script src="./lib/mnemonic.js"></script>
 </body>
 </html>
