@@ -15,29 +15,70 @@
     $("#accountBalanceForm").validator();
     $("#sendTransactionForm").validator();
 
-    function createNewWallet() {
-        let ec = new elliptic.ec('secp256k1');
-        let keyPair = ec.genKeyPair();
-        let walletData = saveWalletData(keyPair);
-        sessionStorage.setItem("privateKey", walletData.privateKey);
-        sessionStorage.setItem("publicKey", walletData.publicKey);
-        sessionStorage.setItem("address", walletData.address);
-        $("#privateKeyTxt").text(walletData.privateKey);
-        $("#publicKeyTxt").text(walletData.publicKey);
-        $("#addressTxt").text(walletData.address);
-        updateWalletAddressFields(walletData.address);
-
-        //let publicKeyCompressed = compressPublicKey(keyPair.getPublic());
+    async function openPasswordPrompt(callback) {
+        bootbox.prompt({
+            title: "This is a prompt with a password input!",
+            inputType: 'password',
+            callback: callback
+        });
     }
 
-    function openWallet() {
+    function createNewWallet(pass, salt) {
+        var pass = openPasswordPrompt(function(pass){
+            let ec = new elliptic.ec('secp256k1');
+            let keyPair = ec.genKeyPair();
+            var walletData = saveWalletData(keyPair, pass, "Some random salt");
+
+            $("#privateKeyTxt").text("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+            $("#publicKeyTxt").text(walletData.publicKey);
+            $("#addressTxt").text(walletData.address);
+            updateWalletAddressFields(walletData.address);
+        });
+    }
+
+    function deriveKey(pass, salt, callback) {
+        scrypt(pass, salt, {
+            N: 16384,
+            r: 8,
+            p: 1,
+            dkLen: 32,
+            encoding: 'hex'
+        }, callback);
+    }
+
+    async function encryptPK(pass, salt, privateKey) {
+        return new Promise((resolve, reject) => {
+            deriveKey(pass, salt, (derivedKey) => {
+                var key = aesjs.utils.hex.toBytes(derivedKey);
+                var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+                var encryptedBytes = aesCtr.encrypt(privateKey);
+                var encrpytedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+                resolve(encrpytedHex);
+            });
+        });
+    }
+
+    async function decryptPK(pass, salt, encryptedHex) {
+        return new Promise((resolve, reject) => {
+            deriveKey(pass, salt, (derivedKey) => {
+                var key = aesjs.utils.hex.toBytes(derivedKey);
+                var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
+                var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+                var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+                var decryptedText = aesjs.utils.hex.fromBytes(decryptedBytes);
+                resolve(decryptedText);
+            });
+        });
+    }
+
+    function openWallet(pass, salt) {
         var validator = $("#openWalletForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
             let privateKeyInput = $("#existingWalletKey").val();
             let ec = new elliptic.ec(curve);
             let keyPair = ec.keyFromPrivate(privateKeyInput);
-            let walletData = saveWalletData(keyPair);
+            let walletData = saveWalletData(keyPair, pass, salt);
             $("#restoredPrivateKeyTxt").text(walletData.privateKey);
             $("#restoredPublicKeyTxt").text(walletData.publicKey);
             $("#restoredAddressTxt").text(walletData.address);
@@ -155,9 +196,9 @@
         return prefix + x;
     }
 
-    function saveWalletData(keyPair) {
-        let privateKey = keyPair.getPrivate().toString(16);
-        sessionStorage.setItem("privateKey", privateKey);
+    function saveWalletData(keyPair, pass, salt) {
+        encryptPK(pass, salt, keyPair.priv.toArray())
+            .then(encryptedHex => sessionStorage.setItem("privateKey", encryptedHex));
 
         let pubKey = compressPublicKey(keyPair.getPublic());
         sessionStorage.setItem("publicKey", pubKey);
@@ -168,7 +209,7 @@
 
         updateWalletAddressFields(walletAddress);
 
-        return { privateKey: privateKey, publicKey: pubKey, address: walletAddress };
+        return { publicKey: pubKey, address: walletAddress };
     }
 
     function getBlockchainNodeUrl() {
