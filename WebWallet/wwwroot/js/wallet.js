@@ -19,7 +19,7 @@
     $('#buttonSignTransaction').click(signTransaction);
     $('#buttonSetNodeUrl').click(updateBlockchainNodeUrl);
 
-    $("#openWalletForm").validator();
+    //$("#openWalletForm").validator();
     $("#blockchainNodeForm").validator();
     $("#accountBalanceForm").validator();
     $("#sendTransactionForm").validator();
@@ -49,6 +49,37 @@
         });
     }
 
+    async function openWalletPrompt() {
+        return new Promise((resolve, reject) => {
+            $('#openWalletOkButton').off();
+
+            $('#openWalletOkButton').on('click', function () {
+                var mnemonic = $('#mnemonicModalInput').val();
+                var p1 = $('#passInput1').val();
+                var p2 = $('#passInput2').val();
+
+                if (mnemonic.split(' ').length != 24) {
+                    alert('You need to enter 24 recovery words for your private key!');
+                    return;
+                }
+
+                if (p1.length == 0 || p2.length == 0) {
+                    alert('Password cannot be empty!');
+                    return;
+                }
+
+                if (p1 != p2) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+
+                $('#openWalletModal').modal('hide');
+                resolve({ mnemonic: mnemonic, password: p1 });
+            });
+            $('#openWalletModal').modal();
+        });
+    }
+
     async function createNewWallet(pass) {
         var pass = await openPasswordPrompt();
         let ec = new elliptic.ec('secp256k1');
@@ -62,17 +93,17 @@
     }
 
     function openWallet(pass) {
-        var validator = $("#openWalletForm").data("bs.validator");
-        validator.validate();
-        if (!validator.hasErrors()) {
-            let privateKeyInput = $("#existingWalletKey").val();
-            let ec = new elliptic.ec(curve);
-            let keyPair = ec.keyFromPrivate(privateKeyInput);
-            let walletData = saveWalletData(keyPair, pass);
-            $("#restoredPrivateKeyTxt").text(walletData.privateKey);
-            $("#restoredPublicKeyTxt").text(walletData.publicKey);
-            $("#restoredAddressTxt").text(walletData.address);
-        }
+        var data = openWalletPrompt();
+
+        //TODO:  restore private key from mnemonic
+        let privateKeyInput = $("#existingWalletKey").val();
+
+        let ec = new elliptic.ec(curve);
+        let keyPair = ec.keyFromPrivate(privateKeyInput);
+        let walletData = saveWalletData(keyPair, data.pass);
+        $("#restoredPrivateKeyTxt").text(walletData.privateKey);
+        $("#restoredPublicKeyTxt").text(walletData.publicKey);
+        $("#restoredAddressTxt").text(walletData.address);
     }
 
     function updateBlockchainNodeUrl() {

@@ -82,34 +82,36 @@
                 <h5>Open existing wallet</h5>
                 <p>Enter your private key (compressed ECDSA key, 65 hex digits)</p>
 
-                <form id="openWalletForm" data-toggle="validator" role="form">
+                <!--<form id="openWalletForm" data-toggle="validator" role="form">
                     <div class="form-group input-group  mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Private Key</span>
                         </div>
-                        <input type="text" required data-error="Please enter private key" id="existingWalletKey" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <input type="text" required data-error="Please enter your " id="existingWalletKey" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                         <div class="help-block with-errors"></div>
                     </div>
                     <div class="form-group">
                         <button type="button" id="buttonOpenWallet" class="btn btn-outline-primary">Open wallet</button>
                     </div>
-                </form>
-
+                </form>-->
+                <div class="form-group">
+                    <button type="button" id="buttonOpenWallet" class="btn btn-outline-primary">Open wallet</button>
+                </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Private Key</span>
+                        <span class="input-group-text">Private key</span>
                     </div>
                     <label id="restoredPrivateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Public Key</span>
+                        <span class="input-group-text">Public key</span>
                     </div>
                     <label id="restoredPublicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Wallet Address</span>
+                        <span class="input-group-text">Wallet address</span>
                     </div>
                     <label id="restoredAddressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
@@ -220,11 +222,34 @@
                 <div class="modal-body">
                     <p>Do not lose this password!!! You won't be able to access your wallet if you do.</p>
                     <br />
-                    <label style="width:100%;">Password x1: <input type="password" id="passwordModalInput1"/></label>
+                    <label style="width:100%;">Password x1: <input type="password" id="passwordModalInput1" /></label>
                     <label style="width:100%;">Password x2: <input type="password" id="passwordModalInput2" /></label>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="passwordModalOkButton">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="openWalletModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enter password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>In order to recover your wallet private key, we need you to enter the 24 mnemonic words that you saved when the wallet was created. After that please enter password to safely encrypt the private key.</p>
+                    <br />
+                    <label style="width:100%;">Mnemonic words: <input type="text" id="mnemonicModalInput" /></label>
+                    <label style="width:100%;">Password: <input type="password" id="passInput1" /></label>
+                    <label style="width:100%;">Repeat password: <input type="password" id="passInput2" /></label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="openWalletOkButton">OK</button>
                 </div>
             </div>
         </div>
