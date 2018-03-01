@@ -2,11 +2,7 @@
     Date.prototype.toJSON = function () { return this.toISOString(); }
 
     $('#passwordModal').on('shown.bs.modal', function () {
-        $('#myInput').focus()
-    })
-
-    $('#passwordModal').on('shown.bs.modal', function () {
-        $('#myInput').focus()
+        $('#passwordModalInput1').focus()
     })
 
     let curve = "secp256k1";
@@ -217,30 +213,23 @@
         return prefix + x;
     }
 
-    function saveWalletData(keyPair, pass) {
-        encryptPK(pass, keyPair.priv.toArray())
-            .then(encryptedHex => {
-                sessionStorage.setItem("privateKey", encryptedHex);
-                var words = [];
-                for (var i in encryptedHex)
-                {
-                    words.push(mnemonic[i]);
-                }
-            });
+    async function saveWalletData(keyPair, pass) {
+        return new Promise(async function (resolve, reject) {
+            var encryptedHex = await encryptPK(pass, keyPair.priv.toArray());
+            sessionStorage.setItem("privateKey", encryptedHex);
+            var words = toMnemonic(encryptedHex);
+            
+            let pubKey = compressPublicKey(keyPair.getPublic());
+            sessionStorage.setItem("publicKey", pubKey);
 
-        //TODO: replace this hex with 12 mnemonic words.
+            let ripemd160 = new Hashes.RMD160();
+            let walletAddress = ripemd160.hex(pubKey);
+            sessionStorage.setItem("address", walletAddress);
 
+            updateWalletAddressFields(walletAddress);
 
-        let pubKey = compressPublicKey(keyPair.getPublic());
-        sessionStorage.setItem("publicKey", pubKey);
-
-        let ripemd160 = new Hashes.RMD160();
-        let walletAddress = ripemd160.hex(pubKey);
-        sessionStorage.setItem("address", walletAddress);
-
-        updateWalletAddressFields(walletAddress);
-
-        return { publicKey: pubKey, address: walletAddress, words: []};
+            resolve({ publicKey: pubKey, address: walletAddress, words: words });
+        });
     }
 
     function deriveKey(pass, callback) {
@@ -276,6 +265,51 @@
                 resolve(decryptedText);
             });
         });
+    }
+
+    function toMnemonic(hex) {
+        var bits = bytesToBinary(aesjs.utils.hex.toBytes(hex));
+
+        var chunks = bits.match(/(.{1,11})/g);
+        var words = chunks.map(function (binary) {
+            return mnemonic[binaryToByte(binary)];
+        });
+
+        return words.join(' ');
+    }
+
+    function fromMnemonic(words) {
+        words = words.split(' ');
+        var indices = [];
+        var bits = words.map((word) => {
+            var index = mnemonic.indexOf(word);
+            return lpad(index.toString(2), 11, '0');
+        });
+
+        bits = bits.join('');
+
+        var bytes = bits
+            .match(/(.{1,8})/g)
+            .map(binaryToByte)
+            .slice(0, 32);
+
+        return aesjs.utils.hex.fromBytes(bytes);
+    }
+
+    function binaryToByte(bin) {
+        return parseInt(bin, 2)
+    }
+
+    function bytesToBinary(bytes) {
+        return bytes.map(function (x) {
+            return lpad(x.toString(2), 8, '0')
+        }).join('')
+    }
+
+    function lpad(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
     }
 
     function getBlockchainNodeUrl() {
