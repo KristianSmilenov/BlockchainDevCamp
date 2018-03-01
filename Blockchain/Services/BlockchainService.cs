@@ -256,7 +256,6 @@ namespace Blockchain.Services
         {
             var dateReceived = DateTime.UtcNow;
             var newTransaction = new Transaction(signedData);
-            newTransaction.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(newTransaction));
 
             if (dbService.GetTransactions().Any(t => t.TransactionHashHex == newTransaction.TransactionHashHex))
             {
@@ -361,7 +360,7 @@ namespace Blockchain.Services
                     }
                     else if (val.To == address)
                     {
-                        sum += val.Value + val.Fee;
+                        sum += val.Value;
                         bal.Confirmations = Math.Min(bal.Confirmations, lastBlockIndex - block.Index + 1);
                     }
 
@@ -377,7 +376,7 @@ namespace Blockchain.Services
                 }
                 else if (val.To == address)
                 {
-                    sum += val.Value + val.Fee;
+                    sum += val.Value;
                 }
 
                 return sum;
@@ -443,7 +442,7 @@ namespace Blockchain.Services
                     TransferSuccessful = true
                 };
 
-                t.TransactionHashHex = CryptoUtils.GetSha256Hex(JsonConvert.SerializeObject(t));
+                t.TransactionHashHex = t.CalculateTransactionHashHex();
 
                 transactions.Insert(0, t);
 

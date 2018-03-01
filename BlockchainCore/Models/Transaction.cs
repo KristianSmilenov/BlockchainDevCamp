@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Blockchain.Serializers;
+using BlockchainCore.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 
 namespace Blockchain.Models
@@ -17,7 +20,7 @@ namespace Blockchain.Models
 
         public Transaction() { }
 
-        public Transaction(TransactionData data)
+        public Transaction(TransactionDataSigned data)
         {
             From = data.From;
             To = data.To;
@@ -25,12 +28,19 @@ namespace Blockchain.Models
             Fee = data.Fee;
             DateCreated = data.DateCreated;
             SenderPubKey = data.SenderPubKey;
+            SenderSignature = data.SenderSignature;
+            TransactionHashHex = CalculateTransactionHashHex();
+        }
+        public string CalculateTransactionHashHex()
+        {
+            var sett = new JsonSerializerSettings
+            {
+                ContractResolver = TransactionDataHashReseolver.Instance
+            };
+            var json = JsonConvert.SerializeObject(this, Formatting.None, sett);
+
+            return CryptoUtils.GetSha256Hex(json);
         }
 
-        public Transaction(TransactionDataSigned data)
-            : this((TransactionData)data)
-        {
-            SenderSignature = data.SenderSignature;
-        }
     }
 }
