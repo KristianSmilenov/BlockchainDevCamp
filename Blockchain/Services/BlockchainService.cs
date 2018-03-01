@@ -19,6 +19,7 @@ namespace Blockchain.Services
         const string TRANSACTION_API_PATH = "api/transactions";
         const string NOTIFY_API_PATH = "api/blocks/notify";
         const string GET_BLOCKCHAIN_API_PATH = "api/blocks";
+        const string ADD_PEER_API_PATH = "api/peers";
 
         private IDBService dbService;
         private AppSettings appSettings;
@@ -401,7 +402,12 @@ namespace Blockchain.Services
             if (!dbService.GetPeers().Any(p => p.Id == peer.Id || p.Url == peer.Url))
             {
                 dbService.AddPeer(peer);
+                ReciprocatePeerAdd(peer);
             }
+        }
+        public void ReciprocatePeerAdd(Peer otherPeer)
+        {
+            HttpUtils.DoApiPost<Peer, object>(otherPeer.Url, ADD_PEER_API_PATH, thisPeer);
         }
 
         public PeersNetwork GetPeersNetwork()
