@@ -207,25 +207,22 @@
 
     <script type="text/template" id="blck-list-tmpl">
         <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Created</th>
-                    <th scope="col">Txns</th>
-                    <th scope="col">Mined by</th>
-                    <th scope="col">Block hash</th>
-                    <th scope="col">Previous hash</th>
-                </tr>
-            </thead>
             <tbody>
+                <tr>
+                    <td scope="col">Status</td>
+                    <td scope="col">Hash</td>
+                    <td scope="col">Transactions</td>
+                </tr>
                 <% _.each( target, function(i) {%>
                 <tr>
-                    <td>#<%= i.index %></td>
-                    <td><%= i.dateCreated %></td>
-                    <td><%= i.transactions.length %></td>
-                    <td><%= i.minedByLabel %></td>
-                    <td><%= i.blockHashLabel %></td>
-                    <td><%= i.previousBlockHashLabel %></td>
+                    <td><small class="badge badge-success">#<%= i.index %></small><br /><small><%= i.dateCreated %></small></td>
+                    <td><small><%= i.blockHash %></small><br /><small>contains: <%= i.transactions.length %> txns</small></td>
+                    <td>
+                        <% _.each( i.transactions, function(j) {%>
+                        <small><%= j.value %> coins with <%= j.fee %> fee </small><br /><small>tx: <%= j.transactionHashHex %></small>
+                        <% }); %>
+                    </td>
+                    <!--<td><%= i.minedByLabel %></td>-->
                 </tr>
                 <% }); %>
             </tbody>
