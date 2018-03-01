@@ -73,12 +73,15 @@ namespace Blockchain.Services
             info.Blocks = dbService.GetAllBlocks().Count;
             return info;
         }
-
-        public List<MinedBlockInfoResponse> GetBlocks(int skip, int take)
+        
+        public CollectionContext<MinedBlockInfoResponse> GetBlocksCollection(int pageNumber, int pageSize)
         {
-            return dbService.GetAllBlocks().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b))
-                .OrderByDescending(b=>b.DateCreated)
-                .Skip(skip).Take(take).ToList();
+            CollectionContext<MinedBlockInfoResponse> response = new CollectionContext<MinedBlockInfoResponse>();
+            response.TotalPages = dbService.GetAllBlocks().Count / pageSize;
+            response.Items = dbService.GetAllBlocks().OrderByDescending(b => b.DateCreated)
+                .Skip(pageNumber * pageSize).Take(pageSize).ToList()
+                .ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b));
+            return response;
         }
 
         public MinedBlockInfoResponse GetBlock(int index)
@@ -525,5 +528,6 @@ namespace Blockchain.Services
 
             Task.WaitAll(tasks.ToArray());
         }
+        
     }
 }

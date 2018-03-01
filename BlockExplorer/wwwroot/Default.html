@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
+    <link rel="stylesheet" href="./css/pagination.css" />
 </head>
 <body>
     <div class="container body-content">
@@ -37,7 +38,7 @@
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="search" id="searchBox" placeholder="Search by Address / Txhash" aria-label="Search">
-                    <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="buttonSearch">Search</button>
+                    <button type="button" class="btn btn-outline-primary my-2 my-sm-0" id="buttonSearch">Search</button>
                 </form>
             </div>
         </nav>
@@ -48,7 +49,7 @@
                     <div class="input-group input-group-sm">
                         <div class="form-group input-group mb-3">
                             <div class="input-group-prepend"><span class="input-group-text">Blockchain Node</span></div>
-                            <input type="text" required data-error="Please enter node url" id="blockchainNodeUrl" class="form-control" value="http://localhost:5101">
+                            <input type="text" required data-error="Please enter node url" id="blockchainNodeUrl" class="form-control" value="http://localhost:5000">
                             <div class="help-block with-errors"></div>
                             <button type="button" id="buttonSetNodeUrl" class="btn btn-outline-dark">Connect to Node</button>
                         </div>
@@ -64,7 +65,10 @@
                 <div class="row"></div>
                 <div class="row">
                     <div class="col">
-                        <h5>Blocks</h5>
+                        <div class="d-flex">
+                            <h5>Last 5 blocks</h5>
+                            <a class="ml-auto" style="cursor: pointer;" id="viewAllBlocks">View all</a>
+                        </div>
                         <div id="blocksPlaceHolder">No blocks available.</div>
                     </div>
                     <div class="col">
@@ -77,8 +81,11 @@
 
         <section id="blocksSection">
             <div class="container mt-3">
-                <h5>Blocks</h5>
-                <div id="blocksListPlaceHolder">No blocks available.</div>
+                    <div class="d-flex">
+                        <h5>Blocks</h5>
+                        <ul class="ml-auto pagination" id="blocksListPagination"></ul>
+                    </div>
+                    <div id="blocksListPlaceHolder">No blocks available.</div>
             </div>
         </section>
 
@@ -180,15 +187,9 @@
                     <td>
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Block #<%= i.index %></h5>
-                                <p class="card-text"><%= i.dateCreated %></p>
+                                <p class="card-title">Block <b>#<%= i.index %></b> <small>(<%= i.dateCreated %>)</small> - <%= i.transactions.length %> txns reward <%= i.transactions[0].value %> coins</p>
+                                <p class="card-text">mined by <i><%= i.minedBy %></i> </p>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="card-body">
-                            <p class="card-text">mined By <%= i.minedBy %> <b><%= i.transactions.length %> txns</b></p>
-                            <p class="card-text">block Reward <b>?? coins</b></p>
                         </div>
                     </td>
                 </tr>
@@ -201,9 +202,9 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col"></th>
                     <th scope="col">Created</th>
-                    <th scope="col">Transactions</th>
+                    <th scope="col">Txns</th>
                     <th scope="col">Mined by</th>
                     <th scope="col">Block hash</th>
                     <th scope="col">Previous hash</th>
@@ -212,7 +213,7 @@
             <tbody>
                 <% _.each( target, function(i) {%>
                 <tr>
-                    <td>Block <%= i.index %></td>
+                    <td>#<%= i.index %></td>
                     <td><%= i.dateCreated %></td>
                     <td><%= i.transactions.length %></td>
                     <td><%= i.minedByLabel %></td>
@@ -284,5 +285,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
     <script src="./js/explorer.js"></script>
+    <!--<script src="./lib/pagination.js"></script>-->
+    <script src="./lib/jquery.bootpag.js"></script>
 </body>
 </html>

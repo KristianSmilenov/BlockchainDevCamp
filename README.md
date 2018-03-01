@@ -47,7 +47,7 @@ The mechanism of synchronization is the following:
 
 
 ### Wallet
-Front-end only web app that allows you to create and use a wallet, cehck your balance and push transactions to the blockchain.
+Front-end only web app that allows you to create and use a wallet, check your balance and push transactions to the blockchain.
 It's so user-friendly and intuitive, that it barely needs any documentation at all.
 Functionalities:
 * Create Wallet - creates new private, public key and address for you to store however you please
@@ -75,10 +75,10 @@ in case you want to connect to a different node.
 
 ### Explorer
 The user-friendly alternative to curl http://node_url/api. 
-It allows you to see what's going on with the network. Data is cached and refreshed once every 5 seconds.
+It allows you to see what's going on with the network. Data is cached and refreshed once every 10 seconds.
 * Home - basic info about latest changes
 * Blocks - all blocks available in the current node 
-* Trsanactions - all transactions available in the current node.
+* Transactions - all transactions available in the current node.
 You can switch between pending and confirmed
 * Accounts - allows you to check account balance, based on the address of the wallet
 * Peers network - funky interactive map of the peers attached to the current node.

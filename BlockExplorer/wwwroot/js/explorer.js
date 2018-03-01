@@ -1,8 +1,10 @@
 ﻿$(document).ready(function () {
     Date.prototype.toJSON = function () { return this.toISOString(); }
     $('#buttonDisplayBalance').click(displayBalance);
+    $('#viewAllBlocks').click(loadBlocksSection);
 
     let activeView = "";
+    let blockListPageSize = 10;
     $("#accountBalanceForm").validator();
 
     function displayBalance() {
@@ -25,42 +27,66 @@
             });
         }
     }
-    
-    function getBlocks() {
-        var url = getNodeUrl() + '/blocks';
-        $.get(url, function (rawData) {
-            if (rawData.length > 0) {
-                _.each(rawData, function (d) {
-                    var timeAgoString = moment(d.dateCreated).fromNow();
-                    d.dateCreated = timeAgoString;
-                });
 
-                var templateData = { target: rawData };
-                var template = _.template($("#blck-tmpl").text());
-                $("#blocksPlaceHolder").html(template(templateData));
-            }
+    function getBlocks() {
+        getBlocksListPage(0, 5, function (data) {
+            _.each(data.items, function (d) {
+                var timeAgoString = moment(d.dateCreated).fromNow();
+                d.dateCreated = timeAgoString;
+            });
+
+            var templateData = { target: data.items };
+            var template = _.template($("#blck-tmpl").text());
+            $("#blocksPlaceHolder").html(template(templateData));
         });
     }
 
-    function getBlocksList() {
-        var url = getNodeUrl() + '/blocks';
-        $.get(url, function (rawData) {
-            if (rawData.length > 0) {
-                _.each(rawData, function (d) {
-                    var timeAgoString = moment(d.dateCreated).fromNow();
-                    d.dateCreated = timeAgoString;
-                    var blockHashLabel = d.blockHash.substring(0, 25) + '...';
-                    d.blockHashLabel = blockHashLabel;
-                    var previousBlockHashLabel = d.previousBlockHash.substring(0, 25) + '...';
-                    d.previousBlockHashLabel = previousBlockHashLabel;
-                    var minedByLabel = d.minedBy.substring(0, 25) + '...';
-                    d.minedByLabel = minedByLabel;
-                });
+    function initBlockListPagination(totalPages) {
+        $('#blocksListPagination').bootpag({
+            total: totalPages
+        }).on("page", function (event, pageNumber) {
+            var pager = $(this)
+            getBlocksListPage(pageNumber - 1, blockListPageSize, function (data) {
+                formatBlockListData(data.items);
+                renderBlockListData(data);
+                pager.bootpag({ total: data.totalPages + 1 });
+            });
+        });
+    }
 
-                var templateData = { target: rawData };
-                var template = _.template($("#blck-list-tmpl").text());
-                $("#blocksListPlaceHolder").html(template(templateData));
-            }
+    function getBlocksList(pageNumber) {
+        if (typeof pageNumber == 'undefined')
+            pageNumber = 0;
+        getBlocksListPage(pageNumber, blockListPageSize, function (data) {
+            formatBlockListData(data.items);
+            renderBlockListData(data);
+            initBlockListPagination(data.totalPages + 1);
+        });
+    }
+
+    function getBlocksListPage(pageNumber, pageSize, callback) {
+        var url = getNodeUrl() + '/blocks?pageNumber=' + pageNumber + '&pageSize=' + pageSize;
+        $.get(url, function (data) {
+            callback(data);
+        });
+    }
+
+    function renderBlockListData(data) {
+        var templateData = { target: data.items };
+        var template = _.template($("#blck-list-tmpl").text());
+        $("#blocksListPlaceHolder").html(template(templateData));
+    }
+
+    function formatBlockListData(items) {
+        _.each(items, function (d) {
+            var timeAgoString = moment(d.dateCreated).fromNow();
+            d.dateCreated = timeAgoString;
+            var blockHashLabel = d.blockHash.substring(0, 25) + '...';
+            d.blockHashLabel = blockHashLabel;
+            var previousBlockHashLabel = d.previousBlockHash.substring(0, 25) + '...';
+            d.previousBlockHashLabel = previousBlockHashLabel;
+            var minedByLabel = d.minedBy.substring(0, 25) + '...';
+            d.minedByLabel = minedByLabel;
         });
     }
 
@@ -168,7 +194,7 @@
     }
 
     function tryGetWalletInfo(searchText) {
-        var walletInfoUrl = getNodeUrl() + '/balance/' + searchText;
+        var walletInfoUrl = getNodeUrl() + '/balance/' + searchText + '/6';
         $.get(walletInfoUrl, function (data) {
             setSearchResultData(data, 'wallet');
         }).fail(function () {
@@ -210,7 +236,7 @@
     }
 
     $('#buttonBlocks').click(loadBlocksSection);
-    function loadBlocksSection () {
+    function loadBlocksSection() {
         showView("blocksSection");
         $(this).parent().addClass("active");
 
@@ -218,7 +244,7 @@
     }
 
     $('#buttonTransactions').click(loadTransactionsSection);
-    function loadTransactionsSection () {
+    function loadTransactionsSection() {
         showView("transactionsSection");
         $(this).parent().addClass("active");
 
@@ -236,13 +262,13 @@
     });
 
     $('#buttonAccounts').click(loadAccountsSection);
-    function loadAccountsSection () {
+    function loadAccountsSection() {
         showView("accountsSection");
         $(this).parent().addClass("active");
     }
 
     $('#buttonPeersNetwork').click(loadPeersMapSection);
-    function loadPeersMapSection () {
+    function loadPeersMapSection() {
         showView("peersMapSection");
         $(this).parent().addClass("active");
 
@@ -263,7 +289,7 @@
     $('#buttonHome').click();
     getNodeInfo();
 
-    setInterval(refreshData, 5000);
+    setInterval(refreshData, 10000);
     function refreshData() {
         var refreshViewMap = {
             //'searchResultsSection': loadSearchSection,
@@ -272,7 +298,7 @@
             'transactionsSection': loadTransactionsSection,
             'accountsSection': loadAccountsSection
         }
-        //this will repeat every 5 seconds
+        //this will repeat every 10 seconds
         if (refreshViewMap[activeView]) {
             refreshViewMap[activeView]();
         }

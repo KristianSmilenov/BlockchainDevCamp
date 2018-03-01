@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blockchain.Models;
 using Blockchain.Services;
+using BlockchainCore.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,10 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Get all blocks in the blockchain
         /// </summary>
-        /// <param name="skip">Number of blocks to skip</param>
-        /// <param name="take">Number of blocks to take</param>
         [HttpGet]
-        public List<MinedBlockInfoResponse> Get([FromQuery]int? skip = 0, [FromQuery]int? take = 20)
+        public CollectionContext<MinedBlockInfoResponse> Get([FromQuery]int? pageNumber = 0, [FromQuery]int? pageSize = 20)
         {
-            return _blockchainService.GetBlocks(skip.Value, take.Value);
+            return _blockchainService.GetBlocksCollection(pageNumber.Value, pageSize.Value);
         }
 
         /// <summary>
