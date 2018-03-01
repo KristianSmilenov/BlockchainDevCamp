@@ -62,7 +62,6 @@
 
         <section id="homeSection">
             <div class="container mt-3">
-                <div class="row"></div>
                 <div class="row">
                     <div class="col">
                         <div class="d-flex">
@@ -72,7 +71,10 @@
                         <div id="blocksPlaceHolder">No blocks available.</div>
                     </div>
                     <div class="col">
-                        <h5>Pending Transactions</h5>
+                        <div class="d-flex">
+                            <h5>Last 5 transactions</h5>
+                            <a class="ml-auto" style="cursor: pointer;" id="viewAllTransactions">View all</a>
+                        </div>
                         <div id="transactionsPlaceHolder">No transactions available.</div>
                     </div>
                 </div>
@@ -81,24 +83,19 @@
 
         <section id="blocksSection">
             <div class="container mt-3">
-                    <div class="d-flex">
-                        <h5>Blocks</h5>
-                        <ul class="ml-auto pagination" id="blocksListPagination"></ul>
-                    </div>
-                    <div id="blocksListPlaceHolder">No blocks available.</div>
+                <div class="d-flex">
+                    <h5>Blocks</h5>
+                    <ul class="ml-auto pagination" id="blocksListPagination"></ul>
+                </div>
+                <div id="blocksListPlaceHolder">No blocks available.</div>
             </div>
         </section>
 
         <section id="transactionsSection">
             <div class="container mt-3">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5>Transactions</h5>
-                    </div>
-                    <div class="col-md-4 col-md-offset-4">
-                        <a class="ml-2" id="buttonPending" style="cursor: pointer">Pending</a>
-                        <a class="ml-2" id="buttonConfirmed" style="cursor: pointer">Confirmed</a>
-                    </div>
+                <div class="d-flex">
+                    <h5>Transactions</h5>
+                    <ul class="ml-auto pagination" id="transactionsListPagination"></ul>
                 </div>
                 <div id="transactionsListPlaceHolder">No transactions available.</div>
             </div>
@@ -224,8 +221,27 @@
             </tbody>
         </table>
     </script>
-
     <script type="text/template" id="trns-tmpl">
+        <table class="table table-hover">
+            <tbody>
+                <% _.each( target, function(i) {%>
+                <tr>
+                    <td>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-title">Transaction <small>(<%= i.dateCreated %>)</small> - <%= i.value %> coins</p>
+                                <small>tx: <%= i.transactionHashHex %></small>
+                                <small>from: <i><%= i.from %></i></small> <br />
+                                <small>to: <i><%= i.to %></i></small>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </script>
+    <!--<script type="text/template" id="trns-tmpl">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -246,7 +262,7 @@
                 <% }); %>
             </tbody>
         </table>
-    </script>
+    </script>-->
 
     <script type="text/template" id="trns-list-tmpl">
         <table class="table table-hover">

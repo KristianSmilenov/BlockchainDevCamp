@@ -2,9 +2,10 @@
     Date.prototype.toJSON = function () { return this.toISOString(); }
     $('#buttonDisplayBalance').click(displayBalance);
     $('#viewAllBlocks').click(loadBlocksSection);
+    $("#viewAllTransactions").click(loadTransactionsSection);
 
     let activeView = "";
-    let blockListPageSize = 10;
+    let itemsListPageSize = 10;
     $("#accountBalanceForm").validator();
 
     function displayBalance() {
@@ -28,28 +29,34 @@
         }
     }
 
+    /*
+     * BLOCKS
+     */
+
     function getBlocks() {
         getBlocksListPage(0, 5, function (data) {
-            _.each(data.items, function (d) {
-                var timeAgoString = moment(d.dateCreated).fromNow();
-                d.dateCreated = timeAgoString;
-            });
-
-            var templateData = { target: data.items };
-            var template = _.template($("#blck-tmpl").text());
-            $("#blocksPlaceHolder").html(template(templateData));
+            formatBlockListData(data.items);
+            renderTemplateData(data.items, "#blck-tmpl", "#blocksPlaceHolder");
         });
     }
 
-    function initBlockListPagination(totalPages) {
+    function getTotalPages(data) {
+        var pages = data.total / itemsListPageSize;
+        if (data.total % itemsListPageSize !== 0) {
+            pages += 1;
+        }
+        return pages;
+    }
+
+    function initBlockListPagination(data) {
         $('#blocksListPagination').bootpag({
-            total: totalPages
+            total: getTotalPages(data)
         }).on("page", function (event, pageNumber) {
             var pager = $(this)
-            getBlocksListPage(pageNumber - 1, blockListPageSize, function (data) {
+            getBlocksListPage(pageNumber - 1, itemsListPageSize, function (data) {
                 formatBlockListData(data.items);
-                renderBlockListData(data);
-                pager.bootpag({ total: data.totalPages + 1 });
+                renderTemplateData(data.items, "#blck-list-tmpl", "#blocksListPlaceHolder");
+                pager.bootpag({ total: getTotalPages(data) });
             });
         });
     }
@@ -57,10 +64,10 @@
     function getBlocksList(pageNumber) {
         if (typeof pageNumber == 'undefined')
             pageNumber = 0;
-        getBlocksListPage(pageNumber, blockListPageSize, function (data) {
+        getBlocksListPage(pageNumber, itemsListPageSize, function (data) {
             formatBlockListData(data.items);
-            renderBlockListData(data);
-            initBlockListPagination(data.totalPages + 1);
+            renderTemplateData(data.items, "#blck-list-tmpl", "#blocksListPlaceHolder");
+            initBlockListPagination(data);
         });
     }
 
@@ -69,12 +76,6 @@
         $.get(url, function (data) {
             callback(data);
         });
-    }
-
-    function renderBlockListData(data) {
-        var templateData = { target: data.items };
-        var template = _.template($("#blck-list-tmpl").text());
-        $("#blocksListPlaceHolder").html(template(templateData));
     }
 
     function formatBlockListData(items) {
@@ -90,56 +91,74 @@
         });
     }
 
-    function getTransactions() {
-        var url = getNodeUrl() + '/transactions';
-        $.get(url, function (rawData) {
-            if (rawData.length > 0) {
-                _.each(rawData, function (d) {
-                    var timeAgoString = moment(d.dateCreated).fromNow();
-                    d.dateCreated = timeAgoString;
-                    var fromLabel = d.from.substring(0, 10) + '...';
-                    d.fromLabel = fromLabel;
-                    var toLabel = d.to.substring(0, 10) + '...';
-                    d.toLabel = toLabel;
-                    var transactionHashLabel = d.transactionHashHex.substring(0, 10) + '...';
-                    d.transactionHashLabel = transactionHashLabel;
-                });
+    function renderTemplateData(items, itemTemplateSelector, placeholderSelector) {
+        var templateData = { target: items };
+        var template = _.template($(itemTemplateSelector).text());
+        $(placeholderSelector).html(template(templateData));
+    }
 
-                var templateData = { target: rawData };
-                var template = _.template($("#trns-tmpl").text());
-                $("#transactionsPlaceHolder").html(template(templateData));
-            }
+    /*
+     * TRANSACTIONS
+     */
+
+    function getTransactionsListPage(pageNumber, pageSize, callback) {
+        var url = getNodeUrl() + '/transactions?pageNumber=' + pageNumber + '&pageSize=' + pageSize;
+        $.get(url, function (data) {
+            callback(data);
+        });
+    }
+
+    function initTransactionsListPagination(data) {
+        $("#transactionsListPagination").bootpag({
+            total: getTotalPages(data)
+        }).on("page", function (event, pageNumber) {
+            var pager = $(this)
+            getTransactionsListPage(pageNumber - 1, itemsListPageSize, function (data) {
+                formatTransactionListData(data.items);
+                renderTemplateData(data.items, "#trns-list-tmpl", "#transactionsListPlaceHolder");
+                pager.bootpag({ total: getTotalPages(data) });
+            });
+        });
+    }
+
+    function formatTransactionListData(items) {
+        _.each(items, function (d) {
+            var timeAgoString = moment(d.dateCreated || new Date()).fromNow();
+            d.dateCreated = timeAgoString;
+            var fromLabel = (d.from || "").substring(0, 10) + '...';
+            d.fromLabel = fromLabel;
+            var toLabel = (d.to || "").substring(0, 10) + '...';
+            d.toLabel = toLabel;
+            var transactionHashLabel = (d.transactionHashHex || "").substring(0, 10) + '...';
+            d.transactionHashLabel = transactionHashLabel;
+        });
+    }
+
+    function getTransactions() {
+        getTransactionsListPage(0, 5, function (data) {
+            formatTransactionListData(data.items);
+            renderTemplateData(data.items, "#trns-tmpl", "#transactionsPlaceHolder");
         });
     }
 
     function getTransactionsList(filter) {
         // TODO: Fix template to show full transaction hash or allow users to copy it
 
+        getTransactionsListPage(0, itemsListPageSize, function (data) {
+            formatTransactionListData(data.items);
+            renderTemplateData(data.items, "#trns-list-tmpl", "#transactionsListPlaceHolder");
+            initTransactionsListPagination(data);
+        });
+
         var url = getNodeUrl() + '/transactions';
         if (filter && filter !== '') {
             url += '?status=' + filter
         }
-
-        $.get(url, function (rawData) {
-            if (rawData.length > 0) {
-                _.each(rawData, function (d) {
-                    var timeAgoString = moment(d.dateCreated || new Date()).fromNow();
-                    d.dateCreated = timeAgoString;
-                    var fromLabel = (d.from || "").substring(0, 10) + '...';
-                    d.fromLabel = fromLabel;
-                    var toLabel = (d.to || "").substring(0, 10) + '...';
-                    d.toLabel = toLabel;
-                    var transactionHashLabel = (d.transactionHashHex || "").substring(0, 10) + '...';
-                    d.transactionHashLabel = transactionHashLabel;
-                });
-
-                var templateData = { target: rawData };
-                var template = _.template($("#trns-list-tmpl").text());
-                $("#transactionsListPlaceHolder").html(template(templateData));
-            }
-        });
     }
 
+    /*
+     * PEERS
+     */
     function getPeersNetwork() {
         var imagePath = "./images/pc-icon.png";
         var url = getNodeUrl() + '/peers/network';
@@ -176,6 +195,10 @@
     function getNodeUrl() {
         return $("#blockchainNodeUrl").val() + '/api';
     }
+
+    /*
+     * SEARCH
+     */
 
     $('#buttonSearch').click(loadSearchSection);
     function loadSearchSection() {
@@ -236,19 +259,26 @@
     }
 
     $('#buttonBlocks').click(loadBlocksSection);
+    let isBlockSectionInitialized = false;
     function loadBlocksSection() {
         showView("blocksSection");
         $(this).parent().addClass("active");
 
-        getBlocksList();
+        if (!isBlockSectionInitialized) {
+            isBlockSectionInitialized = true;
+            getBlocksList();
+        }
     }
 
     $('#buttonTransactions').click(loadTransactionsSection);
+    let isTranscationSectionInitialized = false;
     function loadTransactionsSection() {
         showView("transactionsSection");
         $(this).parent().addClass("active");
-
-        getTransactionsList();
+        if (!isTranscationSectionInitialized) {
+            isTranscationSectionInitialized = true;
+            getTransactionsList();
+        }
     }
 
     $('#buttonPending').click(function () {
@@ -294,9 +324,9 @@
         var refreshViewMap = {
             //'searchResultsSection': loadSearchSection,
             'homeSection': loadHomeSection,
-            'blocksSection': loadBlocksSection,
-            'transactionsSection': loadTransactionsSection,
-            'accountsSection': loadAccountsSection
+            //'blocksSection': loadBlocksSection,
+            //'transactionsSection': loadTransactionsSection,
+            //'accountsSection': loadAccountsSection
         }
         //this will repeat every 10 seconds
         if (refreshViewMap[activeView]) {

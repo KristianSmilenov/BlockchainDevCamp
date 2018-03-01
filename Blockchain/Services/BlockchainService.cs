@@ -77,7 +77,7 @@ namespace Blockchain.Services
         public CollectionContext<MinedBlockInfoResponse> GetBlocksCollection(int pageNumber, int pageSize)
         {
             CollectionContext<MinedBlockInfoResponse> response = new CollectionContext<MinedBlockInfoResponse>();
-            response.TotalPages = dbService.GetAllBlocks().Count / pageSize;
+            response.Total = dbService.GetAllBlocks().Count;
             response.Items = dbService.GetAllBlocks().OrderByDescending(b => b.DateCreated)
                 .Skip(pageNumber * pageSize).Take(pageSize).ToList()
                 .ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b));
@@ -225,25 +225,30 @@ namespace Blockchain.Services
 
             return null;
         }
-        
-        public List<Transaction> GetTransactions(string status, int skip, int take)
+
+        public CollectionContext<Transaction> GetTransactions(string status, int pageNumber, int pageSize)
         {
+            CollectionContext<Transaction> response = new CollectionContext<Transaction>();
+            IOrderedEnumerable<Transaction> transactions;
             switch (status)
             {
+                case "pending":
+                    transactions = dbService.GetTransactions().OrderByDescending(t => t.DateCreated);
+                    response.Total = transactions.Count();
+                    response.Items = transactions.Skip(pageNumber * pageSize).Take(pageSize).ToList();
+                    return response;
                 case "confirmed":
-                    return dbService
+                default:
+                    transactions = dbService
                         .GetAllBlocks()
-                        .Aggregate(new List<Transaction>(), (acc, b) => 
+                        .Aggregate(new List<Transaction>(), (acc, b) =>
                         {
                             acc.AddRange(b.Transactions);
                             return acc;
-                        }).OrderByDescending(t=>t.DateCreated)
-                        .Skip(skip).Take(take).ToList();
-
-                case "pending":
-                default:
-                    return dbService.GetTransactions().OrderByDescending(t=>t.DateCreated)
-                        .Skip(skip).Take(take).ToList();
+                        }).OrderByDescending(t => t.DateCreated);
+                    response.Total = transactions.Count();
+                    response.Items = transactions.Skip(pageNumber * pageSize).Take(pageSize).ToList();
+                    return response;
             }
         }
 

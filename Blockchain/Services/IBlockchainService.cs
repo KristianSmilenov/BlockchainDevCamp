@@ -15,8 +15,6 @@ namespace Blockchain.Services
          * Blockchain Node
          */
         CollectionContext<MinedBlockInfoResponse> GetBlocksCollection(int pageNumber, int pageSize);
-
-        //List<MinedBlockInfoResponse> GetBlocks(int skip, int take);
         MinedBlockInfoResponse GetBlock(int index);
         MinedBlockInfoResponse GetBlock(string blockHash);
         void NotifyBlock(NewBlockNotification notification);
@@ -33,7 +31,8 @@ namespace Blockchain.Services
          * Transactions
          */
         Transaction GetTransaction(string transactionHash);
-        List<Transaction> GetTransactions(string status, int skip, int take);
+        CollectionContext<Transaction> GetTransactions(string status, int pageNumber, int pageSize);
+        //List<Transaction> GetTransactions(string status, int skip, int take);
         TransactionHashInfo CreateTransaction(TransactionDataSigned data);
 
         /*
