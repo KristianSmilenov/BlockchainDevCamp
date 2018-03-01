@@ -189,23 +189,23 @@
         $.get(transactionUrl, function (data) {
             setSearchResultData(data, 'transaction');
         }).fail(function () {
-            tryGetWalletInfo(searchText);
+            tryGetBlockByHash(searchText);
         });
     }
 
-    function tryGetWalletInfo(searchText) {
-        var walletInfoUrl = getNodeUrl() + '/balance/' + searchText + '/6';
-        $.get(walletInfoUrl, function (data) {
-            setSearchResultData(data, 'wallet');
+    function tryGetBlockByHash(searchText) {
+        var urlGetBlock = getNodeUrl() + '/blocks/hash/' + searchText;
+        $.get(urlGetBlock, function (data) {
+            setSearchResultData(data, 'block');
         }).fail(function () {
-            tryGetBlockInfo(searchText);
+            tryGetBlockByIndex(searchText);
         });
     }
 
-    function tryGetBlockInfo(searchText) {
+    function tryGetBlockByIndex(searchText) {
         if (!isNaN(searchText)) {
             var blockIndex = parseInt(searchText)
-            var urlGetBlock = getNodeUrl() + '/blocks/' + blockIndex;
+            var urlGetBlock = getNodeUrl() + '/blocks/index/' + blockIndex;
             $.get(urlGetBlock, function (data) {
                 setSearchResultData(data, 'block');
             });

@@ -89,6 +89,15 @@ namespace Blockchain.Services
             return MinedBlockInfoResponse.FromMinedBlockInfo(dbService.GetAllBlocks()[index]);
         }
 
+        public MinedBlockInfoResponse GetBlock(string blockHash)
+        {
+            MinedBlockInfo block = dbService.GetAllBlocks().Where(b => b.BlockHash.Equals(blockHash) || 
+                b.BlockDataHash.Equals(blockHash)).FirstOrDefault();
+            if(block != null)
+                return MinedBlockInfoResponse.FromMinedBlockInfo(block);
+            return null;
+        }
+
         public void NotifyBlock(NewBlockNotification info)
         {
             if (dbService.GetLastBlock().Index >= info.LastBlock.Index)
@@ -528,6 +537,6 @@ namespace Blockchain.Services
 
             Task.WaitAll(tasks.ToArray());
         }
-        
+
     }
 }

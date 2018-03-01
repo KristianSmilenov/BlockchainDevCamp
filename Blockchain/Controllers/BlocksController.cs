@@ -28,10 +28,22 @@ namespace Blockchain.Controllers
         /// <summary>
         /// Gets specific block by index
         /// </summary>
-        [HttpGet("{index}")]
+        [HttpGet("index/{index}")]
         public IActionResult Get(int index)
         {
             MinedBlockInfoResponse result = _blockchainService.GetBlock(index);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Gets specific block by hash
+        /// </summary>
+        [HttpGet("hash/{hash}")]
+        public IActionResult Get(string hash)
+        {
+            MinedBlockInfoResponse result = _blockchainService.GetBlock(hash);
             if (result != null)
                 return Ok(result);
             return NotFound();
