@@ -37,3 +37,10 @@ body {
 li {
     cursor: pointer;
 }
+
+.modal-body label {
+    width: 100%;
+}
+.modal-body input {
+    width: 70%;
+}

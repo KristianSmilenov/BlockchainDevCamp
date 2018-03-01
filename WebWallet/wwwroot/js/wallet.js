@@ -1,8 +1,17 @@
 ﻿$(document).ready(function () {
     Date.prototype.toJSON = function () { return this.toISOString(); }
 
+    $('#passwordModal').on('shown.bs.modal', function () {
+        $('#myInput').focus()
+    })
+
+    $('#passwordModal').on('shown.bs.modal', function () {
+        $('#myInput').focus()
+    })
+
     let curve = "secp256k1";
     let sigalg = "SHA256withECDSA";
+    const salt = "Some random salt";
 
     $('#buttonCreateNewWallet').click(createNewWallet);
     $('#buttonOpenWallet').click(openWallet);
@@ -15,70 +24,51 @@
     $("#accountBalanceForm").validator();
     $("#sendTransactionForm").validator();
 
-    async function openPasswordPrompt(callback) {
-        bootbox.prompt({
-            title: "This is a prompt with a password input!",
-            inputType: 'password',
-            callback: callback
-        });
-    }
-
-    function createNewWallet(pass, salt) {
-        var pass = openPasswordPrompt(function(pass){
-            let ec = new elliptic.ec('secp256k1');
-            let keyPair = ec.genKeyPair();
-            var walletData = saveWalletData(keyPair, pass, "Some random salt");
-
-            $("#privateKeyTxt").text("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-            $("#publicKeyTxt").text(walletData.publicKey);
-            $("#addressTxt").text(walletData.address);
-            updateWalletAddressFields(walletData.address);
-        });
-    }
-
-    function deriveKey(pass, salt, callback) {
-        scrypt(pass, salt, {
-            N: 16384,
-            r: 8,
-            p: 1,
-            dkLen: 32,
-            encoding: 'hex'
-        }, callback);
-    }
-
-    async function encryptPK(pass, salt, privateKey) {
+    async function openPasswordPrompt() {
         return new Promise((resolve, reject) => {
-            deriveKey(pass, salt, (derivedKey) => {
-                var key = aesjs.utils.hex.toBytes(derivedKey);
-                var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
-                var encryptedBytes = aesCtr.encrypt(privateKey);
-                var encrpytedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
-                resolve(encrpytedHex);
+            $('#passwordModalOkButton').off();
+
+            $('#passwordModalOkButton').on('click', function () {
+                var p1 = $('#passwordModalInput1').val();
+                var p2 = $('#passwordModalInput2').val();
+
+                if (p1.length == 0 || p2.length == 0) {
+                    alert('Password cannot be empty!');
+                    return;
+                }
+
+                if (p1 != p2) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+
+                $('#passwordModal').modal('hide');
+                resolve(p1);
             });
+            $('#passwordModal').modal();
         });
     }
 
-    async function decryptPK(pass, salt, encryptedHex) {
-        return new Promise((resolve, reject) => {
-            deriveKey(pass, salt, (derivedKey) => {
-                var key = aesjs.utils.hex.toBytes(derivedKey);
-                var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
-                var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
-                var decryptedBytes = aesCtr.decrypt(encryptedBytes);
-                var decryptedText = aesjs.utils.hex.fromBytes(decryptedBytes);
-                resolve(decryptedText);
-            });
-        });
+    async function createNewWallet(pass) {
+        var pass = await openPasswordPrompt();
+        let ec = new elliptic.ec('secp256k1');
+        let keyPair = ec.genKeyPair();
+        var walletData = saveWalletData(keyPair, pass);
+
+        $("#privateKeyTxt").text("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        $("#publicKeyTxt").text(walletData.publicKey);
+        $("#addressTxt").text(walletData.address);
+        updateWalletAddressFields(walletData.address);
     }
 
-    function openWallet(pass, salt) {
+    function openWallet(pass) {
         var validator = $("#openWalletForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
             let privateKeyInput = $("#existingWalletKey").val();
             let ec = new elliptic.ec(curve);
             let keyPair = ec.keyFromPrivate(privateKeyInput);
-            let walletData = saveWalletData(keyPair, pass, salt);
+            let walletData = saveWalletData(keyPair, pass);
             $("#restoredPrivateKeyTxt").text(walletData.privateKey);
             $("#restoredPublicKeyTxt").text(walletData.publicKey);
             $("#restoredAddressTxt").text(walletData.address);
@@ -196,9 +186,19 @@
         return prefix + x;
     }
 
-    function saveWalletData(keyPair, pass, salt) {
-        encryptPK(pass, salt, keyPair.priv.toArray())
-            .then(encryptedHex => sessionStorage.setItem("privateKey", encryptedHex));
+    function saveWalletData(keyPair, pass) {
+        encryptPK(pass, keyPair.priv.toArray())
+            .then(encryptedHex => {
+                sessionStorage.setItem("privateKey", encryptedHex);
+                var words = [];
+                for (var i in encryptedHex)
+                {
+                    words.push(mnemonic[i]);
+                }
+            });
+
+        //TODO: replace this hex with 12 mnemonic words.
+
 
         let pubKey = compressPublicKey(keyPair.getPublic());
         sessionStorage.setItem("publicKey", pubKey);
@@ -209,7 +209,42 @@
 
         updateWalletAddressFields(walletAddress);
 
-        return { publicKey: pubKey, address: walletAddress };
+        return { publicKey: pubKey, address: walletAddress, words: []};
+    }
+
+    function deriveKey(pass, callback) {
+        scrypt(pass, salt, {
+            N: 16384,
+            r: 8,
+            p: 1,
+            dkLen: 32,
+            encoding: 'hex'
+        }, callback);
+    }
+
+    async function encryptPK(pass, privateKey) {
+        return new Promise((resolve, reject) => {
+            deriveKey(pass, (derivedKey) => {
+                var key = aesjs.utils.hex.toBytes(derivedKey);
+                var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+                var encryptedBytes = aesCtr.encrypt(privateKey);
+                var encrpytedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+                resolve(encrpytedHex);
+            });
+        });
+    }
+
+    async function decryptPK(pass, encryptedHex) {
+        return new Promise((resolve, reject) => {
+            deriveKey(pass, (derivedKey) => {
+                var key = aesjs.utils.hex.toBytes(derivedKey);
+                var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
+                var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+                var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+                var decryptedText = aesjs.utils.hex.fromBytes(decryptedBytes);
+                resolve(decryptedText);
+            });
+        });
     }
 
     function getBlockchainNodeUrl() {
