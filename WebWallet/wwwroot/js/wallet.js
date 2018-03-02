@@ -72,27 +72,40 @@ async function revealPrivateKey() {
 
 async function openWallet(pass) {
     var mnemonic = $('#inputMnemonicWordsTxt').val();
-    if (mnemonic.split(' ').length != 24) {
-        $("errorAlertNotEnoughWordsMsg").text("You need to enter 24 recovery words for your private key!")
+    var privateKey = $('#restoreWalletPrivateKeyTxt').val();
+    var pass = "";
+
+    if (mnemonic.length == 0 && privateKey.length == 0) {
+        $("errorAlertNotEnoughWordsMsg").text("You need to enter 24 recovery words or your private key!")
         $("#errorAlertNotEnoughWords").fadeTo(2000, 500).slideUp(500, function () {
             $("#errorAlertNotEnoughWords").slideUp(500);
         });
         return;
     }
 
-    var pass = await openWalletPrompt();
-    var res = fromMnemonic(mnemonic);
-    if (res.error) {
-        $("#errorAlertNotEnoughWordsMsg").text(res.error);
-        $("#errorAlertNotEnoughWords").fadeTo(2000, 500).slideUp(500, function () {
-            $("#errorAlertNotEnoughWords").slideUp(500);
-        });
-        return;
+    if (mnemonic.length > 0) {
+        if (mnemonic.split(' ').length != 24) {
+            $("errorAlertNotEnoughWordsMsg").text("You need to enter 24 recovery words for your private key!")
+            $("#errorAlertNotEnoughWords").fadeTo(2000, 500).slideUp(500, function () {
+                $("#errorAlertNotEnoughWords").slideUp(500);
+            });
+            return;
+        }
+
+        pass = await openWalletPrompt();
+        var res = fromMnemonic(mnemonic);
+        if (res.error) {
+            $("#errorAlertNotEnoughWordsMsg").text(res.error);
+            $("#errorAlertNotEnoughWords").fadeTo(2000, 500).slideUp(500, function () {
+                $("#errorAlertNotEnoughWords").slideUp(500);
+            });
+            return;
+        }
+
+        var encryptedHex = res.hex;
+        privateKey = await decryptPK(pass, encryptedHex);
     }
-
-    var encryptedHex = res.hex;
-    var privateKey = await decryptPK(pass, encryptedHex);
-
+    
     let ec = new elliptic.ec(curve);
     let keyPair = ec.keyFromPrivate(privateKey);
     let walletData = await saveWalletData(keyPair, pass);
