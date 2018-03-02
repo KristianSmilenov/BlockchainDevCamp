@@ -4,12 +4,11 @@ const salt = "Some random salt";
 
 async function openPasswordPrompt() {
     return new Promise((resolve, reject) => {
-        $('#passwordModalOkButton').off();
 
-        $('#passwordModalOkButton').on('click', function () {
+        var onClose = function () {
             var p1 = $('#passwordModalInput1').val();
             var p2 = $('#passwordModalInput2').val();
-            
+
             if (p1 != p2) {
                 $("#passwordsDoNotMatchLabel").fadeTo(2000, 500).slideUp(500, function () {
                     $("#passwordsDoNotMatchLabel").slideUp(500);
@@ -18,23 +17,43 @@ async function openPasswordPrompt() {
             }
 
             $('#passwordModal').modal('hide');
+            $(document).off('keypress');
+            $('#passwordModalOkButton').off();
             resolve(p1);
+        };
+
+        $(document).on('keypress', function (event) {
+            if (event.charCode == 13) {
+                onClose();
+            }
         });
+
+        $('#passwordModalOkButton').on('click', onClose);
         $('#passwordModal').modal();
     });
 }
 
 async function openWalletPrompt() {
     return new Promise((resolve, reject) => {
-        $('#openWalletOkButton').off();
 
-        $('#openWalletOkButton').on('click', function () {
+        var onClose = function () {
             var mnemonic = $('#mnemonicModalInput').val();
             var pass = $('#passInput').val();;
 
             $('#openWalletModal').modal('hide');
             resolve(pass);
+
+            $('#openWalletOkButton').off();
+            $(document).off('keypress');
+        };
+
+        $(document).on('keypress', function (event) {
+            if (event.charCode == 13) {
+                onClose();
+            }
         });
+
+        $('#openWalletOkButton').on('click', onClose);
         $('#openWalletModal').modal();
     });
 }
