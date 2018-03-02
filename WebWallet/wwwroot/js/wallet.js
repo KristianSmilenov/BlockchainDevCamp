@@ -51,10 +51,23 @@ async function createNewWallet(pass) {
 
     $("#mnemonicWordsTxt").text(walletData.words);
     $("#publicKeyTxt").text(walletData.publicKey);
+    $("#privateKeyTxt").text("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
     $("#addressTxt").text(walletData.address);
     updateWalletAddressFields(walletData.address);
 
     $("#createWalletHiddenSection").show();
+}
+
+async function revealPrivateKey() {
+    var sender = $(arguments[0].target);
+    if (sender.text()[0] != 'X') {
+        return
+    }
+
+    var pass = await openWalletPrompt();
+    var encryptedHex = sessionStorage.getItem("privateKey");
+    var decryptedHex = await decryptPK(pass, encryptedHex);
+    sender.text(decryptedHex);
 }
 
 async function openWallet(pass) {
@@ -405,6 +418,9 @@ $(document).ready(function () {
         showView("openWalletSection");
         $(this).parent().addClass("active");
     }
+
+    $("#privateKeyTxt").click(revealPrivateKey);
+    $("#restoredPrivateKeyTxt").click(revealPrivateKey);
 
     $('#buttonAccountBalanceView').click(showAccountView);
     function showAccountView() {
