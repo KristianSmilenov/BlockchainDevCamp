@@ -80,20 +80,7 @@
         <section id="openWalletSection">
             <div class="container mt-3">
                 <h5>Open existing wallet</h5>
-                <p>Enter your private key (compressed ECDSA key, 65 hex digits)</p>
-
-                <!--<form id="openWalletForm" data-toggle="validator" role="form">
-                    <div class="form-group input-group  mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Private Key</span>
-                        </div>
-                        <input type="text" required data-error="Please enter your " id="existingWalletKey" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                        <div class="help-block with-errors"></div>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" id="buttonOpenWallet" class="btn btn-outline-primary">Open wallet</button>
-                    </div>
-                </form>-->
+                <p>Wallet keys can be recovered from 24 mnemonic words.</p>
                 <div class="form-group">
                     <button type="button" id="buttonOpenWallet" class="btn btn-outline-primary">Open wallet</button>
                 </div>
@@ -220,7 +207,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Do not lose this password!!! You won't be able to access your wallet if you do.</p>
+                    <p>Your password is used to encrypt and decrypt your private key</p>
                     <br />
                     <label style="width:100%;">Password x1: <input type="password" id="passwordModalInput1" /></label>
                     <label style="width:100%;">Password x2: <input type="password" id="passwordModalInput2" /></label>

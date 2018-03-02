@@ -80,24 +80,25 @@
         var pass = await openPasswordPrompt();
         let ec = new elliptic.ec('secp256k1');
         let keyPair = ec.genKeyPair();
-        var walletData = saveWalletData(keyPair, pass);
+        var walletData = await saveWalletData(keyPair, pass);
 
+        alert("Please write down these words: " + walletData.words);
         $("#privateKeyTxt").text("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         $("#publicKeyTxt").text(walletData.publicKey);
         $("#addressTxt").text(walletData.address);
         updateWalletAddressFields(walletData.address);
     }
 
-    function openWallet(pass) {
-        var data = openWalletPrompt();
-
-        //TODO:  restore private key from mnemonic
-        let privateKeyInput = $("#existingWalletKey").val();
+    async function openWallet(pass) {
+        var data = await openWalletPrompt();
+        var encryptedHex = fromMnemonic(data.mnemonic);
+        var privateKey = await decryptPK(data.password, encryptedHex);
 
         let ec = new elliptic.ec(curve);
-        let keyPair = ec.keyFromPrivate(privateKeyInput);
-        let walletData = saveWalletData(keyPair, data.pass);
-        $("#restoredPrivateKeyTxt").text(walletData.privateKey);
+        let keyPair = ec.keyFromPrivate(privateKey);
+        let walletData = await saveWalletData(keyPair, data.password);
+
+        $("#restoredPrivateKeyTxt").text("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         $("#restoredPublicKeyTxt").text(walletData.publicKey);
         $("#restoredAddressTxt").text(walletData.address);
     }
@@ -133,7 +134,7 @@
 
     $("#successAlert").hide();
     $("#errorAlert").hide();
-    function signTransaction() {
+    async function signTransaction() {
         var validator = $("#sendTransactionForm").data("bs.validator");
         validator.validate();
         if (!validator.hasErrors()) {
@@ -142,9 +143,11 @@
             let recipient = $("#transactionRecipient").val();
             let value = $('#transactionValue').val();
 
-            //let privateKey = window.prompt("To sign a transaction you have to write down your private key:")
-            let privateKey = sessionStorage.getItem("privateKey");
-            if (privateKey) {
+            let pass = await openPasswordPrompt();
+            let encryptedHex = sessionStorage.getItem("privateKey");
+            if (pass && encryptedHex) {
+                // decrypt private key from storage
+                var privateKey = await decryptPK(pass, encryptedHex);
 
                 let ec = new elliptic.ec('secp256k1');
                 let keyPair = ec.keyFromPrivate(privateKey);
