@@ -112,17 +112,6 @@ namespace Blockchain.Services
             }
 
             UpdateChain(info);
-
-            //see if we should use MinedBLockInfo (is BlockHash properly calculated on the fly? ) - mb recreate the object from the data
-
-            //find common ancestor - fetch all previous blocks if needed (previous block might be the common ancestor, in which case, do not fetch
-
-            //validate all previous blocks since the common ancestor
-
-            //replace my blocks with other blocks
-
-            //Lock all transactions while doing the following:
-            //remove from the pending transaction list all the ones that are already inside of this block
         }
 
         private void UpdateChain(NewBlockNotification info)

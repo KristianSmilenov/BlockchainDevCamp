@@ -79,7 +79,7 @@ start dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll "http://localhost
 :: public  key: 03dbe54f289af4832b36228f2bcdcf6c959424d44d3b85374d6079e2fa73d22e2d
 :: address    : 5868c2f8f6e556f7a7de40f08d0355e951f0e058
 :: ---
-start dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll "http://localhost:5101" 5868c2f8f6e556f7a7de40f08d0355e951f0e058
+start dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll "http://localhost:5102" 5868c2f8f6e556f7a7de40f08d0355e951f0e058
 
 :: private key: 8ce026a4ffe017222cc7a54ab5b3f126c4b386a9751075a9000df65e3aefab51
 :: public  key: 0317dbff0d1071e31159535153c96ae1ad1ef4cf7db867aa56fdced38dea6385f3
