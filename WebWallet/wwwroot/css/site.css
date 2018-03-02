@@ -44,3 +44,28 @@ li {
 .modal-body input {
     width: 70%;
 }
+
+.input-group-prepend {
+    width: 152px;
+}
+
+#buttonOpenWallet {
+    width: 152px;
+}
+
+.input-group-prepend .input-group-text {
+    width: 100%;
+}
+
+input:invalid {
+    border: 1px solid red;
+}
+
+input:valid {
+    border: 1px solid black;
+}
+
+#passwordsDoNotMatchLabel {
+    font-style:italic;
+    color: red;
+}

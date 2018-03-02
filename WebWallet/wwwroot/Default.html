@@ -58,21 +58,26 @@
                 </div>
                 <div class="input-group  mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Private key</span>
+                        <span class="input-group-text">Backup words</span>
                     </div>
-                    <label id="privateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    <label id="mnemonicWordsTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Public key</span>
+                <div id="createWalletHiddenSection">
+                    <div class="alert alert-warning alert-dismissible" id="backupMnemonicWarning">
+                        <strong>Warning!</strong> Please backup the 24 words, otherwise you will not be able to use your wallet later!
                     </div>
-                    <label id="publicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Wallet address</span>
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Public key</span>
+                        </div>
+                        <label id="publicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="addressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Wallet address</span>
+                        </div>
+                        <label id="addressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                    </div>
                 </div>
             </div>
         </section>
@@ -80,27 +85,42 @@
         <section id="openWalletSection">
             <div class="container mt-3">
                 <h5>Open existing wallet</h5>
-                <p>Wallet keys can be recovered from 24 mnemonic words.</p>
+                <p>Wallet keys can be recovered by entering the 24 mnemonic words.</p>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Mnemonic words:</span>
+                    </div>
+                    <input type="text" required data-error="Please enter address" id="inputMnemonicWordsTxt" class="form-control">
+                </div>
+                <div class="alert alert-danger" id="errorAlertNotEnoughWords">
+                    <div id="errorAlertNotEnoughWordsMsg">You need to enter 24 recovery words for your private key!</div>
+                </div>
+
                 <div class="form-group">
                     <button type="button" id="buttonOpenWallet" class="btn btn-outline-primary">Open wallet</button>
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Private key</span>
+                <div id="openWalletHiddenData">
+                    <br /><br />
+                    <h5>Wallet Data:</h5>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Private key</span>
+                        </div>
+                        <label id="restoredPrivateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="restoredPrivateKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Public key</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Public key</span>
+                        </div>
+                        <label id="restoredPublicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="restoredPublicKeyTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Wallet address</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Wallet address</span>
+                        </div>
+                        <label id="restoredAddressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="restoredAddressTxt" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
         </section>
@@ -127,24 +147,25 @@
                         <button type="button" id="buttonDisplayBalance" class="btn btn-outline-primary">Display balance</button>
                     </div>
                 </form>
-
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Confirmed</span>
+                <div id="viewAccountHiddenSection">
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Confirmed</span>
+                        </div>
+                        <label id="balanceConfirmed" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="balanceConfirmed" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Last mined</span>
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Last mined</span>
+                        </div>
+                        <label id="balanceLastMined" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="balanceLastMined" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
-                </div>
-                <div class="input-group  mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Pending</span>
+                    <div class="input-group  mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pending</span>
+                        </div>
+                        <label id="balancePending" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                     </div>
-                    <label id="balancePending" disabled class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                 </div>
             </div>
         </section>
@@ -209,8 +230,9 @@
                 <div class="modal-body">
                     <p>Your password is used to encrypt and decrypt your private key</p>
                     <br />
-                    <label style="width:100%;">Password x1: <input type="password" id="passwordModalInput1" /></label>
-                    <label style="width:100%;">Password x2: <input type="password" id="passwordModalInput2" /></label>
+                    <label style="width:100%;">Password x1: <input type="password" id="passwordModalInput1" required/></label>
+                    <label style="width:100%;">Password x2: <input type="password" id="passwordModalInput2" required/></label>
+                    <label id="passwordsDoNotMatchLabel">Passwords do not match!</label>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="passwordModalOkButton">OK</button>
@@ -223,17 +245,13 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Enter password</h5>
+                    <h5 class="modal-title">Enter recovery password</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>In order to recover your wallet private key, we need you to enter the 24 mnemonic words that you saved when the wallet was created. After that please enter password to safely encrypt the private key.</p>
-                    <br />
-                    <label style="width:100%;">Mnemonic words: <input type="text" id="mnemonicModalInput" /></label>
-                    <label style="width:100%;">Password: <input type="password" id="passInput1" /></label>
-                    <label style="width:100%;">Repeat password: <input type="password" id="passInput2" /></label>
+                    <label style="width:100%;">Password: <input type="password" id="passInput" required/></label>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="openWalletOkButton">OK</button>
