@@ -9,11 +9,7 @@ async function openPasswordPrompt() {
         $('#passwordModalOkButton').on('click', function () {
             var p1 = $('#passwordModalInput1').val();
             var p2 = $('#passwordModalInput2').val();
-
-            if (p1.length == 0 || p2.length == 0) {
-                return;
-            }
-
+            
             if (p1 != p2) {
                 $("#passwordsDoNotMatchLabel").fadeTo(2000, 500).slideUp(500, function () {
                     $("#passwordsDoNotMatchLabel").slideUp(500);
