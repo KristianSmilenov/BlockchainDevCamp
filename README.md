@@ -1,6 +1,30 @@
 # .NET Core Blockchain
 
 An all-around blockchain solution built with .NET Core exposing a Web API.
+It has all the components needed for testing and deploying a fully functional blockchain solution.
+
+## Security
+
+The project implements top-notch cryptographic algorithms to make sure your funds are safe.
+
+Private/public key pairs are generated using ECDSA and the secp256k1 curve used by Bitcoin.
+
+The private key is password protected using scrypt and AES-256,
+to make sure that even if somebody manages to steal your browser data, they won't get a hold of your funds.
+You can backup your private key, using 24-word mnemonic and a secret password.
+Even if somebody got your words, they'd still need your password.
+
+Each transaction is signed using your private key and verified by the nodes, using your public key.
+
+## Mining 
+
+Mining requires proof of work, with varying difficulty. This means that if someone wants to mine a lot of blocks (for the reward),
+they would have to put considerable investment in hardware and time.
+The work being done is a simple SHA256 hash of the blocks.
+
+Each mined block gives the miner a variable reward (some pre-set bounty plus all the transaction fees in the block)
+
+Whenever new transactions come in, the miner may choose to start mining the new more profitable block or keep mining the old one.
 
 ## Components
 
@@ -34,6 +58,7 @@ and send you notifications about changes to its blocks and/or transactions
 
 If the other node wants you to sent changes to it, it will use your peer API in return.
 
+##### Consensus algorithm
 The mechanism of synchronization is the following:
 * Whenever a new transaction comes in, broadcast it to all peers
 * Whenever a new block comes in, broadcast it to all peers
@@ -44,7 +69,6 @@ The mechanism of synchronization is the following:
 		* If yes, this means, that you just missed this one block. Attach it at the end
 		* If no, sync the whole blockchain - take the other guys chain, validate it (hashes and stuff), replace yours with theirs
 		In both cases, purge the pending transactions (the ones already mined should be out of the pending list)
-
 
 ### Wallet
 Front-end only web app that allows you to create and use a wallet, check your balance and push transactions to the blockchain.
