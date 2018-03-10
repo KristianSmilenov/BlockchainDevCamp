@@ -173,7 +173,7 @@ async function signTransaction() {
 
         var pass = await openWalletPrompt();
         let encryptedHex = sessionStorage.getItem("privateKey");
-        if (pass && encryptedHex) {
+        if (encryptedHex) {
             // decrypt private key from storage
             var privateKey = await decryptPK(pass, encryptedHex);
 
