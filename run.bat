@@ -24,9 +24,9 @@ IF NOT "%1"=="" (
 
 SET faucetAddress=a4a239576a1d25b32cf2a037e3540f6a2326fdc3
 pushd Blockchain\bin\Release\netcoreapp2.0\publish\
-start dotnet Blockchain.dll --server.urls "http://localhost:5101" --AppSettings:NodeName "Ivan" --AppSettings:NodeUrl "http://localhost:5101" --AppSettings:FaucetAddress %faucetAddress% --AppSettings:Difficulty 6
-start dotnet Blockchain.dll --server.urls "http://localhost:5102" --AppSettings:NodeName "Ivan" --AppSettings:NodeUrl "http://localhost:5102" --AppSettings:FaucetAddress %faucetAddress%  --AppSettings:Difficulty 6
-start dotnet Blockchain.dll --server.urls "http://localhost:5103" --AppSettings:NodeName "Ivan" --AppSettings:NodeUrl "http://localhost:5103" --AppSettings:FaucetAddress %faucetAddress%  --AppSettings:Difficulty 6
+start "Node 1" cmd /c "dotnet Blockchain.dll --server.urls ""http://localhost:5101"" --AppSettings:NodeName ""Ivan"" --AppSettings:NodeUrl ""http://localhost:5101"" --AppSettings:FaucetAddress %faucetAddress% --AppSettings:Difficulty 6"
+start "Node 2" cmd /c "dotnet Blockchain.dll --server.urls ""http://localhost:5102"" --AppSettings:NodeName ""Gosho"" --AppSettings:NodeUrl ""http://localhost:5102"" --AppSettings:FaucetAddress %faucetAddress% --AppSettings:Difficulty 6"
+start "Node 3" cmd /c "dotnet Blockchain.dll --server.urls ""http://localhost:5103"" --AppSettings:NodeName ""Penka"" --AppSettings:NodeUrl ""http://localhost:5103"" --AppSettings:FaucetAddress %faucetAddress% --AppSettings:Difficulty 6"
 popd
 
 ::----------------------------------
@@ -37,7 +37,7 @@ popd
 ::----------------------------------
 
 pushd WebFaucet\bin\Release\netcoreapp2.0\publish
-start dotnet WebFaucet.dll  --server.urls "http://localhost:5201" --AppSettings:PrivateKey d9811a2c1baf6a2558f8ff5fb4cc624b6f2c32bb6dea659cf68584fcd028ee36 --AppSettings:Address %faucetAddress%
+start "Faucet" cmd /c "dotnet WebFaucet.dll  --server.urls ""http://localhost:5201"" --AppSettings:PrivateKey d9811a2c1baf6a2558f8ff5fb4cc624b6f2c32bb6dea659cf68584fcd028ee36 --AppSettings:Address %faucetAddress%"
 popd
 
 ::----------------------------------
@@ -48,7 +48,7 @@ popd
 ::----------------------------------
 
 pushd BlockExplorer\bin\Release\netcoreapp2.0\publish\
-start dotnet BlockExplorer.dll
+start "Explorer" cmd /c "dotnet BlockExplorer.dll"
 popd
 
 ::----------------------------------
@@ -59,7 +59,7 @@ popd
 ::----------------------------------
 
 pushd WebWallet\bin\Release\netcoreapp2.0\publish\
-start dotnet WebWallet.dll
+start "Wallet" cmd /c "dotnet WebWallet.dll"
 popd
 
 ::----------------------------------
@@ -73,18 +73,18 @@ popd
 :: public  key: 031dcfaefb92d3e3bb935a88cfd99a8f148821471436e7ddaa9bc8a1e4996c2a09
 :: address    : ea1ca8370ebe39b8ba29fedb9b3786df6d2e9a9c
 :: ---
-start dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll "http://localhost:5101" ea1ca8370ebe39b8ba29fedb9b3786df6d2e9a9c
+start "Miner 1 5101" cmd /c "dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll ""http://localhost:5101"" ea1ca8370ebe39b8ba29fedb9b3786df6d2e9a9c"
 
 :: private key: 41db7599458eddf2128f7c68e110b7c94fea9c6df69fab3a8ee6a81fa1b362d8
 :: public  key: 03dbe54f289af4832b36228f2bcdcf6c959424d44d3b85374d6079e2fa73d22e2d
 :: address    : 5868c2f8f6e556f7a7de40f08d0355e951f0e058
 :: ---
-start dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll "http://localhost:5102" 5868c2f8f6e556f7a7de40f08d0355e951f0e058
+start "Miner 2 5101" cmd /c "dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll ""http://localhost:5102"" 5868c2f8f6e556f7a7de40f08d0355e951f0e058"
 
 :: private key: 8ce026a4ffe017222cc7a54ab5b3f126c4b386a9751075a9000df65e3aefab51
 :: public  key: 0317dbff0d1071e31159535153c96ae1ad1ef4cf7db867aa56fdced38dea6385f3
 :: address    : 0094b9f4bed622ce6954222bbedcb6cb6d71f991
 :: ---
-start dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll "http://localhost:5102" 0094b9f4bed622ce6954222bbedcb6cb6d71f991
+start "Miner 3 5103" cmd /c "dotnet Miner\bin\Release\netcoreapp2.0\publish\Miner.dll ""http://localhost:5102"" 0094b9f4bed622ce6954222bbedcb6cb6d71f991"
 
 ::----------------------------------
