@@ -26,6 +26,16 @@ namespace Blockchain.Controllers
         }
 
         /// <summary>
+        /// Get all blocks in the blockchain
+        /// </summary>
+        [HttpGet("sync")]
+        public List<MinedBlockInfoResponse> GetSyncBlocks()
+        {
+            return _blockchainService.GetBlocks();
+        }
+
+
+        /// <summary>
         /// Gets specific block by index
         /// </summary>
         [HttpGet("index/{index}")]

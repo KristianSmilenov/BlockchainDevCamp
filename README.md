@@ -19,8 +19,8 @@ The project implements top-notch cryptographic algorithms to make sure your fund
 
 Private/public key pairs are generated using `ECDSA and the secp256k1 curve` used by Bitcoin.
 
-The private key is protected using 256-bit AES password-based encryption, to make sure that even if somebody manages to
-steal your browser data, they won't get a hold of your funds. You can backup your private key, using 24-word mnemonic and a secret password.
+The private key is protected using `256-bit AES password-based encryption (scrypt)`, to make sure that even if somebody manages to
+steal your browser data, they won't get a hold of your funds. You can backup your private key, using `24-word mnemonic and a secret password`.
 Even if somebody got your words, they'd still need your password.
 
 Each transaction is signed using your private key and verified by the nodes, using your public key.

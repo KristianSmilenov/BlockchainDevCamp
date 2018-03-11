@@ -19,6 +19,7 @@ namespace Blockchain.Services
         const string TRANSACTION_API_PATH = "api/transactions";
         const string NOTIFY_API_PATH = "api/blocks/notify";
         const string GET_BLOCKCHAIN_API_PATH = "api/blocks";
+        const string GET_SYNC_BLOCKCHAIN_API_PATH = "api/blocks/sync";
         const string ADD_PEER_API_PATH = "api/peers";
 
         private IDBService dbService;
@@ -135,9 +136,16 @@ namespace Blockchain.Services
             }
         }
 
+        public List<MinedBlockInfoResponse> GetBlocks()
+        {
+            List<MinedBlockInfoResponse> response = dbService.GetAllBlocks().OrderByDescending(b => b.DateCreated)
+                .ToList().ConvertAll(b => MinedBlockInfoResponse.FromMinedBlockInfo(b));
+            return response;
+        }
+
         private List<MinedBlockInfo> GetWholeChainFromPeer(Peer peer)
         {
-            var resp = HttpUtils.DoApiGet<List<MinedBlockInfoResponse>>(peer.Url, GET_BLOCKCHAIN_API_PATH);
+            var resp = HttpUtils.DoApiGet<List<MinedBlockInfoResponse>>(peer.Url, GET_SYNC_BLOCKCHAIN_API_PATH);
 
             var chain = resp?.ConvertAll(i => 
                 new MinedBlockInfo(MiningBlockInfo.FromMinedBlockInfo(i))
@@ -536,6 +544,5 @@ namespace Blockchain.Services
 
             Task.WaitAll(tasks.ToArray());
         }
-
     }
 }

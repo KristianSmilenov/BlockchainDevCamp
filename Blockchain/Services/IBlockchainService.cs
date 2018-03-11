@@ -15,6 +15,7 @@ namespace Blockchain.Services
          * Blockchain Node
          */
         CollectionContext<MinedBlockInfoResponse> GetBlocksCollection(int pageNumber, int pageSize);
+        List<MinedBlockInfoResponse> GetBlocks();
         MinedBlockInfoResponse GetBlock(int index);
         MinedBlockInfoResponse GetBlock(string blockHash);
         void NotifyBlock(NewBlockNotification notification);
